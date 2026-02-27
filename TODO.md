@@ -1,6 +1,10 @@
 Major
-- Code Cleanup
-    - Implement the Command Pattern -> will help with implement rolldown tracking
+- Trait Indicators
+    - Make look like what it actually looks like in game
+    - Units on hover should have a colored border indicating their rarity
+    - Unlockable units should show whether or not they're locked or unlocked
+        - If locked, show how close to unlock condition
+
 - Shop
     - Edit tiles to have champion traits
     - Fix animation to be a ring-like effect
@@ -9,7 +13,13 @@ Major
         - Dragging the champion out should also leave shop background visible instead of duplicating the tile
     - Picking up shop slot should also pick up the entire div not just the image now
 
+- Add SFX
+    - Record buy XP, combine, end of round timer sfx
+
 Minor
+- Code Cleanup
+    - Implement the Command Pattern -> will help with implement rolldown tracking
+
 - Rolldown grading
     - Implement a rolldown replay system
         - Also add a move function so I can track movement
@@ -18,7 +28,6 @@ Minor
     - Make positioning more dynamic
 
 - Add SFX
-    - Record buy XP, combine, end of round timer sfx
     - Add tick sfx (plays every 1s while holding a unit, also plays when switching the hex you're hovering over)
     - Investigate how often champion SFX play
 
@@ -32,12 +41,6 @@ Minor
     - Make more like the actual game
     - Filter by trait
     - Clear, Snapshot, Undo, etc.
-
-- Trait Indicators
-    - Make look like what it actually looks like in game
-    - Units on hover should have a colored border indicating their rarity
-    - Unlockable units should show whether or not they're locked or unlocked
-        - If locked, show how close to unlock condition
 
 - Settings Tab
     - Change hotkeys
