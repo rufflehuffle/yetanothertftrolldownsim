@@ -219,6 +219,7 @@ function renderShopSlot(slot, champName) {
     slot.dataset.champName = champName ?? '';
 
     slot.querySelector('.team-plan-badge')?.remove();
+    costEl.style.setProperty('--before-display', 'none');
 
     if (champ) {
         img.src = champ.tile;
@@ -229,6 +230,7 @@ function renderShopSlot(slot, champName) {
         barEl.style.backgroundColor = color;
         nameEl.textContent = champ.name;
         costEl.textContent = champ.cost;
+        costEl.style.setProperty('--before-display', 'inline-block');
 
         const ownedUnits = [
             ...state.bench.filter(u => u?.name === champName),
