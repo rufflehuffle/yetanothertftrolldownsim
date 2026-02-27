@@ -1,11 +1,14 @@
-Major
-- Trait Indicators
+# 2.27.26 Plan
+    - Compare app to in-game screenshots and fix discrepancies
+
+# Major
+## Trait Indicators
     - Make look like what it actually looks like in game
     - Units on hover should have a colored border indicating their rarity
     - Unlockable units should show whether or not they're locked or unlocked
         - If locked, show how close to unlock condition
 
-- Shop
+## Shop
     - Edit tiles to have champion traits
     - Fix animation to be a ring-like effect
     - When dragging champion out of the shop, it should be placed back if not dragged too far
@@ -13,10 +16,10 @@ Major
         - Dragging the champion out should also leave shop background visible instead of duplicating the tile
     - Picking up shop slot should also pick up the entire div not just the image now
 
-- Add SFX
+## Add SFX
     - Record buy XP, combine, end of round timer sfx
 
-Minor
+# Minor
 - Code Cleanup
     - Implement the Command Pattern -> will help with implement rolldown tracking
 
