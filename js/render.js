@@ -237,7 +237,7 @@ function renderShopSlot(slot, champName) {
         traits.forEach((trait, i) => {
             const traitDiv = document.createElement('div');
             traitDiv.className = 'shop-slot-trait';
-            traitDiv.style.bottom = `${i*30+32}px`;
+            traitDiv.style.bottom = `${i*28+36}px`;
 
             const traitSymbol = document.createElement('div');
             traitSymbol.className = 'shop-slot-trait-symbol';
