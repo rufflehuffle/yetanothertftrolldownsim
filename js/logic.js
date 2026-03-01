@@ -11,7 +11,10 @@ export const BOARD_ROWS = ['D', 'C', 'B', 'A'];
 export const BOARD_COLS = [1, 2, 3, 4, 5, 6, 7];
 
 export function boardCount() {
-    return Object.values(state.board).filter(u => u !== null).filter(u => u.name !== 'Ice Tower' || u.name !== 'Sand Soldier').length;
+    return Object.values(state.board).filter(u => u !== null)
+    .filter(u => u.name !== 'Ice Tower')
+    .filter(u => u.name !== 'Sand Soldier')
+    .length;
 }
 
 export function findEmptyBoardHex() {

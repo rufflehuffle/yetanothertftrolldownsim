@@ -1,24 +1,32 @@
 # TODO
-    - Fix trait indicators
+    Work on Team Planner action items
 
 # Major
+## Team Planner
+    - Make more like the actual game
+    - Filter by trait
+    - Clear, Snapshot, Undo, Team Codes, etc.
+
 ## Shop
     - When dragging champion out of the shop, it should be placed back if not dragged too far
         - When you're far enough, the tile should become transparent
         - Dragging the champion out should also leave shop background visible instead of duplicating the tile
-    - Fix animation to be a ring-like effect
-    - Picking up shop slot should also pick up the entire div not just the image now
 
 ## Trait Indicators
-    - Make look like what it actually looks like in game
     - Units on hover should have a colored border indicating their rarity
     - Unlockable units should show whether or not they're locked or unlocked
         - If locked, show how close to unlock condition
 
-## Add SFX
+## SFX
     - Record buy XP, combine, end of round timer sfx
 
-# Minor
+# Low Priority
+
+## Shop
+    - Change star up animation to be a ring-like effect
+    - Picking up shop slot should also pick up the entire div not just the image now
+    - Add gem to top of shop slot
+
 - Code Cleanup
     - Implement the Command Pattern -> will help with implement rolldown tracking
 
@@ -33,16 +41,10 @@
     - Add tick sfx (plays every 1s while holding a unit, also plays when switching the hex you're hovering over)
     - Investigate how often champion SFX play
 
-- Background art
-
-- Specific unit interactions
+## Specific trait / unit interactions
     - Make Annie, Ice Tower, and Azir summons feel less janky
     - Add T-Hex eat positioning
-
-- Team Planner
-    - Make more like the actual game
-    - Filter by trait
-    - Clear, Snapshot, Undo, etc.
+    - Add Piltover mod selection
 
 - Settings Tab
     - Change hotkeys
@@ -56,8 +58,9 @@ Ideas
 - Rolldown grading
 - Make a bot that simulates another player rolling down
 
-## Known Issues
+## Known Bugs / Issues
 - Inactive traits move around based on the order of units on the board
 - Galio can be fielded
 - Azir Soldiers count towards unit count
 - Ice Tower, Tibbers, and Azir Soldiers have hardcoded hex placements when summoned and overwrite units in those hexes
+- Presets don't load with the XP in the bank
