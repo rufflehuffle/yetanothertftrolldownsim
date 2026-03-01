@@ -3,7 +3,10 @@
 
 # Major
 ## Shop
-    - Edit tiles to have champion traits
+    - Make team planner icon like the actual game
+        - Find icon / take screenshot of icon
+        - Measure team planner label dimensions
+        - Implement in CSS
     - Fix animation to be a ring-like effect
     - When dragging champion out of the shop, it should be placed back if not dragged too far
         - When you're far enough, the tile should become transparent
