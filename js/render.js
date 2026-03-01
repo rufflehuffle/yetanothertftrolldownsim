@@ -279,7 +279,10 @@ function renderShopSlot(slot, champName) {
         }
 
         if (champ.cost > state.gold) { 
-            slot.style.filter = "grayscale(100%)";}
+            slot.style.filter = "grayscale(100%)";
+        } else {
+            slot.style.filter = "";
+        }
     } else {
         slot.querySelector('.shop-star-indicator').textContent = '';
         slot.style.borderColor = '#444';

@@ -247,7 +247,7 @@ body {
     flex-direction: column;
     align-items: stretch;
     gap: 5px;
-    width: 110px;
+    width: 210px;
     align-self: flex-start;
 }
 
@@ -296,9 +296,9 @@ body {
     background: #1a2d4a;
     color: #90c8ff;
     border: 1px solid #2d5a8e;
-    border-radius: 4px;
-    padding: 5px 0;
-    font-size: 12px;
+    height: 50px;
+    padding: 5px 5px;
+    font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
@@ -316,6 +316,7 @@ body {
     opacity: 0.35;
     cursor: not-allowed;
 }
+
 .buy-xp-cost {
     background: #f5c518;
     color: #1a1a1a;
@@ -331,9 +332,9 @@ body {
     background: #1a2d4a;
     color: #90c8ff;
     border: 1px solid #2d5a8e;
-    border-radius: 4px;
+    height: 50px;
     padding: 5px 0;
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
@@ -1309,6 +1310,7 @@ body.team-builder-mode .hex-wrapper.has-unit:focus-within .star-adj {
     white-space: nowrap;
     text-shadow: 0 0 4px rgba(0,0,0,0.9), 0 0 2px rgba(0,0,0,0.9);
     user-select: none;
+    z-index: 2;
 }
 
 /* ============================================================
