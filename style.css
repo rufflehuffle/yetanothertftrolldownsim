@@ -181,9 +181,6 @@ body {
 
 .gold-container {
     text-align: center;
-    color: white;
-    text-shadow: 1px 1px solid black;
-    font-size: 16px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -193,6 +190,9 @@ body {
 .gold {
     cursor: default;
     user-select: none;
+    color: #F0E6D2;
+    text-shadow: 2px 2px solid black;
+    font-size: 16px;
 }
 
 .gold::before {
@@ -1277,7 +1277,7 @@ body.team-builder-mode .hex-wrapper.has-unit:focus-within .star-adj {
     height: 27px;
     background: linear-gradient(#348C5A, #3C604D);
     border-radius: 0 0 5px 5px;
-    z-index: 3;
+    z-index: 6;
     pointer-events: none;
     border-top: 0;
     border-right: 2px solid #609B81;
@@ -1294,7 +1294,7 @@ body.team-builder-mode .hex-wrapper.has-unit:focus-within .star-adj {
     background-size: 17px 17px;
     background-repeat: no-repeat;
     background-position: center;
-    z-index: 4;
+    z-index: 7;
 }
 
 .star-indicator {

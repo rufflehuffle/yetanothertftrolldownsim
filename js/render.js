@@ -237,7 +237,7 @@ function renderShopSlot(slot, champName) {
         traits.forEach((trait, i) => {
             const traitDiv = document.createElement('div');
             traitDiv.className = 'shop-slot-trait';
-            traitDiv.style.bottom = `${i*28+36}px`;
+            traitDiv.style.bottom = `${(traits.length - i - 1) * 28 + 36}px`;
 
             const traitSymbol = document.createElement('div');
             traitSymbol.className = 'shop-slot-trait-symbol';
@@ -279,8 +279,7 @@ function renderShopSlot(slot, champName) {
         }
 
         if (champ.cost > state.gold) { 
-            slot.style.filter = "grayscale(100%)";
-        }
+            slot.style.filter = "grayscale(100%)";}
     } else {
         slot.querySelector('.shop-star-indicator').textContent = '';
         slot.style.borderColor = '#444';
