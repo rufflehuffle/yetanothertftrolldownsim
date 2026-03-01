@@ -165,10 +165,12 @@ export function renderTraits() {
         const info = document.createElement('div');
         info.className = 'trait-info';
 
-        const countEl = document.createElement('span');
-        countEl.className = 'trait-count';
-        countEl.textContent = count;
-        row.appendChild(countEl);
+        if (isActive) {
+            const countEl = document.createElement('span');
+            countEl.className = 'trait-count';
+            countEl.textContent = count;
+            row.appendChild(countEl);
+        }
         
         const nameEl = document.createElement('span');
         nameEl.className = 'trait-name';
