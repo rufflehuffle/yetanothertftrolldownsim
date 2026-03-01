@@ -480,7 +480,7 @@ body {
     white-space: nowrap;
     text-shadow: 0 0 6px rgba(0,0,0,1), 0 0 3px rgba(0,0,0,1);
     user-select: none;
-    z-index: 4;
+    z-index: 10;
 }
 
 @keyframes silver-border-pulse {
@@ -1272,7 +1272,7 @@ body.team-builder-mode .hex-wrapper.has-unit:focus-within .star-adj {
 .shop-slot .team-plan-badge {
     position: absolute;
     top: -6px;
-    left: 10px;
+    left: 6px;
     width: 27px;
     height: 27px;
     background: linear-gradient(#348C5A, #3C604D);
@@ -1290,7 +1290,7 @@ body.team-builder-mode .hex-wrapper.has-unit:focus-within .star-adj {
     position: absolute;
     width: 27px;
     height: 27px;
-    background-image: url("./img/team_planner.png");
+    background-image: url("../img/team_planner.png");
     background-size: 17px 17px;
     background-repeat: no-repeat;
     background-position: center;
@@ -1702,23 +1702,23 @@ body.timer-locked .timer-reset-btn {
 }
 
 .cost-1-odds {
-    color: gray;
+    color: #A09B8C;
 }
 
 .cost-2-odds {
-    color: green;
+    color: #3EBB5A;
 }
 
 .cost-3-odds {
-    color: blue;
+    color: #3DB8F2;
 }
 
 .cost-4-odds {
-    color: purple;
+    color: #D322FF;
 }
 
 .cost-5-odds {
-    color: orange;
+    color: #FF9A21;
 }
 
 .odd {
