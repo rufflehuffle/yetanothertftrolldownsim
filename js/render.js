@@ -18,7 +18,7 @@ export function starColor(stars) {
 
 export function costColor(cost) {
     switch (cost) {
-        case 1: return '#9e9e9e';
+        case 1: return '#162431';
         case 2: return '#4caf50';
         case 3: return '#2196f3';
         case 4: return '#9c27b0';
@@ -219,6 +219,7 @@ function renderShopSlot(slot, champName) {
     slot.dataset.champName = champName ?? '';
 
     slot.querySelector('.team-plan-badge')?.remove();
+    slot.querySelectorAll('.shop-slot-trait')?.forEach((x) => x.remove());
     costEl.style.setProperty('--before-display', 'none');
 
     if (champ) {
@@ -231,6 +232,25 @@ function renderShopSlot(slot, champName) {
         nameEl.textContent = champ.name;
         costEl.textContent = champ.cost;
         costEl.style.setProperty('--before-display', 'inline-block');
+
+        const traits = pool[champName].synergies;
+        traits.forEach((trait, i) => {
+            const traitDiv = document.createElement('div');
+            traitDiv.className = 'shop-slot-trait';
+            traitDiv.style.bottom = `${i*30+32}px`;
+
+            const traitSymbol = document.createElement('div');
+            traitSymbol.className = 'shop-slot-trait-symbol';
+            traitSymbol.style.setProperty('--symbol-img', `url(${traitTable[trait].icon})`)
+            traitDiv.append(traitSymbol)
+
+            const traitText = document.createElement('div');
+            traitText.className = 'shop-slot-trait-text';
+            traitText.textContent = trait;
+            traitDiv.append(traitText)
+            
+            slot.appendChild(traitDiv);
+        })
 
         const ownedUnits = [
             ...state.bench.filter(u => u?.name === champName),

@@ -51,7 +51,7 @@ body {
     width: 190px;
     height: 140px;
     background-color: #2a2a2a;
-    border: 2px solid #444;
+    border: 2px solid #0c0c0c;
     border-radius: 0;
     position: relative;
     overflow: visible;
@@ -63,6 +63,40 @@ body {
     inset: 0;
     overflow: hidden;
     pointer-events: none;
+}
+
+.shop-slot-trait {
+    position: absolute;
+    left: 5px;
+    bottom: 0;
+    color: #EFEADE;
+    text-shadow: 1px 1px black;
+    font-size: 14px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+}
+
+.shop-slot-trait-symbol::before {
+    content: "";
+    display: inline-block;
+    background-image: var(--symbol-img, '');
+    background-size: 65%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #383838;
+    height: 20px;
+    width: 20px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    outline: none;
+}
+
+.shop-slot-trait-symbol {
+    display: inline-block;
+    background-color: black;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    padding: 1px 1px 0 1px;
 }
 
 .champ-img {
@@ -86,10 +120,11 @@ body {
     padding: 2px 5px;
     pointer-events: none;
     user-select: none;
-    font-size: 14px;
-    font-weight: 600;
+    font-family: serif;
+    font-size: 16px;
+    font-weight: 800;
     color: white;
-    text-shadow: #000000 2px 2px;
+    text-shadow: rgba(0, 0, 0, 0.7) 1.5px 1.5px;
 }
 
 .shop-slot-cost {
