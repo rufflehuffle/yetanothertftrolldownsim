@@ -28,6 +28,16 @@ export function costColor(cost) {
     }
 }
 
+function traitBreakpointColors(tier) {
+    switch (tier) {
+        case 'Bronze': return '#876049';
+        case 'Silver': return '#819193';
+        case 'Gold': return '#BCA55B';
+        case 'Prismatic': return '#BDF3ED';
+        case 'Legendary': return '#E37B23';
+    }
+}
+
 // ============================================================
 // Trait computation
 // ============================================================
@@ -141,6 +151,11 @@ export function renderTraits() {
 
         const iconWrap = document.createElement('div');
         iconWrap.className = 'trait-icon-wrap' + (isActive ? ' trait-icon-active' : '');
+        if (isActive) {
+            const breakpointTier = traitTable[traitName].breakpoint_tiers[traitTable[traitName].breakpoints.indexOf(activeBP)];
+            const breakpointColor = traitBreakpointColors(breakpointTier);
+            iconWrap.style.setProperty('--trait-breakpoint-color', breakpointColor);
+        }
         const img = document.createElement('img');
         img.src = traitData.icon;
         img.alt = traitName;

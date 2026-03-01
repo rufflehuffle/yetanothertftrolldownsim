@@ -58,3 +58,6 @@ Ideas
 
 ## Known Issues
 - Inactive traits move around based on the order of units on the board
+- Galio can be fielded
+- Azir Soldiers count towards unit count
+- Ice Tower, Tibbers, and Azir Soldiers have hardcoded hex placements when summoned and overwrite units in those hexes

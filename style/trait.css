@@ -58,7 +58,7 @@
 }
 .trait-icon-wrap.trait-icon-active {
     filter: brightness(1.1) saturate(1.2);
-    background: #845D46;
+    background: var(--trait-breakpoint-color, '');
 }
 .trait-icon-wrap img {
     width: 23px;
