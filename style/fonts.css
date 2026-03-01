@@ -1,60 +1,60 @@
 /* ===== Beaufort for LoL ===== */
 @font-face {
-  font-family: 'BeaufortForLoL';
+  font-family: 'Beaufort';
   src: url('fonts/BeaufortforLOL-Light.ttf') format('truetype');
   font-weight: 300;
   font-style: normal;
 }
 @font-face {
-  font-family: 'BeaufortForLoL';
+  font-family: 'Beaufort';
   src: url('fonts/BeaufortforLOL-LightItalic.ttf') format('truetype');
   font-weight: 300;
   font-style: italic;
 }
 @font-face {
-  font-family: 'BeaufortForLoL';
+  font-family: 'Beaufort';
   src: url('fonts/BeaufortforLOL-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
-  font-family: 'BeaufortForLoL';
+  font-family: 'Beaufort';
   src: url('fonts/BeaufortforLOL-Italic.ttf') format('truetype');
   font-weight: 400;
   font-style: italic;
 }
 @font-face {
-  font-family: 'BeaufortForLoL';
+  font-family: 'Beaufort';
   src: url('fonts/BeaufortforLOL-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
 }
 @font-face {
-  font-family: 'BeaufortForLoL';
+  font-family: 'Beaufort';
   src: url('fonts/BeaufortforLOL-MediumItalic.ttf') format('truetype');
   font-weight: 500;
   font-style: italic;
 }
 @font-face {
-  font-family: 'BeaufortForLoL';
+  font-family: 'Beaufort';
   src: url('fonts/BeaufortforLOL-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
 }
 @font-face {
-  font-family: 'BeaufortForLoL';
+  font-family: 'Beaufort';
   src: url('fonts/BeaufortforLOL-BoldItalic.ttf') format('truetype');
   font-weight: 700;
   font-style: italic;
 }
 @font-face {
-  font-family: 'BeaufortForLoL';
+  font-family: 'Beaufort';
   src: url('fonts/BeaufortforLOL-Heavy.ttf') format('truetype');
   font-weight: 900;
   font-style: normal;
 }
 @font-face {
-  font-family: 'BeaufortForLoL';
+  font-family: 'Beaufort';
   src: url('fonts/BeaufortforLOL-HeavyItalic.ttf') format('truetype');
   font-weight: 900;
   font-style: italic;
