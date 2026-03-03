@@ -1,0 +1,583 @@
+/*  =================
+    HEADER ==========
+    ================= */
+
+.planner {
+    background: #000B13;
+    display: none;
+    grid-template-columns: 26vw 49vw;
+    grid-template-rows: 8% 92%;
+    position: fixed;
+    top: 10vh;
+    left: 15.5vw;
+    width: 75vw;
+    height: 75vh;
+    z-index: 500;
+}
+
+.planner__header {
+    display: flex;
+    gap: 4px;
+    grid-column: 1 / span 2;
+    padding-bottom: 2px;
+    align-items: center;
+    border-bottom: 2px solid #121B20;
+}
+
+.planner__saved-teams-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 20%;
+    border: 2px solid #C0A366;
+}
+
+.planner__saved-teams-btn {
+    cursor: pointer;
+}
+
+.planner__title {
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    font-size: 24px;
+    font-family: 'Beaufort', 'serif';
+    font-weight: bold;
+    color: #F0E6D2;
+}
+
+.planner__close-btn {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5vw;
+    height: 1.5vw;
+    margin-right: 1vw;
+    font-size: 24px;
+    font-family: 'Beaufort', 'serif';
+    font-weight: bold;
+    color: #F0E6D2;
+    background: #091225;
+    cursor: pointer;
+}
+
+/*  =================
+    PICKER ==========
+    ================= */
+
+.planner-picker {
+    padding: 14px 18px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.planner-picker__filter-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.planner-picker__filter-btn {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+
+    width: 20%;
+    padding: 0.5vw 2vw;
+
+    border: 2px solid #675F4C;
+    font-family: "Beaufort", 'serif';
+    font-weight: bold;
+    color: white;
+}
+
+.planner-picker__unlockable-switch {
+    height: 60%;
+    width: 3vw;
+    position: relative;
+    margin-right: 1vw;
+}
+
+.planner-picker__unlockable-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.planner-picker__unlockable-switch-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    cursor: pointer;
+    background: #213E47;
+
+    box-sizing: border-box;
+    border-radius: 20px;
+    border: 3px solid #5D5C55;
+}
+
+.planner-picker__unlockable-switch-icon {
+    position: absolute;
+    left: -15px;
+    top: -8px;
+
+    height: 46px;
+    width: 46px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    clip-path: circle(40%);
+    background-color: #5D5C55;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.planner-picker__unlockable-switch-icon::before {
+    content: '';
+
+    position: absolute;
+
+    height: 40px;
+    width: 40px;
+
+    clip-path: circle(40%);
+    background-color: #1E2429;
+}
+
+.planner-picker__unlockable-switch-symbol {
+    width: 25px;
+    height: 25px;
+
+    z-index: 2;
+}
+
+input:checked ~ .planner-picker__unlockable-switch-slider {
+    background: #106A24;
+    border: 3px solid #997F40;
+}
+
+input:checked ~ .planner-picker__unlockable-switch-icon {
+    transform: translateX(2vw);
+    background-color: #997F40;
+}
+
+.planner-picker__group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.planner-picker__group-header {
+    display: flex;
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+.planner-picker__group-text {
+    font-size: 18px;
+    font-family: 'Beaufort', 'serif';
+    color: #F0E6D2;
+    font-weight: bold;
+}
+
+.planner-picker__unit-container {
+    display: inline-block;
+    position: relative;
+}
+
+.planner-picker__unit {
+    width: 5vw;
+    padding: 2px;
+    border: 2px solid #3E505E;
+    cursor: pointer;
+}
+
+.picker__unit--1-cost {
+    border: 2px solid #3E505E;
+}
+
+.picker__unit--2-cost {
+    border: 2px solid #0B7827;
+}
+
+.picker__unit--3-cost {
+    border: 2px solid #2166A6;
+}
+
+.picker__unit--4-cost {
+    border: 2px solid #B91C8C;
+}
+
+.picker__unit--5-cost {
+    border: 2px solid #B88502;
+}
+
+.planner-picker__unit-img {
+    width: calc(5vw - 2px);
+    height: calc(5vw - 2px);
+    object-fit: cover;
+}
+
+.planner-picker__unit-trait-container {
+    display: flex;
+    padding-left: 16px;
+    gap: 4px;
+}
+
+.planner-picker__unit-trait {
+    height: 20px;
+}
+
+.planner-picker__unit-name {
+    font-size: 14px;
+    padding-top: 6px;
+    color: #F0E6D2;
+    font-family: 'Beaufort', 'serif';
+    font-weight: bold;
+}
+
+.planner-picker__unit-lock-status {
+    position: absolute;
+    right: -5px;
+    top: -5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    clip-path: circle(40%);
+
+    height: 34px;
+    width: 34px;
+}
+
+.picker__unit-lock-status--locked {
+    background: #9C9A8C;
+}
+
+.picker__unit-lock-status--unlocked {
+    background: #CEB6EF;
+}
+
+
+.planner-picker__unit-lock-status::before {
+    content: '';
+
+    position: absolute;
+
+    background: #000B13;
+    clip-path: circle(40%);
+    
+    height: 30px;
+    width: 30px;
+}
+
+.planner-picker__unit-lock-status > img {
+    z-index: 2;
+}
+
+/* Scrollbar */
+.planner-picker {
+  --sb-track-color: #000b13;
+  --sb-thumb-color: #795b29;
+  --sb-size: 7px;
+}
+
+.planner-picker::-webkit-scrollbar {
+  width: var(--sb-size);
+}
+
+.planner-picker::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 4px;
+}
+
+.planner-picker::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 4px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .planner-picker {
+      scrollbar-color: var(--sb-thumb-color)
+                     var(--sb-track-color);
+  }
+}
+
+/*  =================
+    SELECTED ========
+    ================= */
+.planner-selected {
+    display: grid;
+    grid-template-columns: 15% 85%;
+    grid-template-rows: 10% 70% 20%;
+    background: #0F171E;
+    padding: 1vh 2vw 2vh 1vw;
+}
+
+.planner-selected__title {
+    padding-top: 10px;
+    font-size: 28px;
+    color: #F0E6D2;
+    font-family: 'Beaufort', 'serif';
+    font-weight: bold;
+}
+
+.planner-traits {
+    grid-row: 1 / span 3;
+}
+
+.planner-selected__actions {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding-bottom: 5vh;
+}
+
+.planner-selected__clear-btn {
+    display: flex;
+    font-size: 16px;
+    align-items: center;
+    justify-content: center;
+    width: 25%;
+    height: 100%;
+    border: 2px solid #C0A366;
+    color: #F0E6D2;
+    font-family: 'Beaufort', 'serif';
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.planner-selected__snapshot-btn {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    justify-content: center;
+    border: 2px solid #C0A366;
+    width: 50%;
+    height: 100%;
+    color: #F0E6D2;
+    font-family: 'Beaufort', 'serif';
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.planner-selected__undo-btn {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    justify-content: center;
+    border: 2px solid #C0A366;
+    width: 25%;
+    height: 100%;
+    color: #F0E6D2;
+    font-family: 'Beaufort', 'serif';
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.planner-traits {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+}
+
+.planner-traits-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.planner-traits__symbol {
+    height: 40px;
+    width: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+.planner-traits__symbol-img {
+    height: 30px;
+    width: 30px;
+}
+
+.planner-traits__count {
+    display: flex;
+    justify-content: center;
+    width: 16px;
+    font-size: 16px;
+    font-family: 'Beaufort', 'serif';
+    color: #F0E6D2;
+    text-shadow: 1px 1px #000000;
+    font-weight: bold;
+}
+
+.traits-container--active .planner-traits__symbol-img {
+    filter: brightness(0);
+}
+
+.symbol--inactive {
+    background-color: #1E2429;
+}
+
+.symbol--bronze {
+    background-color: #876049;
+}
+
+.symbol--silver {
+    background-color: #819193;
+}
+
+.symbol--gold {
+    background-color: #BCA55B;
+}
+
+.symbol--legendary {
+    background-color: #E37B23;
+}
+
+.symbol--prismatic {
+    background-color: #BDF3ED;
+}
+
+.planner-selected__team {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px 8px;
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+}
+
+.planner-selected__unit {
+    display: flex;
+    flex-direction: column;
+    padding: 2px;
+    border: 2px solid black;
+    box-sizing: border-box;
+    background: #161B21;
+    position: relative;
+}
+
+.planner-selected__unit:has(*) {
+    cursor: pointer;
+}
+
+.selected__unit--1-cost {
+    background: #3E505E;
+}
+
+.selected__unit--2-cost {
+    background: #0B7827;
+}
+
+.selected__unit--3-cost {
+    background: #2166A6;
+}
+
+.selected__unit--4-cost {
+    background: #B91C8C;
+}
+
+.selected__unit--5-cost {
+    background: #B88502;
+}
+
+.planner-selected__unit-img {
+    height: 80%;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid black;
+    object-fit: cover;
+}
+
+.planner-selected__unit-traits {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.planner-selected__unit-trait {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    aspect-ratio: 1 / 1.1547;
+    width: 20px;
+
+    background-color: #1E2429;
+}
+
+.planner-selected__unit-symbol {
+    height: 18px;
+    width: 18px;
+}
+
+.planner-selected__unit-name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 20%;
+
+    font-family: 'Beaufort', 'serif';
+    color: #F0E6D2;
+    font-weight: bold;
+    text-shadow: 0 1px black;
+}
+
+.planner-selected__unit-lock-status {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    clip-path: circle(40%);
+
+    width: 34px;
+    height: 34px;
+}
+
+.selected__unit-lock-status--locked {
+    background: #9C9A8C;
+}
+
+.selected__unit-lock-status--unlocked {
+    background: #CEB6EF;
+}
+
+
+.planner-selected__unit-lock-status::before {
+    content: '';
+
+    position: absolute;
+
+    background: #000B13;
+    clip-path: circle(40%);
+    
+    height: 30px;
+    width: 30px;
+}
+
+.planner-selected__unit-lock-status > img {
+    z-index: 2;
+}

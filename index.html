@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="style/fonts.css">
     <link rel="stylesheet" href="style/style.css">
     <link rel="stylesheet" href="style/trait.css">
+    <link rel="stylesheet" href="style/planner.css">
     <title>42roll.it</title>
 </head>
 <body>
@@ -152,19 +153,51 @@
         </div>
     </div>
 
-    <!-- Team Planner Modal -->
-    <div class="team-planner-backdrop" style="display:none;">
-        <div class="team-planner-modal">
-            <div class="team-planner-header">
-                <span class="team-planner-title">Team Planner</span>
-                <button class="team-planner-close">✕</button>
-            </div>
-            <div class="team-planner-picker"></div>
-            <div class="team-planner-selected-section">
-                <div class="team-planner-selected-label">Your Team <span class="team-planner-count">0/10</span></div>
-                <div class="team-planner-selected-row"></div>
-            </div>
+    <!-- Team Planner -->
+    <div class="planner">
+
+        <div class="planner__header">
+            <div class="planner__saved-teams-btn">&lt; &lt;</div>
+            <div class="planner__title">TEAM PLANNER</div>
+            <div class="planner__close-btn">×</div>
         </div>
+
+        <div class="planner-picker">
+            <div class="planner-picker__filter-container">
+                <div class="planner-picker__filter-btn">Filter</div>
+                <label class="planner-picker__unlockable-switch">
+                    <input type="checkbox">
+                    <div class="planner-picker__unlockable-switch-slider"></div>
+                    <div class="planner-picker__unlockable-switch-icon">
+                        <img class="planner-picker__unlockable-switch-symbol" src="img/lock.png">
+                    </div>
+                </label>
+            </div>
+            <!-- Cost groups are injected here by team-planner.js -->
+        </div>
+
+        <div class="planner-selected">
+
+            <div class="planner-traits">
+                <!-- Trait rows injected by team-planner.js -->
+            </div>
+
+            <div class="planner-selected__header">
+                <div class="planner-selected__title">Your Team</div>
+            </div>
+
+            <div class="planner-selected__team">
+                <!-- Unit slots injected by team-planner.js -->
+            </div>
+
+            <div class="planner-selected__actions">
+                <div class="planner-selected__clear-btn">CLEAR</div>
+                <div class="planner-selected__snapshot-btn">SNAPSHOT</div>
+                <div class="planner-selected__undo-btn">UNDO</div>
+            </div>
+
+        </div>
+
     </div>
 
     <div class="bench">

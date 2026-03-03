@@ -789,7 +789,7 @@ export const pool = {
         copies_in_pool: 9,
         synergies: ["HexMech", "Piltover", "Gunslinger"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_THex.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_thex.png"
+        icon: "./img/thex_square.png"
     },
     "Tahm Kench": {
         unlocked: false,

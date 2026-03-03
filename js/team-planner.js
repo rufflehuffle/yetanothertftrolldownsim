@@ -1,157 +1,370 @@
-import { pool } from './tables.js';
+import { pool, traits as traitTable } from './tables.js';
 import { state, saveTeamPlan, saveUnlockedOverrides, isOriginallyLocked } from './state.js';
-import { render, costColor } from './render.js';
+import { render, computeTraits, getSortedTraitEntries, activeBreakpoint, nextBreakpoint } from './render.js';
 
 // ============================================================
-// Constants (shared with team-builder.js)
+// Constants
 // ============================================================
 export const TEAM_MAX    = 10;
 export const COST_TIERS  = [1, 2, 3, 4, 5];
-export const COST_LABELS = { 1: '1-Cost', 2: '2-Cost', 3: '3-Cost', 4: '4-Cost', 5: '5-Cost' };
+export const COST_LABELS = { 1: '1', 2: '2', 3: '3', 4: '4', 5: '5' };
+
+// Maps cost tier → CSS modifier class on .planner-picker__unit / .planner-selected__unit
+const COST_CLASS = {
+    1: 'picker__unit--1-cost',
+    2: 'picker__unit--2-cost',
+    3: 'picker__unit--3-cost',
+    4: 'picker__unit--4-cost',
+    5: 'picker__unit--5-cost',
+};
+const SELECTED_COST_CLASS = {
+    1: 'selected__unit--1-cost',
+    2: 'selected__unit--2-cost',
+    3: 'selected__unit--3-cost',
+    4: 'selected__unit--4-cost',
+    5: 'selected__unit--5-cost',
+};
+
 export const COST_COLORS = { 1: '#9e9e9e', 2: '#4caf50', 3: '#2196f3', 4: '#9c27b0', 5: '#ff9800' };
+const TRAIT_TIER_CLASS = {
+    Bronze:    'symbol--bronze',
+    Silver:    'symbol--silver',
+    Gold:      'symbol--gold',
+    Legendary: 'symbol--legendary',
+    Prismatic: 'symbol--prismatic',
+};
 
 // ============================================================
-// Team Planner
+// Element refs
 // ============================================================
-const backdrop        = document.querySelector('.team-planner-backdrop');
-const pickerEl        = document.querySelector('.team-planner-picker');
-const selectedRowEl   = document.querySelector('.team-planner-selected-row');
-const selectedCountEl = document.querySelector('.team-planner-count');
+const plannerEl         = document.querySelector('.planner');
+const pickerEl          = document.querySelector('.planner-picker');
+const teamGridEl        = document.querySelector('.planner-selected__team');
+const traitsEl          = document.querySelector('.planner-traits');
+const closeBtnEl        = document.querySelector('.planner__close-btn');
+const clearBtnEl        = document.querySelector('.planner-selected__clear-btn');
+const undoBtnEl         = document.querySelector('.planner-selected__undo-btn');
+const unlockToggleEl    = document.querySelector('.planner-picker__unlockable-switch input');
+const teamPlannerBtnEl  = document.querySelector('.team-planner-button');
 
-export function buildPicker() {
-    pickerEl.innerHTML = '';
+// ============================================================
+// Undo stack  (stores serialised Set snapshots)
+// ============================================================
+const undoStack = [];
+const UNDO_LIMIT = 20;
 
-    function makeUnitEl(champ) {
-        const isSelected = state.teamPlan.has(champ.name);
-        const isLocked   = isOriginallyLocked(champ.name);
-        const cost       = champ.cost;
+function pushUndo() {
+    undoStack.push([...state.teamPlan]);
+    if (undoStack.length > UNDO_LIMIT) undoStack.shift();
+}
 
-        const unit = document.createElement('div');
-        unit.className = 'picker-unit' + (isSelected ? ' selected' : '') + (isLocked ? ' lockable' : '');
-        unit.dataset.name = champ.name;
-        unit.style.borderColor = isSelected ? '#22c55e' : (COST_COLORS[cost] ?? '#444') + '55';
-        unit.title = champ.name;
+// ============================================================
+// Picker helpers
+// ============================================================
 
-        const img = document.createElement('img');
-        img.src = champ.icon;
-        img.alt = champ.name;
-        if (isLocked && !pool[champ.name].unlocked) img.style.filter = 'brightness(0.45) saturate(0.3)';
-        unit.appendChild(img);
+function makeLockBadge(isLocked, isUnlocked, forPicker = true) {
+    const badge = document.createElement('div');
+    const statusClass = isUnlocked
+        ? (forPicker ? 'picker__unit-lock-status--unlocked' : 'selected__unit-lock-status--unlocked')
+        : (forPicker ? 'picker__unit-lock-status--locked'   : 'selected__unit-lock-status--locked');
+    badge.className = (forPicker
+        ? 'planner-picker__unit-lock-status'
+        : 'planner-selected__unit-lock-status') + ' ' + statusClass;
 
-        if (isLocked) {
-            const lockEl = document.createElement('span');
-            lockEl.className = 'picker-lock';
-            lockEl.textContent = pool[champ.name].unlocked ? '🔓' : '🔒';
-            unit.appendChild(lockEl);
-        }
+    const img = document.createElement('img');
+    img.src = isUnlocked ? 'img/unlock.png' : 'img/lock.png';
+    img.className = forPicker ? 'planner-picker__unit-lock-symbol' : 'planner-selected__unit-lock-symbol';
+    badge.appendChild(img);
+    return badge;
+}
 
-        // Left click (MB1) - add/remove from team plan
-        unit.addEventListener('click', () => {
-            if (state.teamPlan.has(champ.name)) {
-                state.teamPlan.delete(champ.name);
-            } else {
-                if (state.teamPlan.size >= TEAM_MAX) return;
-                state.teamPlan.add(champ.name);
-            }
-            saveTeamPlan();
+function makePickerUnit(champ) {
+    const isLocked   = isOriginallyLocked(champ.name);
+    const isUnlocked = isLocked && pool[champ.name].unlocked;
+    const isSelected = state.teamPlan.has(champ.name);
 
-            const isSelected = state.teamPlan.has(champ.name);
-            const cost = champ.cost;
-            unit.classList.toggle('selected', isSelected);
-            unit.style.borderColor = isSelected ? '#22c55e' : (COST_COLORS[cost] ?? '#444') + '55';
-            const lockEl = unit.querySelector('.picker-lock');
-            if (lockEl) lockEl.textContent = pool[champ.name].unlocked ? '🔓' : '🔒';
+    // Outer container (holds unit card + name)
+    const container = document.createElement('div');
+    container.className = 'planner-picker__unit-container';
+    container.dataset.name = champ.name;
 
-            renderTeamPlannerSelected();
-            render();
-        });
+    // Unit card
+    const card = document.createElement('div');
+    card.className = `planner-picker__unit ${COST_CLASS[champ.cost] ?? ''}`;
+    if (isSelected) card.classList.add('picker-unit--selected');
 
-        // Right click (MB2) - toggle unlock for locked champions
-        if (isLocked) {
-            unit.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
-                pool[champ.name].unlocked = !pool[champ.name].unlocked;
-                saveUnlockedOverrides();
+    // Champion image
+    const img = document.createElement('img');
+    img.className = 'planner-picker__unit-img';
+    img.src = champ.icon;
+    img.alt = champ.name;
+    img.draggable = false;
+    card.appendChild(img);
 
-                const img = unit.querySelector('img');
-                const lockEl = unit.querySelector('.picker-lock');
-                if (img) img.style.filter = pool[champ.name].unlocked ? '' : 'brightness(0.45) saturate(0.3)';
-                if (lockEl) lockEl.textContent = pool[champ.name].unlocked ? '🔓' : '🔒';
-            });
-        }
+    // Trait icons row
+    const traitContainer = document.createElement('div');
+    traitContainer.className = 'planner-picker__unit-trait-container';
+    for (const trait of champ.synergies) {
+        const traitData = traitTable[trait];
+        if (!traitData) continue;
+        const traitImg = document.createElement('img');
+        traitImg.className = 'planner-picker__unit-trait';
+        traitImg.src = traitData.icon;
+        traitImg.alt = trait;
+        traitContainer.appendChild(traitImg);
+    }
+    card.appendChild(traitContainer);
 
-        return unit;
+    // Lock badge — only for originally-locked champions
+    if (isLocked) {
+        card.appendChild(makeLockBadge(isLocked, isUnlocked, true));
     }
 
+    container.appendChild(card);
+
+    // Name label beneath the card
+    const nameEl = document.createElement('div');
+    nameEl.className = 'planner-picker__unit-name';
+    nameEl.textContent = champ.name;
+    container.appendChild(nameEl);
+
+    // ── Left-click: toggle team plan ──
+    card.addEventListener('click', () => {
+        pushUndo();
+        if (state.teamPlan.has(champ.name)) {
+            state.teamPlan.delete(champ.name);
+            if (isOriginallyLocked(champ.name)) pool[champ.name].unlocked = false;
+        } else {
+            if (state.teamPlan.size >= TEAM_MAX) return;
+            state.teamPlan.add(champ.name);
+            if (isOriginallyLocked(champ.name)) pool[champ.name].unlocked = true;
+        }
+        saveTeamPlan();
+        saveUnlockedOverrides();
+        refreshPickerUnit(container, champ);
+        renderTeamGrid();
+        renderPlannerTraits();
+        render();
+    });
+
+    // ── Right-click: toggle unlock for locked champions ──
+    if (isLocked) {
+        card.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            pool[champ.name].unlocked = !pool[champ.name].unlocked;
+            saveUnlockedOverrides();
+            refreshPickerUnit(container, champ);
+            // Also refresh the badge in the selected grid if this unit is there
+            const selectedSlot = teamGridEl.querySelector(`.planner-selected__unit[data-name="${CSS.escape(champ.name)}"]`);
+            if (selectedSlot) {
+                const existing = selectedSlot.querySelector('.planner-selected__unit-lock-status');
+                if (existing) existing.remove();
+                selectedSlot.appendChild(makeLockBadge(true, pool[champ.name].unlocked, false));
+            }
+        });
+    }
+
+    return container;
+}
+
+/** Re-syncs a picker unit container's visual state without rebuilding it */
+function refreshPickerUnit(container, champ) {
+    const isLocked   = isOriginallyLocked(champ.name);
+    const isUnlocked = isLocked && pool[champ.name].unlocked;
+    const isSelected = state.teamPlan.has(champ.name);
+
+    const card = container.querySelector('.planner-picker__unit');
+    card.classList.toggle('picker-unit--selected', isSelected);
+
+    // Refresh lock badge — only for originally-locked champions
+    const existingBadge = card.querySelector('.planner-picker__unit-lock-status');
+    if (existingBadge) existingBadge.remove();
+    if (isLocked) card.appendChild(makeLockBadge(isLocked, isUnlocked, true));
+}
+
+// ============================================================
+// Build Picker
+// ============================================================
+export function buildPicker() {
+    // Preserve the filter row (first child) and rebuild cost groups after it
+    const filterRow = pickerEl.querySelector('.planner-picker__filter-container');
+    pickerEl.innerHTML = '';
+    if (filterRow) pickerEl.appendChild(filterRow);
+
     for (const cost of COST_TIERS) {
-        const unlocked = Object.values(pool).filter(c => c.cost === cost && !isOriginallyLocked(c.name));
-        const locked   = Object.values(pool).filter(c => c.cost === cost &&  isOriginallyLocked(c.name));
-        if (!unlocked.length && !locked.length) continue;
+        const champs = Object.values(pool).filter(c => c.cost === cost);
+        if (!champs.length) continue;
 
         const group = document.createElement('div');
-        group.className = 'cost-group';
+        group.className = 'planner-picker__group';
 
-        const label = document.createElement('div');
-        label.className = 'cost-group-label';
-        label.textContent = COST_LABELS[cost];
-        label.style.color = COST_COLORS[cost];
-        group.appendChild(label);
+        // Group header (cost label + gold icon)
+        const header = document.createElement('div');
+        header.className = 'planner-picker__group-header';
+        const headerIcon = document.createElement('img');
+        headerIcon.className = 'planner-picker__group-icon';
+        headerIcon.src = 'https://wiki.leagueoflegends.com/en-us/images/thumb/Gold_colored_icon.png/20px-Gold_colored_icon.png?39991';
+        headerIcon.alt = '';
+        header.appendChild(headerIcon);
+        const headerText = document.createElement('div');
+        headerText.className = 'planner-picker__group-text';
+        headerText.textContent = COST_LABELS[cost];
+        header.appendChild(headerText);
+        group.appendChild(header);
 
-        const unitsRow = document.createElement('div');
-        unitsRow.className = 'cost-group-units';
-        unlocked.forEach(c => unitsRow.appendChild(makeUnitEl(c)));
-        group.appendChild(unitsRow);
+        champs.forEach(c => group.appendChild(makePickerUnit(c)));
 
-        if (locked.length) {
-            const lockedRow = document.createElement('div');
-            lockedRow.className = 'cost-group-units cost-group-units--locked';
-            locked.forEach(c => lockedRow.appendChild(makeUnitEl(c)));
-            group.appendChild(lockedRow);
-        }
         pickerEl.appendChild(group);
     }
 }
 
-export function renderTeamPlannerSelected() {
-    selectedRowEl.innerHTML = '';
-    selectedCountEl.textContent = `${state.teamPlan.size}/10`;
+function getCostColor(cost) {
+    return COST_COLORS[cost] ?? '#ccc';
+}
 
-    if (state.teamPlan.size === 0) {
-        const hint = document.createElement('span');
-        hint.className = 'empty-hint';
-        hint.textContent = 'Click units above to add them to your team plan';
-        selectedRowEl.appendChild(hint);
-        return;
-    }
+// ============================================================
+// Team Grid (5×2 fixed slots)
+// ============================================================
+export function renderTeamGrid() {
+    teamGridEl.innerHTML = '';
 
-    for (const name of state.teamPlan) {
-        const champ = pool[name];
-        if (!champ) continue;
-        const cost = champ.cost;
+    const selected = [...state.teamPlan];
 
-        const wrap = document.createElement('div');
-        wrap.className = 'selected-unit';
-        wrap.title = name;
+    for (let i = 0; i < TEAM_MAX; i++) {
+        const name  = selected[i] ?? null;
+        const champ = name ? pool[name] : null;
 
-        const img = document.createElement('img');
-        img.src = champ.icon;
-        img.alt = name;
-        img.style.borderColor = COST_COLORS[cost] ?? '#444';
-        wrap.appendChild(img);
+        const slot = document.createElement('div');
+        slot.className = 'planner-selected__unit';
 
-        const btn = document.createElement('button');
-        btn.className = 'remove-btn';
-        btn.textContent = '✕';
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleTeamPlan(name);
-        });
-        wrap.appendChild(btn);
+        if (champ) {
+            slot.dataset.name = name;
+            const isLocked   = isOriginallyLocked(name);
+            const isUnlocked = isLocked && pool[name].unlocked;
 
-        selectedRowEl.appendChild(wrap);
+            slot.classList.add(SELECTED_COST_CLASS[champ.cost] ?? '');
+
+            // Trait hexagons (top-left overlay)
+            const traitsOverlay = document.createElement('div');
+            traitsOverlay.className = 'planner-selected__unit-traits';
+            for (const trait of champ.synergies) {
+                const traitData = traitTable[trait];
+                if (!traitData) continue;
+                const hex = document.createElement('div');
+                hex.className = 'planner-selected__unit-trait';
+                const tImg = document.createElement('img');
+                tImg.className = 'planner-selected__unit-symbol';
+                tImg.src = traitData.icon;
+                tImg.alt = trait;
+                hex.appendChild(tImg);
+                traitsOverlay.appendChild(hex);
+            }
+            slot.appendChild(traitsOverlay);
+
+            // Champion portrait
+            const img = document.createElement('img');
+            img.className = 'planner-selected__unit-img';
+            img.src = champ.icon;
+            img.alt = name;
+            slot.appendChild(img);
+
+            // Name bar
+            const nameEl = document.createElement('div');
+            nameEl.className = 'planner-selected__unit-name';
+            nameEl.textContent = name;
+            slot.appendChild(nameEl);
+
+            // Lock badge — only for originally-locked champions
+            if (isLocked) {
+                slot.appendChild(makeLockBadge(isLocked, isUnlocked, false));
+            }
+
+            // Right-click on selected slot: toggle unlock for lockable champions
+            if (isLocked) {
+                slot.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    pool[name].unlocked = !pool[name].unlocked;
+                    saveUnlockedOverrides();
+                    // Refresh badge in place
+                    const existing = slot.querySelector('.planner-selected__unit-lock-status');
+                    if (existing) existing.remove();
+                    slot.appendChild(makeLockBadge(true, pool[name].unlocked, false));
+                    // Keep picker in sync
+                    const container = pickerEl.querySelector(`.planner-picker__unit-container[data-name="${CSS.escape(name)}"]`);
+                    if (container) refreshPickerUnit(container, pool[name]);
+                });
+            }
+
+            // Left-click to remove
+            slot.addEventListener('click', () => {
+                pushUndo();
+                toggleTeamPlan(name);
+            });
+        }
+
+        teamGridEl.appendChild(slot);
     }
 }
 
+// ============================================================
+// Planner Traits panel
+// ============================================================
+export function renderPlannerTraits() {
+    traitsEl.innerHTML = '';
+
+    // Build trait counts from the team plan (not the board)
+    const traitCounts = {};
+    for (const name of state.teamPlan) {
+        const champ = pool[name];
+        if (!champ) continue;
+        for (const syn of champ.synergies) {
+            traitCounts[syn] = (traitCounts[syn] ?? 0) + 1;
+        }
+    }
+
+    const entries = getSortedTraitEntries(traitCounts);
+
+    for (const [traitName, count] of entries.slice(0, 10)) {
+        const traitData = traitTable[traitName];
+        if (!traitData) continue;
+
+        const activeBP = activeBreakpoint(traitName, count);
+        const isActive = activeBP > 0;
+
+        // Determine tier name for the active breakpoint
+        let tierName = 'inactive';
+        if (isActive) {
+            const bpIndex = traitData.breakpoints.indexOf(activeBP);
+            tierName = traitData.breakpoint_tiers?.[bpIndex] ?? 'inactive';
+        }
+
+        const row = document.createElement('div');
+        row.className = 'planner-traits-container' + (isActive ? ' traits-container--active' : '');
+
+        // Hexagon symbol
+        const symbol = document.createElement('div');
+        symbol.className = `planner-traits__symbol ${TRAIT_TIER_CLASS[tierName] ?? 'symbol--inactive'}`;
+        const symbolImg = document.createElement('img');
+        symbolImg.className = 'planner-traits__symbol-img';
+        symbolImg.src = traitData.icon;
+        symbolImg.alt = traitName;
+        symbol.appendChild(symbolImg);
+        row.appendChild(symbol);
+
+        // Count
+        const countEl = document.createElement('div');
+        countEl.className = 'planner-traits__count';
+        countEl.style.whiteSpace = 'nowrap';
+        countEl.textContent = isActive ? count : `${count} / ${traitData.breakpoints[0]}`;
+        row.appendChild(countEl);
+
+        traitsEl.appendChild(row);
+    }
+}
+
+// ============================================================
+// Toggle a unit in/out of the team plan (exported for external use)
+// ============================================================
 export function toggleTeamPlan(name) {
     if (state.teamPlan.has(name)) {
         state.teamPlan.delete(name);
@@ -164,38 +377,69 @@ export function toggleTeamPlan(name) {
     saveTeamPlan();
     saveUnlockedOverrides();
 
-    const unitEl = pickerEl.querySelector(`.picker-unit[data-name="${CSS.escape(name)}"]`);
-    if (unitEl) {
-        const isSelected = state.teamPlan.has(name);
-        const isLocked   = isOriginallyLocked(name);
-        const cost       = pool[name]?.cost;
-        unitEl.classList.toggle('selected', isSelected);
-        unitEl.style.borderColor = isSelected ? '#22c55e' : (COST_COLORS[cost] ?? '#444') + '55';
-        const lockEl = unitEl.querySelector('.picker-lock');
-        if (lockEl) lockEl.textContent = isSelected ? '🔓' : '🔒';
-        const imgEl = unitEl.querySelector('img');
-        if (imgEl && isLocked) imgEl.style.filter = isSelected ? '' : 'brightness(0.45) saturate(0.3)';
-    }
+    // Keep picker unit in sync without a full rebuild
+    const container = pickerEl.querySelector(`.planner-picker__unit-container[data-name="${CSS.escape(name)}"]`);
+    if (container) refreshPickerUnit(container, pool[name]);
 
-    renderTeamPlannerSelected();
+    renderTeamGrid();
+    renderPlannerTraits();
     render();
 }
 
+// ============================================================
+// Open / Close
+// ============================================================
 function openTeamPlanner() {
     buildPicker();
-    renderTeamPlannerSelected();
-    backdrop.style.display = 'flex';
+    renderTeamGrid();
+    renderPlannerTraits();
+    plannerEl.style.display = 'grid';
 }
 
 function closeTeamPlanner() {
-    backdrop.style.display = 'none';
+    plannerEl.style.display = 'none';
 }
 
-document.querySelector('.team-planner-button').addEventListener('click', openTeamPlanner);
-document.querySelector('.team-planner-close').addEventListener('click', closeTeamPlanner);
-backdrop.addEventListener('click', (e) => {
-    if (e.target === backdrop) closeTeamPlanner();
-});
+// ============================================================
+// Wire up UI controls
+// ============================================================
+
+// Open/close
+teamPlannerBtnEl?.addEventListener('click', openTeamPlanner);
+closeBtnEl?.addEventListener('click', closeTeamPlanner);
+
+// Escape key
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && backdrop.style.display !== 'none') closeTeamPlanner();
+    if (e.key === 'Escape' && plannerEl.style.display !== 'none') closeTeamPlanner();
 });
+
+// Clear button
+clearBtnEl?.addEventListener('click', () => {
+    pushUndo();
+    state.teamPlan.clear();
+    saveTeamPlan();
+    // Reset any unlocked overrides that were set via the planner
+    for (const name of Object.keys(pool)) {
+        if (isOriginallyLocked(name)) pool[name].unlocked = false;
+    }
+    saveUnlockedOverrides();
+    buildPicker();
+    renderTeamGrid();
+    renderPlannerTraits();
+    render();
+});
+
+// Undo button
+undoBtnEl?.addEventListener('click', () => {
+    if (!undoStack.length) return;
+    const prev = undoStack.pop();
+    state.teamPlan = new Set(prev);
+    saveTeamPlan();
+    buildPicker();
+    renderTeamGrid();
+    renderPlannerTraits();
+    render();
+});
+
+// Hide planner on startup
+if (plannerEl) plannerEl.style.display = 'none';

@@ -59,7 +59,7 @@ export function computeTraits() {
     return { traitCounts, traitUnits };
 }
 
-function activeBreakpoint(traitName, count) {
+export function activeBreakpoint(traitName, count) {
     const bp = traitTable[traitName]?.breakpoints ?? [];
     let active = 0;
     for (const b of bp) {
@@ -68,7 +68,7 @@ function activeBreakpoint(traitName, count) {
     return active;
 }
 
-function nextBreakpoint(traitName, count) {
+export function nextBreakpoint(traitName, count) {
     const bp = traitTable[traitName]?.breakpoints ?? [];
     for (const b of bp) {
         if (b > count) return b;
@@ -127,14 +127,39 @@ function showTraitTooltip(e, traitName, count, activeBP) {
     positionTooltip(e);
 }
 
+const TIER_ORDER = { "Prismatic": 5, "Gold": 4, "Legendary": 3, "Silver": 2, "Bronze": 1 };
+
+export function getSortedTraitEntries(traitCounts) {
+    return Object.entries(traitCounts).sort((a, b) => {
+        const [aName, aCount] = a;
+        const [bName, bCount] = b;
+
+        const aBpVal = activeBreakpoint(aName, aCount);
+        const bBpVal = activeBreakpoint(bName, bCount);
+
+        const aActive = aBpVal > 0;
+        const bActive = bBpVal > 0;
+
+        if (aActive !== bActive) return bActive - aActive;
+
+        if (aActive && bActive) {
+            const aTrait = traitTable[aName];
+            const bTrait = traitTable[bName];
+
+            const aTier = TIER_ORDER[aTrait.breakpoint_tiers[aTrait.breakpoints.indexOf(aBpVal)]] ?? 0;
+            const bTier = TIER_ORDER[bTrait.breakpoint_tiers[bTrait.breakpoints.indexOf(bBpVal)]] ?? 0;
+
+            if (aTier !== bTier) return bTier - aTier;
+            return bBpVal - aBpVal;
+        }
+
+        return bCount - aCount;
+    });
+}
+
 export function renderTraits() {
     const { traitCounts } = computeTraits();
-    const entries = Object.entries(traitCounts).sort((a, b) => {
-        const aActive = activeBreakpoint(a[0], a[1]) > 0;
-        const bActive = activeBreakpoint(b[0], b[1]) > 0;
-        if (aActive !== bActive) return bActive - aActive;
-        return b[1] - a[1];
-    });
+    const entries = getSortedTraitEntries(traitCounts);
 
     traitPanel.innerHTML = '';
 

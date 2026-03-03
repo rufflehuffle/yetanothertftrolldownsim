@@ -345,6 +345,14 @@ document.querySelector('.team-builder-button').addEventListener('click', () => o
 document.querySelector('.rolldown-mode-button').addEventListener('click', closeTeamBuilder);
 document.querySelector('.presets-button').addEventListener('click', openPresets);
 
+document.querySelector('.planner-selected__clear-btn')
+    ?.addEventListener('click', () => {
+        state.teamPlan.clear();
+        saveTeamPlan();
+        buildPicker();
+        renderTeamPlannerSelected();
+    });
+
 // ============================================================
 // Gold Editor
 // ============================================================
