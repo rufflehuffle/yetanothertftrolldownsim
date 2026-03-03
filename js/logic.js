@@ -241,7 +241,7 @@ export function sellUnit(unit, location) {
     playSound('sell.mp3');
 }
 
-function sellValue(unit) {
+export function sellValue(unit) {
     const cost = pool[unit.name].cost;
     if (unit.stars === 1) return cost;
     if (unit.stars === 2) return cost === 1 ? 3 : 3 * cost - 1;

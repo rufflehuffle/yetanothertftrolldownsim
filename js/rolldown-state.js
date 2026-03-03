@@ -14,16 +14,12 @@
 const VALID_MODES = new Set(['planning', 'round', 'paused', 'roundEnd', 'freeroll']);
 
 const _state = {
-    mode: 'planning',          // current phase
-    prevMode: null,            // used to resume from pause
-    menuOpen: null,            // 'presets' | 'teambuilder' | 'planner' | 'savepreset' | null
+    mode: 'planning',
 };
 
 // ── Getters ──────────────────────────────────────────────────
 
-export function getRdMode()     { return _state.mode; }
-export function getRdPrevMode() { return _state.prevMode; }
-export function getRdMenu()     { return _state.menuOpen; }
+export function getRdMode() { return _state.mode; }
 
 export function isPlanning()  { return _state.mode === 'planning'; }
 export function isRound()     { return _state.mode === 'round'; }
@@ -45,7 +41,6 @@ export function setRdMode(newMode) {
     if (newMode === _state.mode) return;
 
     const from = _state.mode;
-    _state.prevMode = from;
     _state.mode = newMode;
 
     // Apply body class for CSS hooks
@@ -55,12 +50,6 @@ export function setRdMode(newMode) {
     document.dispatchEvent(new CustomEvent('rdmodechange', {
         detail: { from, to: newMode }
     }));
-}
-
-// ── Menu tracking ────────────────────────────────────────────
-
-export function setRdMenu(menuName) {
-    _state.menuOpen = menuName;  // null to clear
 }
 
 // ── Named transitions ────────────────────────────────────────

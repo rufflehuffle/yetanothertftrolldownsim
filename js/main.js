@@ -4,7 +4,7 @@ import { render, computeTraits } from './render.js';
 import {
     doRoll, buyXp, buyChamp, getChampAt, getUnitAt, setUnitAt,
     boardCount, findEmptyBoardHex, moveHovered, sellHovered,
-    hoveredSlot, setHoveredSlot, sellUnit,
+    hoveredSlot, setHoveredSlot, sellUnit, sellValue,
     findUnits, isChampOnBoard, removeChamps, isChampAnywhere
 } from './logic.js';
 import './team-planner.js';
@@ -15,31 +15,9 @@ import {
     getRdMode, setRdMode,
     isPlanning, isRound, isPaused, isRoundEnd, isFreeroll,
     startRound, pauseRound, resumeRound, finishRound, returnToPlanning,
-    enterFreeroll, exitFreeroll,
-    setRdMenu
+    enterFreeroll, exitFreeroll
 } from './rolldown-state.js';
 
-// Track rolldown
-const rolldown = {
-    actions: [],
-    shops: []
-}
-
-function writeActionToRolldown(rolldown, unit_acted_on=null, action_type, time, state) {
-    const action = {
-        type: action_type,
-        unit: unit_acted_on,
-        timestamp: time,
-        boardState: JSON.parse(JSON.stringify(state.board)),
-        benchState: JSON.parse(JSON.stringify(state.bench)),
-        shopState: JSON.parse(JSON.stringify(state.shop)),
-        goldRemaining: state.gold
-    }
-    if (action_type == "roll") {
-        rolldown.shops.push(JSON.parse(JSON.stringify(state.shop)))
-    }
-    rolldown.actions.push(action)
-}
 
 // Handle Summons
 export function applyBoardEffects() {
@@ -90,11 +68,11 @@ document.body.appendChild(ghost);
 // ============================================================
 // Sell Zone & drag state
 // ============================================================
-const sellZone      = document.querySelector('.sell-zone');
-const shopContainer = document.querySelector('.hud');
+const sellZone = document.querySelector('.sell-zone');
+const shopEl   = document.querySelector('.shop');
 
 function isOverShop(x, y) {
-    const rect = shopContainer.getBoundingClientRect();
+    const rect = shopEl.getBoundingClientRect();
     return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
 }
 
@@ -116,6 +94,12 @@ function handleDragStart(e, location) {
     ghost.style.left = `${e.clientX}px`;
     ghost.style.top = `${e.clientY}px`;
     ghost.style.display = 'block';
+    // Show sell value on the zone for board/bench units (not shop slots)
+    if (!isShop) {
+        const unit = getUnitAt(location);
+        const gold = unit ? sellValue(unit) : 0;
+        sellZone.textContent = gold > 0 ? `Sell for ${gold}g` : 'Sell';
+    }
     playSound('unit_select.mp3')
 }
 
@@ -150,6 +134,7 @@ function endDrag() {
     ghost.style.display = 'none';
     sellZone.style.display = 'none';
     sellZone.classList.remove('active');
+    sellZone.textContent = 'Sell';
 }
 
 // ============================================================
@@ -310,6 +295,14 @@ document.addEventListener('keydown', (e) => {
         }
         return;
     }
+    // Escape: pause the round
+    if (e.key === 'Escape') {
+        if (isRound()) {
+            timerControls.pause();
+            pauseRound();
+        }
+        return;
+    }
     if (e.key === 'd') {
         if (!e.repeat) {
             if (isRoundEnd() && lastLoadedPreset) {
@@ -460,7 +453,6 @@ rdPauseFreerollBtn.addEventListener('click', () => {
     enterFreeroll();
 });
 
-
 // Keep overlay content fresh on every mode change
 document.addEventListener('rdmodechange', () => updateOverlayContent());
 
@@ -515,7 +507,7 @@ document.querySelector('.planner-selected__clear-btn')
 // Round Timer
 // ============================================================
 
-// timerControls is populated by the IIFE below and used by UI overlays in Batch 2+
+// timerControls is populated by the IIFE below and exposed for overlay wiring
 export let timerControls = {};
 
 (function () {

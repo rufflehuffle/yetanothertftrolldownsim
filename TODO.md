@@ -1,16 +1,6 @@
 # TODO
 
-Next steps are to make training a specific rolldown as seamless as possible. To do that I think the following needs to be done:
-1. Add a state machine that tracks whether the player is in rolldown mode, team builder, and what menu the player has open (presets, planner, etc.)
-2. 
-
-
 # Major
-
-## Setup Flow
-Basically make it less clunky to use the timer and rolldown simulatenously (shouldn't even have to think about starting the timer)
-- Add auto-reset
-- Add a pause + end round early button
 
 ## Shop
 - Implement proper shop drag behavior
