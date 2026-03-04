@@ -1,5 +1,5 @@
 import { pool, traits as traitTable } from './tables.js';
-import { state, saveTeamPlan, saveUnlockedOverrides, isOriginallyLocked } from './state.js';
+import { state, saveTeamPlan, saveUnlockedOverrides, isOriginallyLocked, setPlannedAsGenerateTarget } from './state.js';
 import { render, computeTraits, getSortedTraitEntries, activeBreakpoint, nextBreakpoint } from './render.js';
 import { generate41Board } from './board-generator.js';
 
@@ -51,6 +51,7 @@ const undoBtnEl         = document.querySelector('.planner-selected__undo-btn');
 const unlockToggleEl    = document.querySelector('.planner-picker__unlockable-switch input');
 const teamPlannerBtnEl  = document.querySelector('.team-planner-button');
 const generateBtnEl     = document.querySelector('.planner-selected__generate-btn'); // TODO (temp): 4-1 generator
+const setTargetBtnEl    = document.querySelector('.planner-selected__set-target-btn');
 const pasteBtnEl        = document.querySelector('.planner-selected__paste-btn');
 
 // ============================================================
@@ -514,8 +515,9 @@ undoBtnEl?.addEventListener('click', () => {
 // board + bench + gold into the main state. Close the planner so the
 // user can immediately see the result.
 export function triggerGenerate41Board() {
-    if (!state.teamPlan.size) return false;
-    const result = generate41Board(state.teamPlan);
+    const target = state.targetTeam ?? state.teamPlan;
+    if (!target.size) return false;
+    const result = generate41Board(target);
     if (!result) return false;
     state.gold  = result.gold;
     state.level = result.level;
@@ -529,6 +531,42 @@ export function triggerGenerate41Board() {
 
 generateBtnEl?.addEventListener('click', () => {
     triggerGenerate41Board();
+});
+
+// Target team hover preview
+const targetPreviewEl = document.createElement('div');
+targetPreviewEl.className = 'target-team-preview';
+targetPreviewEl.style.display = 'none';
+setTargetBtnEl?.appendChild(targetPreviewEl);
+
+function refreshTargetPreview() {
+    if (!state.targetTeam || state.targetTeam.size === 0) return;
+    targetPreviewEl.innerHTML = '';
+    for (const name of state.targetTeam) {
+        const champ = pool[name];
+        if (!champ) continue;
+        const cell = document.createElement('div');
+        cell.className = 'target-preview-unit';
+        cell.dataset.cost = champ.cost;
+        const img = document.createElement('img');
+        img.src = champ.icon;
+        img.alt = name;
+        img.draggable = false;
+        cell.appendChild(img);
+        targetPreviewEl.appendChild(cell);
+    }
+    targetPreviewEl.style.display = 'grid';
+}
+
+setTargetBtnEl?.addEventListener('click', () => {
+    setPlannedAsGenerateTarget();
+    refreshTargetPreview();
+});
+
+setTargetBtnEl?.addEventListener('mouseenter', refreshTargetPreview);
+
+setTargetBtnEl?.addEventListener('mouseleave', () => {
+    targetPreviewEl.style.display = 'none';
 });
 // ── end TODO ────────────────────────────────────────────────────────────────
 

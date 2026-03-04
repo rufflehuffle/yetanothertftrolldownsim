@@ -498,7 +498,7 @@ export const pool = {
         teamPlannerCode: 53,
         copies_in_pool: 18,
         synergies: ["Yordle", "Bruiser", "Invoker"],
-        tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_KobukoyYuumi_splash_centered_0.TFT_Set16.png",
+        tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Kobuko_splash_centered_0.TFT_Set16.png",
         icon: "https://cdn.metatft.com/file/metatft/champions/tft16_kobuko.png",
         role: "Tank",
         damageType: "Magic"

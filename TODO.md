@@ -14,7 +14,7 @@
 
 ## Team Planner
 - Filter by trait
-- Clear, Snapshot, Undo, Team Codes, etc.
+- Snapshot
 
 ## Trait Indicators
 - Units on hover should have a colored border indicating their rarity
@@ -56,6 +56,7 @@
 
 # Ideas
 - Add items
+- Add augments
 - Rolldown grading
 - Make a bot that simulates another player rolling down
 
@@ -70,3 +71,4 @@
     - Units can still appear in the shop after being 3 starred
     - Presets don't load with the XP in the bank
     - HUD is all messed up and clippy in TB mode
+    - Shop, planner, etc. UI don't support 7 costs well
