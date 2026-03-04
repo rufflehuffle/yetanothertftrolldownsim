@@ -23,7 +23,12 @@ export let state = {
         D1: null, D2: null, D3: null, D4: null, D5: null, D6: null, D7: null,
     },
     teamPlan: loadTeamPlan(),
+    targetTeam: null,
 };
+
+export function setPlannedAsGenerateTarget() {
+    state.targetTeam = new Set(state.teamPlan);
+}
 
 export function saveTeamPlan() {
     try {

@@ -1,5 +1,6 @@
 import { pool } from './tables.js';
 import { state, _originallyLocked, isOriginallyLocked, saveTeamPlan, saveUnlockedOverrides } from './state.js';
+import { generate41Board } from './board-generator.js';
 import { render } from './render.js';
 import { doRoll } from './logic.js';
 import { teamBuilderActive, buildTbPicker } from './team-builder.js';
@@ -50,6 +51,8 @@ function doSavePreset() {
         ),
         bench: state.bench.map(u => u ? { name: u.name, stars: u.stars } : null),
         teamPlan: [...state.teamPlan],
+        targetTeam: [...(state.targetTeam ?? [])],
+        autoGenerateTeam: false,
         unlocks: Object.values(pool)
             .filter(c => isOriginallyLocked(c.name) && c.unlocked)
             .map(c => c.name),
@@ -152,6 +155,24 @@ function renderPresetsList() {
         }
         item.appendChild(unitsEl);
 
+        // Auto-generate checkbox
+        const autoLabel = document.createElement('label');
+        autoLabel.className = 'preset-autogenerate';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.checked = !!preset.autoGenerateTeam;
+        cb.addEventListener('change', (e) => {
+            e.stopPropagation();
+            preset.autoGenerateTeam = cb.checked;
+            const all = loadPresets();
+            const p = all.find(p => p.id === preset.id);
+            if (p) { p.autoGenerateTeam = cb.checked; savePresets(all); }
+        });
+        autoLabel.appendChild(cb);
+        autoLabel.append(' AUTO GENERATE ON LOAD');
+        autoLabel.addEventListener('click', e => e.stopPropagation());
+        item.appendChild(autoLabel);
+
         // Delete button
         const delBtn = document.createElement('button');
         delBtn.className = 'preset-delete';
@@ -192,24 +213,6 @@ document.addEventListener('keydown', (e) => {
 export let lastLoadedPreset = null;
 
 export function loadPreset(preset) {
-    // Set level & XP
-    state.level = preset.level;
-    state.xp = 0;
-
-    // Set gold
-    state.gold = preset.gold;
-
-    // Load board
-    for (const key of Object.keys(state.board)) {
-        const u = preset.board?.[key];
-        state.board[key] = u ? { name: u.name, stars: u.stars } : null;
-    }
-
-    // Load bench
-    state.bench = (preset.bench ?? []).map(u => u ? { name: u.name, stars: u.stars } : null);
-    while (state.bench.length < 9) state.bench.push(null);
-    state.bench = state.bench.slice(0, 9);
-
     // Restore teamPlan if saved with preset
     if (preset.teamPlan) {
         // Reset all originally-locked unlocks first
@@ -225,6 +228,40 @@ export function loadPreset(preset) {
         }
         saveTeamPlan();
         saveUnlockedOverrides();
+    }
+
+    // Restore targetTeam
+    state.targetTeam = preset.targetTeam?.length ? new Set(preset.targetTeam) : null;
+
+    if (preset.autoGenerateTeam) {
+        // Generate a fresh 4-1 board from the target team instead of loading the saved board
+        const target = state.targetTeam ?? state.teamPlan;
+        const result = target.size ? generate41Board(target) : null;
+        if (result) {
+            state.gold  = result.gold;
+            state.level = result.level;
+            state.xp    = 0;
+            state.bench = result.bench;
+            state.board = result.board;
+        }
+    } else {
+        // Set level & XP
+        state.level = preset.level;
+        state.xp = 0;
+
+        // Set gold
+        state.gold = preset.gold;
+
+        // Load board
+        for (const key of Object.keys(state.board)) {
+            const u = preset.board?.[key];
+            state.board[key] = u ? { name: u.name, stars: u.stars } : null;
+        }
+
+        // Load bench
+        state.bench = (preset.bench ?? []).map(u => u ? { name: u.name, stars: u.stars } : null);
+        while (state.bench.length < 9) state.bench.push(null);
+        state.bench = state.bench.slice(0, 9);
     }
 
     // Track as last used preset for F1 reload

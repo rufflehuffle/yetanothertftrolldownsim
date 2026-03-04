@@ -1017,6 +1017,17 @@ body.team-builder-mode .hex-wrapper.has-unit:focus-within .star-adj {
 }
 .preset-delete:hover { background: #8b0000; color: #fff; border-color: #ff4444; }
 
+.preset-autogenerate {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #888;
+    cursor: pointer;
+    user-select: none;
+    padding: 2px 0;
+}
+
 .presets-empty {
     color: #555;
     font-size: 14px;
