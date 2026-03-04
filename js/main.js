@@ -7,7 +7,7 @@ import {
     hoveredSlot, setHoveredSlot, sellUnit, sellValue,
     findUnits, isChampOnBoard, removeChamps, isChampAnywhere
 } from './logic.js';
-import './team-planner.js';
+import { triggerGenerate41Board } from './team-planner.js';
 import { teamBuilderActive, tbDragging, setTbDragging, openTeamBuilder, closeTeamBuilder } from './team-builder.js';
 import { openSavePreset, openPresets, loadPreset, lastLoadedPreset, savePresetInput } from './presets.js';
 import { playSound } from './audio.js';
@@ -361,6 +361,7 @@ const rdOverlayTbBtn       = document.querySelector('.rd-overlay-tb-btn');
 const rdOverlayPresetsBtn  = document.querySelector('.rd-overlay-presets-btn');
 const rdOverlayFreerollBtn = document.querySelector('.rd-overlay-freeroll-btn');
 const rdOverlayRoundendFreerollBtn = document.querySelector('.rd-overlay-roundend-freeroll-btn');
+const rdOverlayGenerateBtn         = document.querySelector('.rd-overlay-generate-btn');
 const rdPauseEndBtn        = document.querySelector('.rd-pause-overlay__end-btn');
 const rdPauseResetBtn      = document.querySelector('.rd-pause-overlay__reset-btn');
 const rdPauseFreerollBtn   = document.querySelector('.rd-pause-overlay__freeroll-btn');
@@ -377,6 +378,7 @@ function updateOverlayContent() {
         rdOverlayPresetsBtn.style.display = '';
         rdOverlayFreerollBtn.style.display = '';
         rdOverlayRoundendFreerollBtn.style.display = 'none';
+        rdOverlayGenerateBtn.style.display = 'none';
     } else if (mode === 'roundEnd') {
         rdShopOverlayHint.textContent = lastLoadedPreset ? 'Press D to reset' : '';
         // Preset name on its own line in gold
@@ -388,8 +390,10 @@ function updateOverlayContent() {
         rdOverlayPresetsBtn.style.display = 'none';
         rdOverlayFreerollBtn.style.display = 'none';
         rdOverlayRoundendFreerollBtn.style.display = '';
+        rdOverlayGenerateBtn.style.display = '';
     } else {
         rdOverlayRoundendFreerollBtn.style.display = 'none';
+        rdOverlayGenerateBtn.style.display = 'none';
     }
     // Sync pause overlay reset button
     if (rdPauseResetBtn) {
@@ -428,6 +432,14 @@ rdOverlayRoundendFreerollBtn.addEventListener('click', () => {
         enterFreeroll();
         updateOverlayContent();
     }
+});
+rdOverlayGenerateBtn.addEventListener('click', () => {
+    if (!isRoundEnd()) return;
+    const applied = triggerGenerate41Board();
+    if (!applied) return;
+    timerControls.reset();
+    returnToPlanning();
+    updateOverlayContent();
 });
 
 // Pause overlay: Reset to last preset

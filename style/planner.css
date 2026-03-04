@@ -2,6 +2,14 @@
     HEADER ==========
     ================= */
 
+.planner-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    z-index: 499;
+}
+
 .planner {
     background: #000B13;
     display: none;
@@ -325,12 +333,37 @@ input:checked ~ .planner-picker__unlockable-switch-icon {
     padding: 1vh 2vw 2vh 1vw;
 }
 
+.planner-selected__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .planner-selected__title {
     padding-top: 10px;
     font-size: 28px;
     color: #F0E6D2;
     font-family: 'Beaufort', 'serif';
     font-weight: bold;
+}
+
+.planner-selected__paste-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    padding: 5px 12px;
+    border: 2px solid #C0A366;
+    color: #F0E6D2;
+    font-family: 'Beaufort', 'serif';
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+}
+
+.planner-selected__paste-btn:hover {
+    background: rgba(192, 163, 102, 0.15);
 }
 
 .planner-traits {
@@ -340,7 +373,8 @@ input:checked ~ .planner-picker__unlockable-switch-icon {
 .planner-selected__actions {
     display: flex;
     flex-direction: row;
-    gap: 20px;
+    flex-wrap: nowrap;
+    gap: 12px;
     padding-bottom: 5vh;
 }
 
@@ -349,8 +383,8 @@ input:checked ~ .planner-picker__unlockable-switch-icon {
     font-size: 16px;
     align-items: center;
     justify-content: center;
-    width: 25%;
-    height: 100%;
+    flex: 1;
+    height: 40px;
     border: 2px solid #C0A366;
     color: #F0E6D2;
     font-family: 'Beaufort', 'serif';
@@ -364,8 +398,8 @@ input:checked ~ .planner-picker__unlockable-switch-icon {
     font-size: 16px;
     justify-content: center;
     border: 2px solid #C0A366;
-    width: 50%;
-    height: 100%;
+    flex: 2;
+    height: 40px;
     color: #F0E6D2;
     font-family: 'Beaufort', 'serif';
     font-weight: bold;
@@ -378,8 +412,8 @@ input:checked ~ .planner-picker__unlockable-switch-icon {
     font-size: 16px;
     justify-content: center;
     border: 2px solid #C0A366;
-    width: 25%;
-    height: 100%;
+    flex: 1;
+    height: 40px;
     color: #F0E6D2;
     font-family: 'Beaufort', 'serif';
     font-weight: bold;
@@ -580,4 +614,24 @@ input:checked ~ .planner-picker__unlockable-switch-icon {
 
 .planner-selected__unit-lock-status > img {
     z-index: 2;
+}
+
+/* TODO (temp): 4-1 board generator button */
+.planner-selected__generate-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    padding: 5px 12px;
+    border: 2px solid #C0A366;
+    color: #F0E6D2;
+    font-family: 'Beaufort', 'serif';
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+}
+
+.planner-selected__generate-btn:hover {
+    background: rgba(192, 163, 102, 0.15);
 }

@@ -1,6 +1,7 @@
 import { pool, traits as traitTable } from './tables.js';
 import { state, saveTeamPlan, saveUnlockedOverrides, isOriginallyLocked } from './state.js';
 import { render, computeTraits, getSortedTraitEntries, activeBreakpoint, nextBreakpoint } from './render.js';
+import { generate41Board } from './board-generator.js';
 
 // ============================================================
 // Constants
@@ -16,6 +17,7 @@ const COST_CLASS = {
     3: 'picker__unit--3-cost',
     4: 'picker__unit--4-cost',
     5: 'picker__unit--5-cost',
+    7: 'picker__unit--5-cost'
 };
 const SELECTED_COST_CLASS = {
     1: 'selected__unit--1-cost',
@@ -23,6 +25,7 @@ const SELECTED_COST_CLASS = {
     3: 'selected__unit--3-cost',
     4: 'selected__unit--4-cost',
     5: 'selected__unit--5-cost',
+    7: 'selected__unit--7-cost'
 };
 
 export const COST_COLORS = { 1: '#9e9e9e', 2: '#4caf50', 3: '#2196f3', 4: '#9c27b0', 5: '#ff9800' };
@@ -38,6 +41,7 @@ const TRAIT_TIER_CLASS = {
 // Element refs
 // ============================================================
 const plannerEl         = document.querySelector('.planner');
+const plannerBackdropEl = document.querySelector('.planner-backdrop');
 const pickerEl          = document.querySelector('.planner-picker');
 const teamGridEl        = document.querySelector('.planner-selected__team');
 const traitsEl          = document.querySelector('.planner-traits');
@@ -46,6 +50,8 @@ const clearBtnEl        = document.querySelector('.planner-selected__clear-btn')
 const undoBtnEl         = document.querySelector('.planner-selected__undo-btn');
 const unlockToggleEl    = document.querySelector('.planner-picker__unlockable-switch input');
 const teamPlannerBtnEl  = document.querySelector('.team-planner-button');
+const generateBtnEl     = document.querySelector('.planner-selected__generate-btn'); // TODO (temp): 4-1 generator
+const pasteBtnEl        = document.querySelector('.planner-selected__paste-btn');
 
 // ============================================================
 // Undo stack  (stores serialised Set snapshots)
@@ -396,10 +402,70 @@ function openTeamPlanner() {
     renderTeamGrid();
     renderPlannerTraits();
     plannerEl.style.display = 'grid';
+    plannerBackdropEl.style.display = 'block';
 }
 
 function closeTeamPlanner() {
     plannerEl.style.display = 'none';
+    plannerBackdropEl.style.display = 'none';
+}
+
+// ============================================================
+// Load a team from a shareable code
+// Format: [prefix][champion slots][TFTSetXX]
+//   prefix 01 → 10 × 2-char hex slots  (teamPlannerCode ≤ 0xFF, older sets)
+//   prefix 02 → 10 × 3-char hex slots  (teamPlannerCode 800+, Set 16)
+//   empty slot = "00" / "000"
+// Example: 0232d36035003435b35735d336322000TFTSet16
+// ============================================================
+export function loadTeamCode(code) {
+    const trimmed = (code || '').trim();
+    const match = trimmed.match(/^(01|02)([0-9a-f]+)(TFTSet\d+)$/i);
+    if (!match) return false;
+
+    const [, prefix, champData] = match;
+    const slotSize = prefix === '01' ? 2 : 3;          // 01→2-char slots, 02→3-char slots
+
+    if (champData.length !== 10 * slotSize) return false; // must be exactly 10 slots
+
+    // Extract non-empty slot codes
+    const codes = [];
+    for (let i = 0; i < 10; i++) {
+        const val = parseInt(champData.slice(i * slotSize, (i + 1) * slotSize), 16);
+        if (val !== 0) codes.push(val);
+    }
+
+    if (!codes.length) return false;
+
+    // Build reverse lookup: teamPlannerCode → champion name
+    const lookup = {};
+    for (const [name, data] of Object.entries(pool)) {
+        if (data.teamPlannerCode != null) lookup[data.teamPlannerCode] = name;
+    }
+
+    const names = codes
+        .map(c => lookup[c])
+        .filter(Boolean)
+        .slice(0, TEAM_MAX);
+
+    if (!names.length) return false;
+
+    pushUndo();
+    state.teamPlan.clear();
+    for (const name of Object.keys(pool)) {
+        if (isOriginallyLocked(name)) pool[name].unlocked = false;
+    }
+    for (const name of names) {
+        state.teamPlan.add(name);
+        if (isOriginallyLocked(name)) pool[name].unlocked = true;
+    }
+    saveTeamPlan();
+    saveUnlockedOverrides();
+    buildPicker();
+    renderTeamGrid();
+    renderPlannerTraits();
+    render();
+    return true;
 }
 
 // ============================================================
@@ -441,6 +507,40 @@ undoBtnEl?.addEventListener('click', () => {
     renderTeamGrid();
     renderPlannerTraits();
     render();
+});
+
+// ── TODO (temp): Generate 4-1 Board button ─────────────────────────────────
+// Simulates a standard early-game buying curve and loads the resulting
+// board + bench + gold into the main state. Close the planner so the
+// user can immediately see the result.
+export function triggerGenerate41Board() {
+    if (!state.teamPlan.size) return false;
+    const result = generate41Board(state.teamPlan);
+    if (!result) return false;
+    state.gold  = result.gold;
+    state.level = result.level;
+    state.xp    = 0;
+    state.bench = result.bench;
+    state.board = result.board;
+    closeTeamPlanner();
+    render();
+    return true;
+}
+
+generateBtnEl?.addEventListener('click', () => {
+    triggerGenerate41Board();
+});
+// ── end TODO ────────────────────────────────────────────────────────────────
+
+// Paste team code
+pasteBtnEl?.addEventListener('click', async () => {
+    let text = '';
+    try { text = await navigator.clipboard.readText(); } catch { return; }
+    const ok = loadTeamCode(text);
+    if (!ok) {
+        pasteBtnEl.textContent = 'INVALID CODE';
+        setTimeout(() => { pasteBtnEl.textContent = 'PASTE TEAM'; }, 1500);
+    }
 });
 
 // Hide planner on startup
