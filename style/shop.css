@@ -1,0 +1,250 @@
+.shop {
+    display: flex;
+    gap: 8px;
+    position: relative;
+}
+
+.shop-slot {
+    width: 185px;
+    height: 140px;
+    background-color: #2a2a2a;
+    border: 3px solid #0c0c0c;
+    border-radius: 0;
+    position: relative;
+    overflow: visible;
+    cursor: pointer;
+}
+
+.shop-slot-clip {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.shop-slot-trait {
+    position: absolute;
+    left: 5px;
+    bottom: 0;
+    color: #EFEADE;
+    text-shadow: 1px 1px black;
+    font-size: 14px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+}
+
+.shop-slot-trait-symbol::before {
+    content: "";
+    display: inline-block;
+    background-image: var(--symbol-img, '');
+    background-size: 65%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #383838;
+    height: 20px;
+    width: 20px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    outline: none;
+}
+
+.shop-slot-trait-symbol {
+    display: inline-block;
+    background-color: black;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    padding: 1px 1px 0 1px;
+}
+
+.champ-img {
+    width: 185px;
+    height: 105px;
+    object-fit: fill;
+    object-position: top right;
+    user-select: none;
+    pointer-events: none;
+    border: 1px solid;
+    border-color: #454A4B #454A4B black #454A4B;
+    box-sizing: border-box;
+}
+
+.shop-slot-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 31px;
+    padding: 2px 5px;
+    pointer-events: none;
+    user-select: none;
+    font-family: 'Beaufort', 'serif';
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    text-shadow: rgba(0, 0, 0, 0.7) 1.5px 1.5px;
+}
+
+.shop-slot-cost {
+    margin-left: 4px;
+}
+
+.shop-slot-cost::before {
+  /* Inserts the image content using the content property and a URL */
+  content: url('https://wiki.leagueoflegends.com/en-us/images/thumb/Gold_colored_icon.png/20px-Gold_colored_icon.png?39991');
+
+  /* Pseudo-elements default to display: inline, but if you need to set explicit
+     width/height, you may use display: inline-block */
+  display: inline-block;
+
+  /* Optional: Set specific dimensions for the image if needed */
+  width: 20px;
+  height: 20px;
+
+  /* Optional: Add some spacing between the image and the text */
+  margin-right: 4px;
+
+  /* Ensures the image aligns nicely with the text baseline */
+  vertical-align: middle;
+
+  display: var(--before-display, none);
+}
+
+.sell-zone {
+    position: absolute;
+    inset: 0;
+    background-color: #282828;
+    border: 2px solid #000000;
+    color: #F0E6D2;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-family: 'Beaufort', serif;
+    font-weight: bold;
+    letter-spacing: 1px;
+    z-index: 999;
+}
+
+@keyframes owned-wave {
+    0%   { background-position: 250% 0; }
+    100% { background-position: -250% 0; }
+}
+
+.shop-slot.owned .shop-slot-clip::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        105deg,
+        transparent 20%,
+        rgba(255, 255, 255, 0.55) 50%,
+        transparent 80%
+    );
+    background-size: 250% 100%;
+    animation: owned-wave 5s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.shop-star-indicator {
+    position: absolute;
+    top: -10px;
+    left: 6px;
+    font-size: 18px;
+    line-height: 1;
+    letter-spacing: 2px;
+    pointer-events: none;
+    white-space: nowrap;
+    text-shadow: 0 0 6px rgba(0,0,0,1), 0 0 3px rgba(0,0,0,1);
+    user-select: none;
+    z-index: 10;
+}
+
+@keyframes silver-border-pulse {
+    0%, 100% { box-shadow: 0 0 6px 2px rgba(192, 210, 230, 0.5); border-color: #c0d2e6; }
+    50%       { box-shadow: 0 0 14px 5px rgba(192, 210, 230, 0.9); border-color: #e8f0f8; }
+}
+
+@keyframes gold-border-pulse {
+    0%, 100% { box-shadow: 0 0 6px 2px rgba(255, 185, 50, 0.5); border-color: #ffb932; }
+    50%       { box-shadow: 0 0 14px 5px rgba(255, 185, 50, 0.9); border-color: #ffe080; }
+}
+
+.shop-slot.star-up-2 {
+    animation: silver-border-pulse 1.2s ease-in-out infinite;
+}
+
+.shop-slot.star-up-3 {
+    animation: gold-border-pulse 1.2s ease-in-out infinite;
+}
+
+/* ============================================================
+   Shop slot: Team Plan indicator (green corner badge)
+   ============================================================ */
+.shop-slot .team-plan-badge {
+    position: absolute;
+    top: -6px;
+    left: 6px;
+    width: 27px;
+    height: 27px;
+    background: linear-gradient(#348C5A, #3C604D);
+    border-radius: 0 0 5px 5px;
+    z-index: 6;
+    pointer-events: none;
+    border-top: 0;
+    border-right: 2px solid #609B81;
+    border-bottom: 2px solid #609B81;
+    border-left: 2px solid #609B81;
+}
+
+.team-plan-badge::before {
+    content: "";
+    position: absolute;
+    width: 27px;
+    height: 27px;
+    background-image: url("../img/team_planner.png");
+    background-size: 17px 17px;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 7;
+}
+
+.star-indicator {
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    line-height: 1;
+    letter-spacing: 1px;
+    pointer-events: none;
+    white-space: nowrap;
+    text-shadow: 0 0 4px rgba(0,0,0,0.9), 0 0 2px rgba(0,0,0,0.9);
+    user-select: none;
+    z-index: 2;
+}
+
+.drag-ghost {
+    position: fixed;
+    width: 80px;
+    height: 92px;
+    object-fit: cover;
+    pointer-events: none;
+    opacity: 0.8;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    z-index: 1000;
+    user-select: none;
+    transform: translate(-50%, -50%);
+}
+
+.shop-slot-ghost {
+    position: fixed !important;
+    pointer-events: none;
+    opacity: 0.8;
+    z-index: 1000;
+    transform: translate(-50%, -50%);
+    cursor: default;
+}
