@@ -4,6 +4,7 @@ import { generate41Board } from './board-generator.js';
 import { render } from './render.js';
 import { doRoll } from './logic.js';
 import { teamBuilderActive, buildTbPicker } from './team-builder.js';
+import { history } from './commands.js';
 
 // ============================================================
 // Preset storage
@@ -275,4 +276,5 @@ export function loadPreset(preset) {
     }
 
     render();
+    history.clear();
 }

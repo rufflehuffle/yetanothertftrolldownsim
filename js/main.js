@@ -1,12 +1,17 @@
 import { pool } from './tables.js';
 import { state } from './state.js';
-import { render, computeTraits, renderShopSlot } from './render.js';
+import { render, renderShopSlot } from './render.js';
 import {
-    doRoll, buyXp, buyChamp, getChampAt, getUnitAt, setUnitAt,
-    boardCount, findEmptyBoardHex, moveHovered, sellHovered,
-    hoveredSlot, setHoveredSlot, sellUnit, sellValue,
-    findUnits, isChampOnBoard, removeChamps, isChampAnywhere
+    doRoll, getChampAt, getUnitAt,
+    boardCount, findEmptyBoardHex,
+    hoveredSlot, setHoveredSlot, sellValue
 } from './logic.js';
+import { applyBoardEffects } from './effects.js';
+import {
+    dispatch, history,
+    RollCommand, BuyXpCommand, BuyCommand, SellCommand,
+    MoveUnitCommand, MoveHoveredCommand
+} from './commands.js';
 import { triggerGenerate41Board } from './team-planner.js';
 import { teamBuilderActive, tbDragging, setTbDragging, openTeamBuilder, closeTeamBuilder } from './team-builder.js';
 import { openSavePreset, openPresets, loadPreset, lastLoadedPreset, savePresetInput } from './presets.js';
@@ -18,44 +23,6 @@ import {
     enterFreeroll, exitFreeroll
 } from './rolldown-state.js';
 
-
-// Handle Summons
-export function applyBoardEffects() {
-    handleFreljordTower();
-    handleAzirSoldiers();
-    handleTibbers();
-}
-
-function handleFreljordTower() {
-    const { traitCounts } = computeTraits();
-    const freljordCount = traitCounts['Freljord'] ?? 0;
-    const hasTower = isChampOnBoard('Ice Tower');
-    if (freljordCount >= 3 && !hasTower) {
-        setUnitAt({type: 'board', key: 'B2'}, {name: 'Ice Tower', stars: 1})
-    } else if (freljordCount < 3 && hasTower) {
-        removeChamps('Ice Tower')
-    }
-    render();
-}
-
-function handleAzirSoldiers() {
-    if (isChampOnBoard('Azir') && !isChampOnBoard('Sand Soldier')) {
-        setUnitAt({type: 'board', key: 'A1'}, {name: 'Sand Soldier', stars: 1})
-        setUnitAt({type: 'board', key: 'A2'}, {name: 'Sand Soldier', stars: 1})
-    } else if (!isChampOnBoard('Azir') && isChampOnBoard('Sand Soldier')) {
-        removeChamps('Sand Soldier')
-    }
-    render();
-}
-
-function handleTibbers() {
-    if (isChampOnBoard('Annie') && !isChampAnywhere('Tibbers')) {
-        setUnitAt({type: 'bench', index: 0}, {name: 'Tibbers', stars: 1})
-    } else if (!isChampOnBoard('Annie')) {
-        removeChamps('Tibbers')
-    }
-    render();
-}
 
 // ============================================================
 // Ghost
@@ -117,19 +84,10 @@ function handleDragStart(e, location) {
 
 function handleDrop(location) {
     if (!dragging || dragging.type === 'shop') return;
-    const draggedUnit = getUnitAt(dragging);
-    const targetUnit  = getUnitAt(location);
-    if (location.type === 'board' && dragging.type !== 'board' && !targetUnit && boardCount() >= state.level) {
-        playSound('board_full.mp3');
-        endDrag();
-        return;
-    }
-    setUnitAt(dragging, targetUnit);
-    setUnitAt(location, draggedUnit);
+    const ok = dispatch(new MoveUnitCommand(dragging, location));
+    if (!ok) playSound('board_full.mp3');
+    else     playSound('unit_drop.mp3');
     endDrag();
-    playSound('unit_drop.mp3')
-    applyBoardEffects();
-    render();
 }
 
 function isInSlotCenter(x, y, slotEl) {
@@ -143,8 +101,8 @@ function isInSlotCenter(x, y, slotEl) {
 function handleShopDragEnd(e) {
     if (!dragging || dragging.type !== 'shop') return;
     const champName = getChampAt(dragging);
-    if (champName && state.gold >= pool[champName].cost) {
-        if (!isInSlotCenter(e.clientX, e.clientY, shopGhostSlotEl)) buyChamp(champName, dragging.index);
+    if (champName && !isInSlotCenter(e.clientX, e.clientY, shopGhostSlotEl)) {
+        dispatch(new BuyCommand(champName, dragging.index));
     }
     endDrag();
 }
@@ -178,12 +136,8 @@ sellZone.addEventListener('mouseup', () => {
     // Block selling before the round starts
     if (isPlanning() || isRoundEnd()) { endDrag(); return; }
     const unit = dragging.type === 'shop' ? null : getUnitAt(dragging);
-    if (unit) {
-        sellUnit(unit, dragging)
-    }
+    if (unit) dispatch(new SellCommand(unit, dragging));
     endDrag();
-    applyBoardEffects();
-    render();
 });
 
 // ============================================================
@@ -203,7 +157,7 @@ document.querySelectorAll('.shop-slot').forEach((slot, i) => {
         if (!dragging || dragging.type !== 'shop') return;
         if (!dragMoved) {
             const champName = getChampAt(dragging);
-            if (champName && state.gold >= pool[champName].cost) buyChamp(champName, dragging.index);
+            if (champName) dispatch(new BuyCommand(champName, dragging.index));
             endDrag();
         }
     });
@@ -211,11 +165,11 @@ document.querySelectorAll('.shop-slot').forEach((slot, i) => {
 
 document.querySelector('.roll-button').addEventListener('click', () => {
     if (isPlanning() || isRoundEnd()) return;
-    doRoll();
+    dispatch(new RollCommand());
 });
 document.querySelector('.buy-xp-button').addEventListener('click', () => {
     if (isPlanning() || isRoundEnd()) return;
-    buyXp();
+    dispatch(new BuyXpCommand());
 });
 
 document.querySelectorAll('.bench-slot').forEach((slot, i) => {
@@ -299,6 +253,7 @@ document.addEventListener('mouseup', (e) => {
         }
         setTbDragging(null);
         ghost.style.display = 'none';
+        history.clear();
         return;
     }
     if (dragging?.type === 'shop' && dragMoved) handleShopDragEnd(e);
@@ -334,6 +289,16 @@ document.addEventListener('keydown', (e) => {
         }
         return;
     }
+    if (e.ctrlKey && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        history.undo();
+        return;
+    }
+    if ((e.ctrlKey && e.key === 'y') || (e.ctrlKey && e.shiftKey && e.key === 'z')) {
+        e.preventDefault();
+        history.redo();
+        return;
+    }
     if (e.key === 'd') {
         if (!e.repeat) {
             if (isRoundEnd() && lastLoadedPreset) {
@@ -343,30 +308,24 @@ document.addEventListener('keydown', (e) => {
                 returnToPlanning();
                 updateOverlayContent();
             } else if (!isPlanning() && !isRoundEnd()) {
-                doRoll();
+                dispatch(new RollCommand());
             }
         }
     }
-    if (e.key === 'f' || e.key === 'F') { if (!e.repeat && !isPlanning() && !isRoundEnd()) buyXp() };
+    if (e.key === 'f' || e.key === 'F') { if (!e.repeat && !isPlanning() && !isRoundEnd()) dispatch(new BuyXpCommand()); }
     if (e.key === 'w') {
-        moveHovered();
-        applyBoardEffects();
-        render();
+        dispatch(new MoveHoveredCommand());
     }
     if (e.key === 'e') {
         // Block selling before the round starts
         if (isPlanning() || isRoundEnd()) return;
         if (dragging && dragging.type !== 'shop') {
             const unit = getUnitAt(dragging);
-            if (unit) {
-                sellUnit(unit, dragging)
-            }
+            if (unit) dispatch(new SellCommand(unit, dragging));
             endDrag();
-            applyBoardEffects();
-            render();
-        } else if (!dragging) {
-            sellHovered();
-            applyBoardEffects();
+        } else if (!dragging && hoveredSlot) {
+            const unit = getUnitAt(hoveredSlot);
+            if (unit) dispatch(new SellCommand(unit, hoveredSlot));
         }
     }
 });

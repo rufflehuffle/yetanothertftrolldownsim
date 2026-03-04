@@ -2,7 +2,7 @@ import { pool, shop_odds, xp_to_level } from './tables.js';
 import { state } from './state.js';
 import { render } from './render.js';
 import { playSound } from './audio.js';
-import { applyBoardEffects } from './main.js'
+import { applyBoardEffects } from './effects.js'
 
 // ============================================================
 // Board utilities
@@ -88,13 +88,14 @@ export function rollShop() {
 }
 
 export function doRoll(subtractGold=true) {
-    if (state.gold < 2) return;
+    if (subtractGold && state.gold < 2) return false;
     state.shop = rollShop();
     if (subtractGold) {
         state.gold -= 2;
-        playSound('roll.mp3')
+        playSound('roll.mp3');
     }
     render();
+    return true;
 }
 
 export function addXp(amount) {
@@ -110,11 +111,12 @@ export function addXp(amount) {
 }
 
 export function buyXp() {
-    if (state.gold < 4) return;
-    if (state.level >= 10) return;
+    if (state.gold < 4) return false;
+    if (state.level >= 10) return false;
     state.gold -= 4;
     addXp(4);
     render();
+    return true;
 }
 
 // ============================================================
@@ -184,8 +186,8 @@ export function buyChamp(champName, shopIndex) {
 
     // Handle bench full scenario
     if (firstEmpty === -1) {
-        if (!isUnitAnywhere) return;
-        
+        if (!isUnitAnywhere) return false;
+
         const ownedUnits = [
             ...state.bench.filter(u => u?.name === champName),
             ...Object.values(state.board).filter(u => u?.name === champName)
@@ -203,7 +205,7 @@ export function buyChamp(champName, shopIndex) {
         //          - If yes, buy units from the shop until threshold is met
 
         const threshold = currentCopies < 3 ? 3 : currentCopies < 6 ? 6 : 9;
-        if (allCopies < threshold) return;
+        if (allCopies < threshold) return false;
 
         const shopIndices = state.shop.flatMap((val, i) => val === champName ? [i] : []);
         for (let i=0; i<threshold-currentCopies; i++) {
@@ -222,8 +224,8 @@ export function buyChamp(champName, shopIndex) {
         playSound('buy.mp3');
         checkStarUp(champName);
         render();
-    
-        return;
+
+        return true;
     }
 
     state.bench[firstEmpty] = { name: champName, stars: 1 };
@@ -232,13 +234,15 @@ export function buyChamp(champName, shopIndex) {
     checkStarUp(champName);
     playSound('buy.mp3');
     render();
+    return true;
 }
 
 export function sellUnit(unit, location) {
-    if (pool[unit.name].cost == 0) return;
+    if (pool[unit.name].cost == 0) return false;
     state.gold += sellValue(unit);
     setUnitAt(location, null);
     playSound('sell.mp3');
+    return true;
 }
 
 export function sellValue(unit) {
@@ -247,6 +251,22 @@ export function sellValue(unit) {
     if (unit.stars === 2) return cost === 1 ? 3 : 3 * cost - 1;
     if (unit.stars === 3) return 9 * cost - 1;
     return cost;
+}
+
+// ============================================================
+// Unit movement
+// ============================================================
+export function moveUnit(from, to) {
+    const unitA = getUnitAt(from);
+    const unitB = getUnitAt(to);
+    // Block moving a non-board unit onto an empty board hex when board is full
+    if (to.type === 'board' && from.type !== 'board' && !unitB && boardCount() >= state.level) {
+        return false;
+    }
+    setUnitAt(from, unitB);
+    setUnitAt(to, unitA);
+    applyBoardEffects(); // calls render() internally
+    return true;
 }
 
 // ============================================================

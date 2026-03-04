@@ -8,7 +8,9 @@
       "Bash(where python)",
       "Bash(where py)",
       "Bash(node --version)",
-      "Bash(node \"/c/Users/hemng/AppData/Local/Temp/add_codes.js\")"
+      "Bash(node \"/c/Users/hemng/AppData/Local/Temp/add_codes.js\")",
+      "Bash(git add js/main.js js/render.js style/style.css CLAUDE.md TODO.md)",
+      "Bash(git commit:*)"
     ]
   }
 }
