@@ -254,7 +254,7 @@ function updateStarIndicator(el, copyCount, copiesInShop=1, isBenchFull=false, i
 
 // Helpers
 
-function renderShopSlot(slot, champName) {
+export function renderShopSlot(slot, champName) {
     const champ = champName ? pool[champName] : null;
     const img = slot.querySelector('.champ-img');
     const barEl = slot.querySelector('.shop-slot-bar');

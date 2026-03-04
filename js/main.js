@@ -1,6 +1,6 @@
 import { pool } from './tables.js';
 import { state } from './state.js';
-import { render, computeTraits } from './render.js';
+import { render, computeTraits, renderShopSlot } from './render.js';
 import {
     doRoll, buyXp, buyChamp, getChampAt, getUnitAt, setUnitAt,
     boardCount, findEmptyBoardHex, moveHovered, sellHovered,
@@ -64,6 +64,7 @@ const ghost = document.createElement('img');
 ghost.classList.add('drag-ghost');
 ghost.draggable = false;
 document.body.appendChild(ghost);
+let shopGhostEl = null, shopGhostSlotEl = null, shopGhostSlotIndex = -1;
 
 // ============================================================
 // Sell Zone & drag state
@@ -87,13 +88,24 @@ function handleDragStart(e, location) {
     dragStartY = e.clientY;
     dragMoved = false;
     const isShop = location.type === 'shop';
-    ghost.src = isShop ? pool[champName].tile : pool[champName].icon;
-    ghost.style.width = isShop ? '170px' : '80px';
-    ghost.style.height = isShop ? '120px' : '92px';
-    ghost.style.clipPath = isShop ? 'none' : 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)';
-    ghost.style.left = `${e.clientX}px`;
-    ghost.style.top = `${e.clientY}px`;
-    ghost.style.display = 'block';
+    if (isShop) {
+        const slotEl = document.querySelectorAll('.shop-slot')[location.index];
+        shopGhostSlotEl = slotEl;
+        shopGhostSlotIndex = location.index;
+        shopGhostEl = slotEl.cloneNode(true);
+        shopGhostEl.classList.add('shop-slot-ghost');
+        shopGhostEl.style.left = `${e.clientX}px`;
+        shopGhostEl.style.top = `${e.clientY}px`;
+        document.body.appendChild(shopGhostEl);
+        renderShopSlot(slotEl, null);
+        ghost.style.display = 'none';
+    } else {
+        ghost.src = pool[champName].icon;
+        ghost.classList.remove('shop-ghost');
+        ghost.style.left = `${e.clientX}px`;
+        ghost.style.top = `${e.clientY}px`;
+        ghost.style.display = 'block';
+    }
     // Show sell value on the zone for board/bench units (not shop slots)
     if (!isShop) {
         const unit = getUnitAt(location);
@@ -120,17 +132,32 @@ function handleDrop(location) {
     render();
 }
 
-function handleShopDragEnd() {
+function isInSlotCenter(x, y, slotEl) {
+    const rect = slotEl.getBoundingClientRect();
+    return x >= rect.left + rect.width * 0.25 &&
+           x <= rect.left + rect.width * 0.75 &&
+           y >= rect.top + rect.height * 0.25 &&
+           y <= rect.top + rect.height * 0.75;
+}
+
+function handleShopDragEnd(e) {
     if (!dragging || dragging.type !== 'shop') return;
     const champName = getChampAt(dragging);
     if (champName && state.gold >= pool[champName].cost) {
-        buyChamp(champName, dragging.index);
+        if (!isInSlotCenter(e.clientX, e.clientY, shopGhostSlotEl)) buyChamp(champName, dragging.index);
     }
     endDrag();
 }
 
 function endDrag() {
     dragging = null;
+    if (shopGhostEl) {
+        shopGhostEl.remove();
+        shopGhostEl = null;
+        renderShopSlot(shopGhostSlotEl, state.shop[shopGhostSlotIndex]);
+        shopGhostSlotEl = null;
+        shopGhostSlotIndex = -1;
+    }
     ghost.style.display = 'none';
     sellZone.style.display = 'none';
     sellZone.classList.remove('active');
@@ -219,8 +246,12 @@ document.addEventListener('mousemove', (e) => {
         const dx = e.clientX - dragStartX, dy = e.clientY - dragStartY;
         if (Math.hypot(dx, dy) > 4) dragMoved = true;
     }
-    ghost.style.left = `${e.clientX}px`;
-    ghost.style.top = `${e.clientY}px`;
+    const activeGhost = shopGhostEl || ghost;
+    activeGhost.style.left = `${e.clientX}px`;
+    activeGhost.style.top = `${e.clientY}px`;
+    if (shopGhostEl) {
+        shopGhostEl.style.opacity = isInSlotCenter(e.clientX, e.clientY, shopGhostSlotEl) ? '1' : '0.8';
+    }
     if (dragging.type !== 'shop') {
         const overShop = isOverShop(e.clientX, e.clientY);
         sellZone.style.display = overShop ? 'flex' : 'none';
@@ -270,7 +301,7 @@ document.addEventListener('mouseup', (e) => {
         ghost.style.display = 'none';
         return;
     }
-    if (dragging?.type === 'shop' && dragMoved) handleShopDragEnd();
+    if (dragging?.type === 'shop' && dragMoved) handleShopDragEnd(e);
     else endDrag();
 });
 

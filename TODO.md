@@ -2,14 +2,6 @@
 
 # Major
 
-## Shop
-- Implement proper shop drag behavior
-    - When dragging champion out of the shop, it should be placed back if not dragged too far
-    - When you're far enough, the tile should become transparent
-    - Dragging the champion out should also leave shop background visible instead of duplicating the tile
-    - Picking up shop slot should also pick up the entire div not just the image now
-
-
 # Low Priority
 
 ## Team Planner

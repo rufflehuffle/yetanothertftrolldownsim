@@ -1243,6 +1243,15 @@ body.timer-locked .timer-reset-btn {
     transform: translate(-50%, -50%);
 }
 
+.shop-slot-ghost {
+    position: fixed !important;
+    pointer-events: none;
+    opacity: 0.8;
+    z-index: 1000;
+    transform: translate(-50%, -50%);
+    cursor: default;
+}
+
 .above-shop-container {
     display: flex;
     width: 100%;
