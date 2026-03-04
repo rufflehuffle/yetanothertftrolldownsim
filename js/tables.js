@@ -3,901 +3,1201 @@ export const pool = {
         unlocked: true,
         cost: 1,
         name: "Anivia",
+        teamPlannerCode: 830,
         copies_in_pool: 30,
         synergies: ["Freljord", "Invoker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Anivia_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_anivia.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_anivia.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Blitzcrank": {
         unlocked: true,
         cost: 1,
         name: "Blitzcrank",
+        teamPlannerCode: 842,
         copies_in_pool: 30,
         synergies: ["Zaun", "Juggernaut"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Blitzcrank_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_blitzcrank.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_blitzcrank.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Briar": {
         unlocked: true,
         cost: 1,
         name: "Briar",
+        teamPlannerCode: 815,
         copies_in_pool: 30,
         synergies: ["Noxus", "Slayer", "Juggernaut"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Briar_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_briar.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_briar.png",
+        role: "Assassin",
+        damageType: "Attack"
     },
     "Caitlyn": {
         unlocked: true,
         cost: 1,
         name: "Caitlyn",
+        teamPlannerCode: 841,
         copies_in_pool: 30,
         synergies: ["Piltover", "Longshot"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Caitlyn_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_caitlyn.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_caitlyn.png",
+        role: "Caster",
+        damageType: "Attack"
     },
     "Illaoi": {
         unlocked: true,
         cost: 1,
         name: "Illaoi",
+        teamPlannerCode: 812,
         copies_in_pool: 30,
         synergies: ["Bilgewater", "Bruiser"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Illaoi_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_illaoi.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_illaoi.png",
+        role: "Tank",
+        damageType: "Attack"
     },
     "Jarvan IV": {
         unlocked: true,
         cost: 1,
         name: "Jarvan IV",
+        teamPlannerCode: 824,
         copies_in_pool: 30,
         synergies: ["Demacia", "Defender"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_JarvanIV_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_jarvaniv.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_jarvaniv.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Jhin": {
         unlocked: true,
         cost: 1,
         name: "Jhin",
+        teamPlannerCode: 884,
         copies_in_pool: 30,
         synergies: ["Ionia", "Gunslinger"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Jhin_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_jhin.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_jhin.png",
+        role: "Marksman",
+        damageType: "Attack"
     },
     "Kog'Maw": {
         unlocked: true,
         cost: 1,
         name: "Kog'Maw",
+        teamPlannerCode: 853,
         copies_in_pool: 30,
         synergies: ["Void", "Arcanist", "Longshot"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_KogMaw_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_kogmaw.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_kogmaw.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Lulu": {
         unlocked: true,
         cost: 1,
         name: "Lulu",
+        teamPlannerCode: 736,
         copies_in_pool: 30,
         synergies: ["Yordle", "Arcanist"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Lulu_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_lulu.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_lulu.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Qiyana": {
         unlocked: true,
         cost: 1,
         name: "Qiyana",
+        teamPlannerCode: 44,
         copies_in_pool: 30,
         synergies: ["Ixtal", "Slayer"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Qiyana_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_qiyana.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_qiyana.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "Rumble": {
         unlocked: true,
         cost: 1,
         name: "Rumble",
+        teamPlannerCode: 801,
         copies_in_pool: 30,
         synergies: ["Yordle", "Defender"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Rumble_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_rumble.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_rumble.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Shen": {
         unlocked: true,
         cost: 1,
         name: "Shen",
+        teamPlannerCode: 849,
         copies_in_pool: 30,
         synergies: ["Ionia", "Bruiser"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Shen_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_shen.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_shen.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Sona": {
         unlocked: true,
         cost: 1,
         name: "Sona",
+        teamPlannerCode: 826,
         copies_in_pool: 30,
         synergies: ["Demacia", "Invoker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Sona_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_sona.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_sona.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Viego": {
         unlocked: true,
         cost: 1,
         name: "Viego",
+        teamPlannerCode: 36,
         copies_in_pool: 30,
         synergies: ["Shadow Isles", "Quickstriker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Viego_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_viego.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_viego.png",
+        role: "Fighter",
+        damageType: "Hybrid"
     },
     "Aphelios": {
         unlocked: true,
         cost: 2,
         name: "Aphelios",
+        teamPlannerCode: 821,
         copies_in_pool: 25,
         synergies: ["Targon"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Aphelios_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_aphelios.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_aphelios.png",
+        role: "Marksman",
+        damageType: "Attack"
     },
     "Ashe": {
         unlocked: true,
         cost: 2,
         name: "Ashe",
+        teamPlannerCode: 831,
         copies_in_pool: 25,
         synergies: ["Freljord", "Quickstriker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Ashe_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_ashe.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_ashe.png",
+        role: "Marksman",
+        damageType: "Attack"
     },
     "Bard": {
         unlocked: false,
         cost: 2,
         name: "Bard",
+        teamPlannerCode: 24,
         copies_in_pool: 25,
         synergies: ["Caretaker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Bard_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_bard.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_bard.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Cho'Gath": {
         unlocked: true,
         cost: 2,
         name: "Cho'Gath",
+        teamPlannerCode: 852,
         copies_in_pool: 25,
         synergies: ["Void", "Juggernaut"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_ChoGath_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_chogath.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_chogath.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Ekko": {
         unlocked: true,
         cost: 2,
         name: "Ekko",
+        teamPlannerCode: 21,
         copies_in_pool: 25,
         synergies: ["Zaun", "Disruptor"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Ekko_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_ekko.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_ekko.png",
+        role: "Fighter",
+        damageType: "Magic"
     },
     "Graves": {
         unlocked: false,
         cost: 2,
         name: "Graves",
+        teamPlannerCode: 39,
         copies_in_pool: 25,
         synergies: ["Bilgewater", "Gunslinger"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Graves_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_graves.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_graves.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "Neeko": {
         unlocked: true,
         cost: 2,
         name: "Neeko",
+        teamPlannerCode: 835,
         copies_in_pool: 25,
         synergies: ["Ixtal", "Arcanist", "Defender"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Neeko_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_neeko.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_neeko.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Orianna": {
         unlocked: false,
         cost: 2,
         name: "Orianna",
+        teamPlannerCode: 43,
         copies_in_pool: 25,
         synergies: ["Piltover", "Invoker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Orianna_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_orianna.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_orianna.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Poppy": {
         unlocked: false,
         cost: 2,
         name: "Poppy",
+        teamPlannerCode: 879,
         copies_in_pool: 25,
         synergies: ["Demacia", "Yordle", "Juggernaut"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Poppy_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_poppy.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_poppy.png",
+        role: "Tank",
+        damageType: "Attack"
     },
     "Rek'Sai": {
         unlocked: true,
         cost: 2,
         name: "Rek'Sai",
+        teamPlannerCode: 851,
         copies_in_pool: 25,
         synergies: ["Void", "Vanquisher"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_RekSai_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_reksai.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_reksai.png",
+        role: "Assassin",
+        damageType: "Attack"
     },
     "Sion": {
         unlocked: true,
         cost: 2,
         name: "Sion",
+        teamPlannerCode: 814,
         copies_in_pool: 25,
         synergies: ["Noxus", "Bruiser"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Sion_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_sion.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_sion.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Teemo": {
         unlocked: true,
         cost: 2,
         name: "Teemo",
+        teamPlannerCode: 800,
         copies_in_pool: 25,
         synergies: ["Yordle", "Longshot"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Teemo_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_teemo.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_teemo.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Tristana": {
         unlocked: true,
         cost: 2,
         name: "Tristana",
+        teamPlannerCode: 735,
         copies_in_pool: 25,
         synergies: ["Yordle", "Gunslinger"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Tristana_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_tristana.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_tristana.png",
+        role: "Caster",
+        damageType: "Attack"
     },
     "Tryndamere": {
         unlocked: false,
         cost: 2,
         name: "Tryndamere",
+        teamPlannerCode: 17,
         copies_in_pool: 25,
         synergies: ["Freljord", "Slayer"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Tryndamere_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_tryndamere.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_tryndamere.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "Twisted Fate": {
         unlocked: true,
         cost: 2,
         name: "Twisted Fate",
+        teamPlannerCode: 803,
         copies_in_pool: 25,
         synergies: ["Bilgewater", "Quickstriker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_TwistedFate_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_twistedfate.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_twistedfate.png",
+        role: "Specialist",
+        damageType: "Magic"
     },
     "Vi": {
         unlocked: true,
         cost: 2,
         name: "Vi",
+        teamPlannerCode: 843,
         copies_in_pool: 25,
         synergies: ["Piltover", "Zaun", "Defender"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Vi_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_vi.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_vi.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "Xin Zhao": {
         unlocked: true,
         cost: 2,
         name: "Xin Zhao",
+        teamPlannerCode: 16,
         copies_in_pool: 25,
         synergies: ["Demacia", "Ionia", "Warden"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_XinZhao_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_xinzhao.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_xinzhao.png",
+        role: "Tank",
+        damageType: "Attack"
     },
     "Yasuo": {
         unlocked: true,
         cost: 2,
         name: "Yasuo",
+        teamPlannerCode: 845,
         copies_in_pool: 25,
         synergies: ["Ionia", "Slayer"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Yasuo_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_yasuo.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_yasuo.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "Yorick": {
         unlocked: false,
         cost: 2,
         name: "Yorick",
+        teamPlannerCode: 15,
         copies_in_pool: 25,
         synergies: ["Shadow Isles", "Warden"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Yorick_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_yorick.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_yorick.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Ahri": {
         unlocked: true,
         cost: 3,
         name: "Ahri",
+        teamPlannerCode: 847,
         copies_in_pool: 18,
         synergies: ["Ionia", "Arcanist"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Ahri_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_ahri.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_ahri.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Darius": {
         unlocked: false,
         cost: 3,
         name: "Darius",
+        teamPlannerCode: 875,
         copies_in_pool: 18,
         synergies: ["Noxus", "Defender"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Darius_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_darius.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_darius.png",
+        role: "Tank",
+        damageType: "Attack"
     },
     "Dr. Mundo": {
         unlocked: true,
         cost: 3,
         name: "Dr. Mundo",
+        teamPlannerCode: 47,
         copies_in_pool: 18,
         synergies: ["Zaun", "Bruiser"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_DrMundo_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_drmundo.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_drmundo.png",
+        role: "Tank",
+        damageType: "Attack"
     },
     "Draven": {
         unlocked: true,
         cost: 3,
         name: "Draven",
+        teamPlannerCode: 817,
         copies_in_pool: 18,
         synergies: ["Noxus", "Quickstriker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Draven_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_draven.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_draven.png",
+        role: "Marksman",
+        damageType: "Attack"
     },
     "Gangplank": {
         unlocked: true,
         cost: 3,
         name: "Gangplank",
+        teamPlannerCode: 804,
         copies_in_pool: 18,
         synergies: ["Bilgewater", "Slayer", "Vanquisher"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Gangplank_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_gangplank.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_gangplank.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "Gwen": {
         unlocked: false,
         cost: 3,
         name: "Gwen",
+        teamPlannerCode: 29,
         copies_in_pool: 18,
         synergies: ["Shadow Isles", "Disruptor"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Gwen_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_gwen.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_gwen.png",
+        role: "Fighter",
+        damageType: "Magic"
     },
     "Jinx": {
         unlocked: true,
         cost: 3,
         name: "Jinx",
+        teamPlannerCode: 840,
         copies_in_pool: 18,
         synergies: ["Zaun", "Gunslinger"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Jinx_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_jinx.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_jinx.png",
+        role: "Specialist",
+        damageType: "Attack"
     },
     "Kennen": {
         unlocked: false,
         cost: 3,
         name: "Kennen",
+        teamPlannerCode: 880,
         copies_in_pool: 18,
         synergies: ["Ionia", "Yordle", "Defender"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Kennen_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_kennen.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_kennen.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Kobuko & Yuumi": {
         unlocked: false,
         cost: 3,
         name: "Kobuko & Yuumi",
+        teamPlannerCode: 53,
         copies_in_pool: 18,
         synergies: ["Yordle", "Bruiser", "Invoker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_KobukoyYuumi_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_kobuko.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_kobuko.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "LeBlanc": {
         unlocked: false,
         cost: 3,
         name: "LeBlanc",
+        teamPlannerCode: 23,
         copies_in_pool: 18,
         synergies: ["Noxus", "Invoker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Leblanc_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_leblanc.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_leblanc.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Leona": {
         unlocked: true,
         cost: 3,
         name: "Leona",
+        teamPlannerCode: 820,
         copies_in_pool: 18,
         synergies: ["Targon"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Leona_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_leona.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_leona.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Loris": {
         unlocked: true,
         cost: 3,
         name: "Loris",
+        teamPlannerCode: 32,
         copies_in_pool: 18,
         synergies: ["Piltover", "Warden"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Loris_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_loris.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_loris.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Malzahar": {
         unlocked: true,
         cost: 3,
         name: "Malzahar",
+        teamPlannerCode: 850,
         copies_in_pool: 18,
         synergies: ["Void", "Disruptor"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Malzahar_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_malzahar.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_malzahar.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Milio": {
         unlocked: true,
         cost: 3,
         name: "Milio",
+        teamPlannerCode: 834,
         copies_in_pool: 18,
         synergies: ["Ixtal", "Invoker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Milio_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_milio.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_milio.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Nautilus": {
         unlocked: true,
         cost: 3,
         name: "Nautilus",
+        teamPlannerCode: 802,
         copies_in_pool: 18,
         synergies: ["Bilgewater", "Juggernaut", "Warden"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Nautilus_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_nautilus.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_nautilus.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Sejuani": {
         unlocked: true,
         cost: 3,
         name: "Sejuani",
+        teamPlannerCode: 865,
         copies_in_pool: 18,
         synergies: ["Freljord", "Defender"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Sejuani_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_sejuani.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_sejuani.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Vayne": {
         unlocked: true,
         cost: 3,
         name: "Vayne",
+        teamPlannerCode: 4,
         copies_in_pool: 18,
         synergies: ["Demacia", "Longshot"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Vayne_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_vayne.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_vayne.png",
+        role: "Marksman",
+        damageType: "Attack"
     },
     "Zoe": {
         unlocked: true,
         cost: 3,
         name: "Zoe",
+        teamPlannerCode: 819,
         copies_in_pool: 18,
         synergies: ["Targon"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Zoe_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_zoe.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_zoe.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Ambessa": {
         unlocked: true,
         cost: 4,
         name: "Ambessa",
+        teamPlannerCode: 818,
         copies_in_pool: 10,
         synergies: ["Noxus", "Vanquisher"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Ambessa_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_ambessa.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_ambessa.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "Bel'Veth": {
         unlocked: true,
         cost: 4,
         name: "Bel'Veth",
+        teamPlannerCode: 870,
         copies_in_pool: 10,
         synergies: ["Void", "Slayer"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_BelVeth_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_belveth.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_belveth.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "Braum": {
         unlocked: true,
         cost: 4,
         name: "Braum",
+        teamPlannerCode: 832,
         copies_in_pool: 10,
         synergies: ["Freljord", "Warden"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Braum_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_braum.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_braum.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Diana": {
         unlocked: false,
         cost: 4,
         name: "Diana",
+        teamPlannerCode: 35,
         copies_in_pool: 10,
         synergies: ["Targon"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Diana_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_diana.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_diana.png",
+        role: "Assassin",
+        damageType: "Magic"
     },
     "Fizz": {
         unlocked: false,
         cost: 4,
         name: "Fizz",
+        teamPlannerCode: 878,
         copies_in_pool: 10,
         synergies: ["Bilgewater", "Yordle"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Fizz_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_fizz.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_fizz.png",
+        role: "Assassin",
+        damageType: "Magic"
     },
     "Garen": {
         unlocked: true,
         cost: 4,
         name: "Garen",
+        teamPlannerCode: 828,
         copies_in_pool: 10,
         synergies: ["Demacia", "Defender"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Garen_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_garen.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_garen.png",
+        role: "Tank",
+        damageType: "Attack"
     },
     "Kai'Sa": {
         unlocked: false,
         cost: 4,
         name: "Kai'Sa",
+        teamPlannerCode: 27,
         copies_in_pool: 10,
         synergies: ["Assimilator", "Void", "Longshot"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Kaisa_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_kaisa.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_kaisa.png",
+        role: "Caster",
+        damageType: "Attack"
     },
     "Kalista": {
         unlocked: false,
         cost: 4,
         name: "Kalista",
+        teamPlannerCode: 30,
         copies_in_pool: 10,
         synergies: ["Shadow Isles", "Vanquisher"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Kalista_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_kalista.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_kalista.png",
+        role: "Caster",
+        damageType: "Attack"
     },
     "Lissandra": {
         unlocked: true,
         cost: 4,
         name: "Lissandra",
+        teamPlannerCode: 833,
         copies_in_pool: 10,
         synergies: ["Freljord", "Invoker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Lissandra_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_lissandra.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_lissandra.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Lux": {
         unlocked: true,
         cost: 4,
         name: "Lux",
+        teamPlannerCode: 829,
         copies_in_pool: 10,
         synergies: ["Demacia", "Arcanist"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Lux_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_lux.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_lux.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Miss Fortune": {
         unlocked: true,
         cost: 4,
         name: "Miss Fortune",
+        teamPlannerCode: 813,
         copies_in_pool: 10,
         synergies: ["Bilgewater", "Gunslinger"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_MissFortune_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_missfortune.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_missfortune.png",
+        role: "Caster",
+        damageType: "Attack"
     },
     "Nasus": {
         unlocked: false,
         cost: 4,
         name: "Nasus",
+        teamPlannerCode: 34,
         copies_in_pool: 10,
         synergies: ["Shurima"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Nasus_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_nasus.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_nasus.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Nidalee": {
         unlocked: false,
         cost: 4,
         name: "Nidalee",
+        teamPlannerCode: 20,
         copies_in_pool: 10,
         synergies: ["Ixtal", "Huntress"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Nidalee_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_nidalee.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_nidalee.png",
+        role: "Fighter",
+        damageType: "Magic"
     },
     "Renekton": {
         unlocked: false,
         cost: 4,
         name: "Renekton",
+        teamPlannerCode: 28,
         copies_in_pool: 10,
         synergies: ["Shurima"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Renekton_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_renekton.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_renekton.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "Rift Herald": {
         unlocked: false,
         cost: 4,
         name: "Rift Herald",
+        teamPlannerCode: 22,
         copies_in_pool: 10,
         synergies: ["Void", "Bruiser"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_RiftHerald_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_riftherald.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_riftherald.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Seraphine": {
         unlocked: true,
         cost: 4,
         name: "Seraphine",
+        teamPlannerCode: 844,
         copies_in_pool: 10,
         synergies: ["Piltover", "Disruptor"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Seraphine_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_seraphine.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_seraphine.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Singed": {
         unlocked: false,
         cost: 4,
         name: "Singed",
+        teamPlannerCode: 871,
         copies_in_pool: 10,
         synergies: ["Zaun", "Juggernaut"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Singed_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_singed.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_singed.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Skarner": {
         unlocked: false,
         cost: 4,
         name: "Skarner",
+        teamPlannerCode: 26,
         copies_in_pool: 10,
         synergies: ["Ixtal"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Skarner_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_skarner.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_skarner.png",
+        role: "Tank",
+        damageType: "Attack"
     },
     "Swain": {
         unlocked: true,
         cost: 4,
         name: "Swain",
+        teamPlannerCode: 37,
         copies_in_pool: 10,
         synergies: ["Noxus", "Arcanist", "Juggernaut"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Swain_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_swain.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_swain.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Taric": {
         unlocked: true,
         cost: 4,
         name: "Taric",
+        teamPlannerCode: 822,
         copies_in_pool: 10,
         synergies: ["Targon"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Taric_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_taric.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_taric.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Veigar": {
         unlocked: false,
         cost: 4,
         name: "Veigar",
+        teamPlannerCode: 873,
         copies_in_pool: 10,
         synergies: ["Yordle", "Arcanist"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Veigar_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_veigar.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_veigar.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Warwick": {
         unlocked: false,
         cost: 4,
         name: "Warwick",
+        teamPlannerCode: 877,
         copies_in_pool: 10,
         synergies: ["Zaun", "Quickstriker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Warwick_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_warwick.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_warwick.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "Wukong": {
         unlocked: true,
         cost: 4,
         name: "Wukong",
+        teamPlannerCode: 848,
         copies_in_pool: 10,
         synergies: ["Ionia", "Bruiser"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Wukong_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_wukong.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_wukong.png",
+        role: "Tank",
+        damageType: "Attack"
     },
     "Yone": {
         unlocked: false,
         cost: 4,
         name: "Yone",
+        teamPlannerCode: 876,
         copies_in_pool: 10,
         synergies: ["Ionia", "Slayer"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Yone_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_yone.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_yone.png",
+        role: "Fighter",
+        damageType: "Hybrid"
     },
     "Yunara": {
         unlocked: true,
         cost: 4,
         name: "Yunara",
+        teamPlannerCode: 42,
         copies_in_pool: 10,
         synergies: ["Ionia", "Quickstriker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Yunara_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_yunara.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_yunara.png",
+        role: "Marksman",
+        damageType: "Attack"
     },
     "Aatrox": {
         unlocked: false,
         cost: 5,
         name: "Aatrox",
+        teamPlannerCode: 882,
         copies_in_pool: 9,
         synergies: ["Darkin", "World Ender", "Slayer"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Aatrox_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_aatrox.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_aatrox.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "Annie": {
         unlocked: true,
         cost: 5,
         name: "Annie",
+        teamPlannerCode: 854,
         copies_in_pool: 9,
         synergies: ["Dark Child", "Arcanist"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Annie_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_annie.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_annie.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Azir": {
         unlocked: true,
         cost: 5,
         name: "Azir",
+        teamPlannerCode: 857,
         copies_in_pool: 9,
         synergies: ["Shurima", "Emperor", "Disruptor"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Azir_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_azir.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_azir.png",
+        role: "Marksman",
+        damageType: "Magic"
     },
     "Fiddlesticks": {
         unlocked: true,
         cost: 5,
         name: "Fiddlesticks",
+        teamPlannerCode: 859,
         copies_in_pool: 9,
         synergies: ["Harvester", "Vanquisher"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Fiddlesticks_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_fiddlesticks.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_fiddlesticks.png",
+        role: "Assassin",
+        damageType: "Magic"
     },
     "Galio": {
         unlocked: false,
         cost: 5,
         name: "Galio",
+        teamPlannerCode: 863,
         copies_in_pool: 9,
         synergies: ["Demacia", "Heroic"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Galio_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_galio.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_galio.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Kindred": {
         unlocked: true,
         cost: 5,
         name: "Kindred",
+        teamPlannerCode: 856,
         copies_in_pool: 9,
         synergies: ["Eternal", "Quickstriker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Kindred_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_kindred.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_kindred.png",
+        role: "Marksman",
+        damageType: "Attack"
     },
     "Lucian & Senna": {
         unlocked: true,
         cost: 5,
         name: "Lucian & Senna",
+        teamPlannerCode: 52,
         copies_in_pool: 9,
         synergies: ["Soulbound", "Gunslinger"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Lucian_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_lucian.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_lucian.png",
+        role: "Caster",
+        damageType: "Attack"
     },
     "Mel": {
         unlocked: false,
         cost: 5,
         name: "Mel",
+        teamPlannerCode: 25,
         copies_in_pool: 9,
         synergies: ["Noxus", "Disruptor"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Mel_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_mel.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_mel.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Ornn": {
         unlocked: true,
         cost: 5,
         name: "Ornn",
+        teamPlannerCode: 855,
         copies_in_pool: 9,
         synergies: ["Blacksmith", "Warden"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Ornn_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_ornn.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_ornn.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Sett": {
         unlocked: false,
         cost: 5,
         name: "Sett",
+        teamPlannerCode: 866,
         copies_in_pool: 9,
         synergies: ["Ionia", "The Boss"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Sett_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_sett.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_sett.png",
+        role: "Fighter",
+        damageType: "Magic"
     },
     "Shyvana": {
         unlocked: true,
         cost: 5,
         name: "Shyvana",
+        teamPlannerCode: 861,
         copies_in_pool: 9,
         synergies: ["Dragonborn", "Juggernaut"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Shyvana_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_shyvana.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_shyvana.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "T-Hex": {
         unlocked: false,
         cost: 5,
         name: "T-Hex",
+        teamPlannerCode: 869,
         copies_in_pool: 9,
         synergies: ["HexMech", "Piltover", "Gunslinger"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_THex.TFT_Set16.png",
-        icon: "./img/thex_square.png"
+        icon: "./img/thex_square.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "Tahm Kench": {
         unlocked: false,
         cost: 5,
         name: "Tahm Kench",
+        teamPlannerCode: 864,
         copies_in_pool: 9,
         synergies: ["Bilgewater", "Glutton", "Bruiser"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_TahmKench_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_tahmkench.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_tahmkench.png",
+        role: "Tank",
+        damageType: "Magic"
     },
     "Thresh": {
         unlocked: false,
         cost: 5,
         name: "Thresh",
+        teamPlannerCode: 33,
         copies_in_pool: 9,
         synergies: ["Shadow Isles", "Warden"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Thresh_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_thresh.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_thresh.png",
+        role: "Fighter",
+        damageType: "Magic"
     },
     "Volibear": {
         unlocked: false,
         cost: 5,
         name: "Volibear",
+        teamPlannerCode: 883,
         copies_in_pool: 9,
         synergies: ["Freljord", "Bruiser"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Volibear_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_volibear.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_volibear.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "Xerath": {
         unlocked: false,
         cost: 5,
         name: "Xerath",
+        teamPlannerCode: 31,
         copies_in_pool: 9,
         synergies: ["Shurima", "Ascendant"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Xerath_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_xerath.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_xerath.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Ziggs": {
         unlocked: false,
         cost: 5,
         name: "Ziggs",
+        teamPlannerCode: 881,
         copies_in_pool: 9,
         synergies: ["Zaun", "Yordle", "Longshot"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Ziggs_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_ziggs.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_ziggs.png",
+        role: "Marksman",
+        damageType: "Magic"
     },
     "Zilean": {
         unlocked: true,
         cost: 5,
         name: "Zilean",
+        teamPlannerCode: 858,
         copies_in_pool: 9,
         synergies: ["Chronokeeper", "Invoker"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Zilean_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_zilean.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_zilean.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Aurelion Sol": {
         unlocked: false,
         cost: 7,
         name: "Aurelion Sol",
+        teamPlannerCode: 872,
         copies_in_pool: 9,
         synergies: ["Targon", "Star Forger"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_AurelionSol_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_aurelionsol.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_aurelionsol.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Baron Nashor": {
         unlocked: false,
         cost: 7,
         name: "Baron Nashor",
+        teamPlannerCode: 874,
         copies_in_pool: 9,
         synergies: ["Void", "Riftscourge"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_BaronNashor_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_baronnashor.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_baronnashor.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "Brock": {
         unlocked: false,
         cost: 7,
         name: "Brock",
+        teamPlannerCode: 867,
         copies_in_pool: 9,
         synergies: ["Ixtal"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Brock_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_brock.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_brock.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     "Ryze": {
         unlocked: false,
         cost: 7,
         name: "Ryze",
+        teamPlannerCode: 19,
         copies_in_pool: 9,
         synergies: ["Rune Mage"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Ryze_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_ryze.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_ryze.png",
+        role: "Caster",
+        damageType: "Magic"
     },
     "Sylas": {
         unlocked: false,
         cost: 7,
         name: "Sylas",
+        teamPlannerCode: 18,
         copies_in_pool: 9,
         synergies: ["Chainbreaker", "Arcanist", "Defender"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Sylas_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_sylas.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_sylas.png",
+        role: "Fighter",
+        damageType: "Magic"
     },
     "Zaahen": {
         unlocked: false,
         cost: 7,
         name: "Zaahen",
+        teamPlannerCode: 48,
         copies_in_pool: 9,
         synergies: ["Darkin", "Immortal"],
         tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Zaahen_splash_centered_0.TFT_Set16.png",
-        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_zaahen.png"
+        icon: "https://cdn.metatft.com/file/metatft/champions/tft16_zaahen.png",
+        role: "Fighter",
+        damageType: "Attack"
     },
     // Summons
     "Ice Tower": {
