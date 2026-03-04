@@ -1,0 +1,97 @@
+/* ============================================================
+   Team Planner Button
+   ============================================================ */
+.team-planner-button {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background-color: #1e3a5f;
+    color: #90c8ff;
+    border: 1px solid #2d5a8e;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    z-index: 100;
+    letter-spacing: 0.3px;
+}
+.team-planner-button:hover {
+    background-color: #2a4f7a;
+    border-color: #4a8abf;
+}
+
+/* ============================================================
+   Team Builder Button
+   ============================================================ */
+.team-builder-button {
+    position: fixed;
+    top: 52px;
+    right: 16px;
+    background-color: #2d1e4a;
+    color: #c084fc;
+    border: 1px solid #5b3a8e;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    z-index: 100;
+    letter-spacing: 0.3px;
+}
+.team-builder-button:hover {
+    background-color: #3e2a65;
+    border-color: #8b5cf6;
+}
+.team-builder-button.active {
+    background-color: #4c1d95;
+    border-color: #a78bfa;
+    color: #e9d5ff;
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+}
+
+/* Presets button */
+.presets-button {
+    position: fixed;
+    top: 88px;
+    right: 16px;
+    background-color: #1a2a1a;
+    color: #86efac;
+    border: 1px solid #3a6a3a;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    z-index: 100;
+    letter-spacing: 0.3px;
+}
+.presets-button:hover {
+    background-color: #253525;
+    border-color: #5a9a5a;
+}
+
+/* Rolldown mode button (replaces TB button in same position when in TB mode) */
+.rolldown-mode-button {
+    position: fixed;
+    top: 52px; /* Same position as team-builder-button */
+    right: 16px;
+    background-color: #1a2a3a;
+    color: #7dd3fc;
+    border: 1px solid #2a5a7a;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    z-index: 100;
+    letter-spacing: 0.3px;
+}
+.rolldown-mode-button:hover {
+    background-color: #1e3a52;
+    border-color: #4a8abf;
+}

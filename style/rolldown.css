@@ -1,0 +1,234 @@
+/* ============================================================
+   Rolldown Mode Overlays
+   ============================================================ */
+
+/* ── Shared overlay base ── */
+.rd-shop-overlay,
+.rd-pause-overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+/* ── Planning / RoundEnd overlay ── */
+.rd-shop-overlay {
+    background: rgba(0, 11, 19, 0.88);
+}
+/* Planning: fully opaque so the user can't read the incoming shop */
+body.rd-planning .rd-shop-overlay {
+    background: #000B13;
+}
+
+.rd-shop-overlay__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    width: 100%;
+}
+
+.rd-shop-overlay__hint {
+    font-family: 'Beaufort', serif;
+    font-size: 11px;
+    font-weight: bold;
+    color: #675F4C;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    min-height: 14px;
+}
+
+.rd-shop-overlay__preset-name {
+    font-family: 'Beaufort', serif;
+    font-size: 13px;
+    color: #C0A366;
+    letter-spacing: 0.3px;
+    min-height: 14px;
+}
+
+.rd-shop-overlay__primary-btn {
+    background: #091225;
+    color: #F0E6D2;
+    border: 2px solid #C0A366;
+    padding: 6px 22px;
+    font-family: 'Beaufort', serif;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.15s, border-color 0.15s;
+}
+.rd-shop-overlay__primary-btn:hover {
+    background: #0d1a30;
+    border-color: #e8c97a;
+}
+
+.rd-shop-overlay__secondary-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 2px;
+}
+
+.rd-overlay-tb-btn,
+.rd-overlay-presets-btn,
+.rd-overlay-freeroll-btn,
+.rd-overlay-roundend-freeroll-btn,
+.rd-overlay-generate-btn {
+    background: transparent;
+    border: 2px solid #675F4C;
+    color: #A09B8C;
+    padding: 4px 10px;
+    font-family: 'Beaufort', serif;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: border-color 0.15s, color 0.15s;
+}
+.rd-overlay-tb-btn:hover,
+.rd-overlay-presets-btn:hover,
+.rd-overlay-freeroll-btn:hover,
+.rd-overlay-roundend-freeroll-btn:hover,
+.rd-overlay-generate-btn:hover {
+    border-color: #C0A366;
+    color: #F0E6D2;
+}
+
+/* ── Pause overlay ── */
+.rd-pause-overlay {
+    background: rgba(0, 11, 19, 0.88);
+}
+
+.rd-pause-overlay__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    width: 100%;
+}
+
+.rd-pause-overlay__label {
+    font-family: 'Beaufort', serif;
+    font-size: 11px;
+    font-weight: bold;
+    color: #675F4C;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.rd-pause-overlay__end-btn {
+    background: #091225;
+    color: #F0E6D2;
+    border: 2px solid #C0A366;
+    padding: 6px 22px;
+    font-family: 'Beaufort', serif;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.15s, border-color 0.15s;
+}
+.rd-pause-overlay__end-btn:hover {
+    background: #0d1a30;
+    border-color: #e8c97a;
+}
+
+.rd-pause-overlay__reset-btn,
+.rd-pause-overlay__freeroll-btn {
+    background: transparent;
+    border: 2px solid #675F4C;
+    color: #A09B8C;
+    padding: 4px 10px;
+    font-family: 'Beaufort', serif;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: border-color 0.15s, color 0.15s;
+}
+.rd-pause-overlay__reset-btn:hover,
+.rd-pause-overlay__freeroll-btn:hover {
+    border-color: #C0A366;
+    color: #F0E6D2;
+}
+
+/* ── Visibility rules driven by rd-{mode} body classes ── */
+
+body.rd-planning .rd-shop-overlay  { display: flex; }
+body.rd-roundEnd .rd-shop-overlay  { display: flex; }
+body.rd-paused   .rd-pause-overlay { display: flex; }
+
+/* Round: block team builder and presets buttons */
+body.rd-round .team-builder-button,
+body.rd-round .presets-button {
+    pointer-events: none;
+    opacity: 0.35;
+}
+
+/* RoundEnd: also block team builder and presets */
+body.rd-roundEnd .team-builder-button,
+body.rd-roundEnd .presets-button {
+    pointer-events: none;
+    opacity: 0.35;
+}
+
+/* Block shop interactions behind overlays in planning/roundEnd */
+body.rd-planning .shop-slot,
+body.rd-roundEnd .shop-slot {
+    pointer-events: none;
+}
+
+/* Disabled state when no preset is loaded */
+.rd-pause-overlay__reset-btn:disabled,
+.rd-shop-overlay__primary-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* Hide all leaking shop visual elements when not actively in a round or freeroll.
+   This covers planning, roundEnd, and paused — anything outside rd-round / rd-freeroll. */
+body:not(.rd-round):not(.rd-freeroll) .team-plan-badge,
+body:not(.rd-round):not(.rd-freeroll) .shop-star-indicator {
+    visibility: hidden;
+}
+body:not(.rd-round):not(.rd-freeroll) .shop-slot.star-up-2,
+body:not(.rd-round):not(.rd-freeroll) .shop-slot.star-up-3 {
+    animation: none;
+    box-shadow: none;
+}
+
+/* Also hide when the sell zone is active (unit being dragged over shop) */
+.shop:has(.sell-zone.active) .team-plan-badge,
+.shop:has(.sell-zone.active) .shop-star-indicator {
+    visibility: hidden;
+}
+.shop:has(.sell-zone.active) .shop-slot.star-up-2,
+.shop:has(.sell-zone.active) .shop-slot.star-up-3 {
+    animation: none;
+    box-shadow: none;
+}
+
+
+/* ── Timer button dim states ── */
+/* Dim start button during roundEnd — round is over, can't start a new one from here */
+body.rd-roundEnd .timer-start-btn {
+    opacity: 0.35;
+    pointer-events: none;
+}
+/* Dim reset button when it has no function: planning (nothing to reset yet),
+   and during an active round */
+body.rd-planning .timer-reset-btn,
+body.rd-round .timer-reset-btn {
+    opacity: 0.35;
+    pointer-events: none;
+}
+/* Freeroll: show reset button but keep it dimmed — it doesn't end the session */
+body.rd-freeroll .timer-reset-btn {
+    display: inline-block;
+    opacity: 0.35;
+    pointer-events: none;
+}

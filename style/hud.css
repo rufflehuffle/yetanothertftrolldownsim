@@ -1,0 +1,267 @@
+.hud {
+    position: fixed;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: flex-start;
+    user-select: none;
+    gap: 16px;
+    background-color: #0D1416;
+    padding: 8px;
+    border-left: solid #947842;
+    border-top: solid #947842;
+    border-right: solid #947842;
+}
+
+.shop-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.gold-container {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: default;
+}
+
+.gold {
+    cursor: default;
+    user-select: none;
+    color: #F0E6D2;
+    text-shadow: 2px 2px solid black;
+    font-family: 'Beaufort', 'serif';
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.gold::before {
+  /* Inserts the image content using the content property and a URL */
+  content: url('https://wiki.leagueoflegends.com/en-us/images/thumb/Gold_colored_icon.png/20px-Gold_colored_icon.png?39991');
+
+  /* Pseudo-elements default to display: inline, but if you need to set explicit
+     width/height, you may use display: inline-block */
+  display: inline-block;
+
+  /* Optional: Set specific dimensions for the image if needed */
+  width: 20px;
+  height: 20px;
+
+  /* Optional: Add some spacing between the image and the text */
+  margin-right: 4px;
+
+  /* Ensures the image aligns nicely with the text baseline */
+  vertical-align: middle;
+}
+
+.gold:hover {
+    text-decoration: underline dotted rgba(255,255,0,0.5);
+}
+
+.gold-input {
+    width: 60px;
+    background: #1a1a1a;
+    color: #f5c518;
+    border: 1px solid #f5c518;
+    border-radius: 4px;
+    padding: 1px 4px;
+    font-size: inherit;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+    /* hide number spinner arrows */
+    -moz-appearance: textfield;
+}
+.gold-input::-webkit-outer-spin-button,
+.gold-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+/* ============================================================
+   Level Panel (left of shop)
+   ============================================================ */
+.level-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
+    width: 210px;
+    align-self: flex-start;
+}
+
+.level-display {
+    font-size: 13px;
+    font-weight: 700;
+    color: #90c8ff;
+    letter-spacing: 0.5px;
+    user-select: none;
+}
+
+/* Row: "Lvl X" on left, "X / X" on right */
+.level-xp-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+/* XP fraction text — right-aligned, above bar */
+.xp-bar-text {
+    font-size: 9px;
+    font-weight: 600;
+    color: #6a9fd8;
+    letter-spacing: 0.3px;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.level-selection select {
+    width: 100%;
+    background: #1e1e1e;
+    color: #ccc;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+}
+.level-selection select:hover {
+    border-color: #666;
+}
+
+.buy-xp-button {
+    background: #1a2d4a;
+    color: #90c8ff;
+    border: 1px solid #2d5a8e;
+    height: 50px;
+    padding: 5px 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+.buy-xp-button:hover {
+    background: #243f63;
+    border-color: #4a8abf;
+}
+.buy-xp-button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.buy-xp-cost {
+    background: #f5c518;
+    color: #1a1a1a;
+    font-size: 10px;
+    font-weight: 800;
+    border-radius: 3px;
+    padding: 1px 5px;
+    line-height: 1.4;
+}
+
+
+.roll-button {
+    background: #1a2d4a;
+    color: #90c8ff;
+    border: 1px solid #2d5a8e;
+    height: 50px;
+    padding: 5px 0;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+.roll-button:hover {
+    background: #243f63;
+    border-color: #4a8abf;
+}
+.roll-cost {
+    background: #f5c518;
+    color: #1a1a1a;
+    font-size: 10px;
+    font-weight: 800;
+    border-radius: 3px;
+    padding: 1px 5px;
+    line-height: 1.4;
+}
+
+/* XP progress bar */
+.xp-bar {
+    position: relative;
+    width: 100%;
+    height: 6px;
+    background: #111;
+    border-radius: 3px;
+    border: 1px solid #2a2a2a;
+    overflow: hidden;
+}
+.xp-bar-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 0%;
+    background: linear-gradient(90deg, #1a3a6e 0%, #2563b0 60%, #3b82f6 100%);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.above-shop-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.odds-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 14px;
+}
+
+.cost-1-odds {
+    color: #A09B8C;
+}
+
+.cost-2-odds {
+    color: #3EBB5A;
+}
+
+.cost-3-odds {
+    color: #3DB8F2;
+}
+
+.cost-4-odds {
+    color: #D322FF;
+}
+
+.cost-5-odds {
+    color: #FF9A21;
+}
+
+.odd {
+    line-height: 1;
+    display: flex;
+    align-items: center;
+}
