@@ -1,13 +1,15 @@
 # TODO
-Implement a rolldown history tab
+
 
 # Major
+
+
+# Low Priority
 - Fix any glaring issues with UI/UX
     - Read Don't Make Me Think and apply concepts
 
-# Low Priority
-
 ## Team Planner
+- Change image used in .selected to be a 
 - Filter by trait
 - Snapshot
 

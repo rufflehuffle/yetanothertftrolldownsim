@@ -269,13 +269,16 @@ export function renderTeamGrid() {
             slot.appendChild(traitsOverlay);
 
             // Champion portrait
+            const imgClip = document.createElement('div');
+            imgClip.className = 'planner-selected__unit-img-clip';
             const img = document.createElement('img');
             img.className = 'planner-selected__unit-img';
-            img.src = champ.icon;
+            img.src = champ.tile;
             img.alt = name;
             img.draggable = false;
             img.addEventListener('mousedown', e => e.preventDefault());
-            slot.appendChild(img);
+            imgClip.appendChild(img);
+            slot.appendChild(imgClip);
 
             // Name bar
             const nameEl = document.createElement('div');
