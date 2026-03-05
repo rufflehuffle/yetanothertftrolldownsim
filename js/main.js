@@ -144,12 +144,33 @@ sellZone.addEventListener('mouseup', () => {
 // ============================================================
 // Event Listeners
 // ============================================================
-document.querySelector('select[name="level"]').addEventListener('change', (e) => {
-    state.level = Number(e.target.value);
-    state.xp = 0;
-    applyBoardEffects();
-    render();
-});
+(function () {
+    const levelDropdown = document.querySelector('.level-dropdown');
+    const levelDisplay  = document.querySelector('.level-display');
+
+    levelDisplay.addEventListener('click', (e) => {
+        e.stopPropagation();
+        levelDropdown.classList.toggle('open');
+    });
+
+    levelDropdown.querySelectorAll('.level-option').forEach(opt => {
+        opt.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const chosen = Number(opt.dataset.value);
+            if (chosen !== state.level) {
+                state.level = chosen;
+                state.xp = 0;
+                applyBoardEffects();
+                render();
+            }
+            levelDropdown.classList.remove('open');
+        });
+    });
+
+    document.addEventListener('click', () => {
+        levelDropdown.classList.remove('open');
+    });
+})();
 
 document.querySelectorAll('.shop-slot').forEach((slot, i) => {
     const location = { type: 'shop', index: i };

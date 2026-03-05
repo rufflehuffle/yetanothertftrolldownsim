@@ -1,6 +1,9 @@
 # TODO
+Implement a rolldown history tab
 
 # Major
+- Fix any glaring issues with UI/UX
+    - Read Don't Make Me Think and apply concepts
 
 # Low Priority
 
@@ -23,9 +26,6 @@
 - Add tick sfx (plays every 1s while holding a unit, also plays when switching the hex you're hovering over)
 - Investigate how often champion SFX play
 
-## Code Cleanup
-- Implement the Command Pattern -> will help with implement rolldown tracking
-
 ## Rolldown Grading
 - Implement a rolldown replay system
     - Also add a move function so I can track movement
@@ -37,14 +37,11 @@
 
 ## Settings
 - Change hotkeys
-- Add start timer on rolldown tickbox
 
 ## Presets
 - Add editing of presets
 
 ## Misc
-- Sell zone doesn't cover shop for all viewports
-    - Make positioning more dynamic
 
 # Ideas
 - Add items
@@ -64,3 +61,4 @@
     - Presets don't load with the XP in the bank
     - HUD is all messed up and clippy in TB mode
     - Shop, planner, etc. UI don't support 7 costs well
+    - "pool" object in tables.js is doing too much -> split into unit_info and pool
