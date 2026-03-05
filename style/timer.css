@@ -4,21 +4,33 @@
 .top-timer-bar {
     position: fixed;
     top: 0;
-    left: 0;
-    right: 0;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 600;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
     pointer-events: none;
     user-select: none;
 }
 
+.top-timer-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 28px;
+    background: #090a0c;
+    clip-path: polygon(0% 0%, 100% 0%, calc(100% - 20px) 100%, 20px 100%);
+    width: 462px;
+    height: 26px;
+    pointer-events: auto;
+    box-sizing: border-box;
+}
+
 .top-timer-progress-track {
-    width: 100%;
-    height: 6px;
-    background: #1a1a2e;
+    flex: 1;
+    height: 10px;
+    background: #0d1215;
     position: relative;
+    min-width: 0;
 }
 
 .top-timer-progress-fill {
@@ -38,47 +50,21 @@
     background: #ef4444;
 }
 
-.top-timer-controls {
+.timer-input-container {
+    flex-shrink: 0;
     display: flex;
-    flex-direction: column;  /* stack rows vertically */
     align-items: center;
-    gap: 5px;
-    padding: 3px 10px;
-    background: rgba(15,15,25,0.85);
-    border-bottom: 1px solid #1e293b;
-    pointer-events: auto;
-    width: fit-content;
-    margin: 0 auto;
-    border-radius: 0 0 8px 8px;
-}
-
-.timer-buttons {
-    display: flex;
-    gap: 5px;
 }
 
 .timer-value {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
-    color: #e5e7eb;
-    min-width: 36px;
+    color: #EAE0CD;
+    min-width: 28px;
     text-align: right;
-    letter-spacing: 1px;
-    transition: color 0.3s;
+    letter-spacing: 0.5px;
 }
 
-.timer-value.timer-warning {
-    color: #f97316;
-}
-
-.timer-value.timer-expired {
-    color: #ef4444;
-    animation: timer-pulse 0.8s ease-in-out infinite;
-}
-
-.timer-value.timer-running {
-    color: #38bdf8;
-}
 
 @keyframes timer-pulse {
     0%, 100% { opacity: 1; }
@@ -86,13 +72,15 @@
 }
 
 .timer-input {
-    width: 40px;
-    background: #1a1a1a;
+    width: 32px;
+    background: transparent;
     border: 1px solid #334155;
-    border-radius: 4px;
-    color: #e5e7eb;
-    font-size: 12px;
-    padding: 2px 4px;
+    border-radius: 3px;
+    color: #EAE0CD;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 1px 3px;
     text-align: center;
 }
 .timer-input::-webkit-inner-spin-button,
@@ -102,26 +90,6 @@
 .timer-label {
     font-size: 12px;
     color: #64748b;
-}
-
-.timer-start-btn,
-.timer-reset-btn {
-    background: #1e293b;
-    border: 1px solid #334155;
-    border-radius: 4px;
-    color: #e5e7eb;
-    cursor: pointer;
-    font-size: 12px;
-    padding: 2px 7px;
-    transition: background 0.15s;
-}
-
-.timer-start-btn:hover { background: #2d3f55; }
-.timer-reset-btn:hover { background: #2d3f55; }
-
-.timer-start-btn.running {
-    color: #f97316;
-    border-color: #f97316;
 }
 
 /* Board lock when expired — shop greyed out, others just blocked */
@@ -140,8 +108,3 @@ body.timer-locked select[name="level"] {
     cursor: not-allowed;
 }
 
-body.timer-locked .timer-reset-btn {
-    border-color: #ef4444;
-    color: #ef4444;
-    animation: timer-pulse 0.8s ease-in-out infinite;
-}
