@@ -10,7 +10,12 @@
       "Bash(node --version)",
       "Bash(node \"/c/Users/hemng/AppData/Local/Temp/add_codes.js\")",
       "Bash(git add js/main.js js/render.js style/style.css CLAUDE.md TODO.md)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git add js/logic.js js/main.js js/presets.js js/commands.js js/effects.js TASKS.md .claudeignore)",
+      "Bash(git add index.html style/style.css style/base.css style/board.css style/buttons.css style/hud.css style/presets.css style/rolldown.css style/shop.css style/team-builder.css style/timer.css)",
+      "Bash(git add js/timer.js js/main.js index.html style/timer.css)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(git add index.html style/hud.css img/reroll.png img/xp.png)"
     ]
   }
 }

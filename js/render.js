@@ -342,7 +342,12 @@ function renderXpBar() {
     const xpFill = document.querySelector('.xp-bar-fill');
     const xpText = document.querySelector('.xp-bar-text');
     const levelDisplay = document.querySelector('.level-display');
-    if (levelDisplay) levelDisplay.textContent = `Lvl ${state.level}`;
+    if (levelDisplay) {
+        levelDisplay.textContent = `Lvl ${state.level}`;
+        document.querySelectorAll('.level-option').forEach(opt => {
+            opt.classList.toggle('active', Number(opt.dataset.value) === state.level);
+        });
+    }
     if (xpFill && xpText) {
         if (state.level >= 10 || maxXp == null) {
             xpFill.style.width = '100%';
@@ -359,7 +364,7 @@ function renderOdds() {
     const display_odds = shop_odds[state.level];
     const symbols = ["•", "●", "▲", "◆", "⬟"]
     odds.forEach((x, i) => {
-        x.textContent = `${symbols[i]} ${display_odds[i+1] * 100}%`
+        x.textContent = `${symbols[i]} ${Math.round(display_odds[i+1] * 100)}%`
     });
 }
 
@@ -369,7 +374,6 @@ function renderOdds() {
 export function render() {
     document.querySelector('.gold').textContent = state.gold;
 
-    document.querySelector('select[name="level"]').value = state.level;
     renderXpBar();
     renderOdds();
 
