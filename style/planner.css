@@ -529,12 +529,21 @@ input:checked ~ .planner-picker__unlockable-switch-icon {
     background: #B88502;
 }
 
-.planner-selected__unit-img {
+.planner-selected__unit-img-clip {
     height: 80%;
     width: 100%;
-    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
     border: 1px solid black;
-    object-fit: cover;
+    box-sizing: border-box;
+}
+
+.planner-selected__unit-img {
+    position: absolute;
+    height: 100%;
+    aspect-ratio: 7 / 4;
+    object-fit: fill;
+    left: -100px;
 }
 
 .planner-selected__unit-traits {
@@ -545,6 +554,8 @@ input:checked ~ .planner-picker__unlockable-switch-icon {
     display: flex;
     flex-direction: column;
     gap: 2px;
+
+    z-index: 1;
 }
 
 .planner-selected__unit-trait {
@@ -617,7 +628,6 @@ input:checked ~ .planner-picker__unlockable-switch-icon {
     z-index: 2;
 }
 
-/* TODO (temp): 4-1 board generator button */
 .planner-selected__generate-btn {
     display: flex;
     align-items: center;

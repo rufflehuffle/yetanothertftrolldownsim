@@ -77,8 +77,6 @@
     font-weight: 700;
     text-align: center;
     outline: none;
-    /* hide number spinner arrows */
-    -moz-appearance: textfield;
 }
 .gold-input::-webkit-outer-spin-button,
 .gold-input::-webkit-inner-spin-button {
@@ -268,8 +266,6 @@
     overflow: hidden;
 }
 
-.buy-xp-button:hover {
-}
 .buy-xp-button:disabled {
     opacity: 0.35;
     cursor: not-allowed;
@@ -308,8 +304,6 @@
     overflow: hidden;
 }
 
-.roll-button:hover {
-}
 .roll-button:disabled {
     opacity: 0.35;
     cursor: not-allowed;
