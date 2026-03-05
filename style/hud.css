@@ -140,70 +140,145 @@
     border-color: #666;
 }
 
-.buy-xp-button {
-    background: #1a2d4a;
-    color: #90c8ff;
-    border: 1px solid #2d5a8e;
-    height: 50px;
-    padding: 5px 5px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-    width: 100%;
+/* ============================================================
+   Shared HUD button inner layout (Buy XP / Reroll)
+   ============================================================ */
+.hud-btn-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 0 0 10px;
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+}
+
+.hud-btn-label {
+    font-family: 'Beaufort', serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #C8AA6E;
+    line-height: 1.3;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.hud-btn-cost {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-family: 'Beaufort', serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #C8AA6E;
+    line-height: 1.3;
+}
+
+.hud-btn-cost::before {
+    content: url('https://wiki.leagueoflegends.com/en-us/images/thumb/Gold_colored_icon.png/20px-Gold_colored_icon.png?39991');
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 1px;
+}
+
+.hud-btn-right {
+    width: 56px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    position: relative;
+    z-index: 1;
 }
+
+.hud-btn-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    margin-left: 6px;
+}
+
+/* ============================================================
+   Buy XP button
+   ============================================================ */
+.buy-xp-button {
+    position: relative;
+    background: linear-gradient(
+        50deg,
+        #18272E 0%,
+        #18272E calc(50% - 3px),
+        #081018 50%,
+        #233C4A calc(50% + 3px),
+        #233C4A 100%
+    );
+    border: 2px solid #42829C;
+    box-shadow: inset 0 0 0 2px #081018;
+    height: 50px;
+    padding: 0;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+}
+
 .buy-xp-button:hover {
-    background: #243f63;
-    border-color: #4a8abf;
 }
 .buy-xp-button:disabled {
     opacity: 0.35;
     cursor: not-allowed;
 }
 
-.buy-xp-cost {
-    background: #f5c518;
-    color: #1a1a1a;
-    font-size: 10px;
-    font-weight: 800;
-    border-radius: 3px;
-    padding: 1px 5px;
-    line-height: 1.4;
+.buy-xp-button .hud-btn-label,
+.buy-xp-button .hud-btn-cost {
+    font-size: 12px;
+    text-align: left;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    color: white;
 }
 
-
+/* ============================================================
+   Reroll button
+   ============================================================ */
 .roll-button {
-    background: #1a2d4a;
-    color: #90c8ff;
-    border: 1px solid #2d5a8e;
+    position: relative;
+    background: linear-gradient(
+        50deg,
+        #23241B 0%,
+        #23241B calc(50% - 3px),
+        #081018 50%,
+        #47412C calc(50% + 3px),
+        #47412C 100%
+    );
+    border: 2px solid #8C7B4A;
+    box-shadow: inset 0 0 0 2px #081018;
     height: 50px;
-    padding: 5px 0;
-    font-size: 16px;
-    font-weight: 600;
+    padding: 0;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
+    transition: border-color 0.15s;
     width: 100%;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
+    align-items: stretch;
+    overflow: hidden;
 }
+
 .roll-button:hover {
-    background: #243f63;
-    border-color: #4a8abf;
 }
-.roll-cost {
-    background: #f5c518;
-    color: #1a1a1a;
-    font-size: 10px;
-    font-weight: 800;
-    border-radius: 3px;
-    padding: 1px 5px;
-    line-height: 1.4;
+.roll-button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.roll-button .hud-btn-label,
+.roll-button .hud-btn-cost {
+    font-size: 12px;
+    text-align: left;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    color: white;
 }
 
 /* XP progress bar */
