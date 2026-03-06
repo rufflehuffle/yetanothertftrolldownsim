@@ -44,7 +44,11 @@ class CommandHistory {
         this._past   = [];
         this._future = [];
         this._limit  = 50;
+        this._listeners = [];
     }
+
+    addListener(fn) { this._listeners.push(fn); }
+    _notify() { this._listeners.forEach(fn => fn()); }
 
     dispatch(cmd) {
         const ok = cmd.execute();
@@ -52,6 +56,7 @@ class CommandHistory {
         this._past.push(cmd);
         if (this._past.length > this._limit) this._past.shift();
         this._future = [];
+        this._notify();
         return true;
     }
 
@@ -60,13 +65,17 @@ class CommandHistory {
         if (!cmd) return;
         cmd.undo();
         this._future.push(cmd);
+        this._notify();
     }
 
     redo() {
         const cmd = this._future.pop();
         if (!cmd) return;
         const ok = cmd.execute();
-        if (ok) this._past.push(cmd);
+        if (ok) {
+            this._past.push(cmd);
+            this._notify();
+        }
     }
 
     clear() {

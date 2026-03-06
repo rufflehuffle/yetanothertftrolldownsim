@@ -1,6 +1,7 @@
 # TODO
 
 # Major
+Disable loading saved teams and entering TB mode while in a round
 
 # Low Priority
 ## HUD
@@ -37,6 +38,7 @@
 
 ## Settings
 - Change hotkeys
+- Add reload planner on reset setting
 
 ## Presets
 - Add editing of presets
@@ -65,6 +67,12 @@
     - No way to get from Free Roll mode to Round Start anymore
         - Have ESC return you to the before round start menu
     - Need to prevent D from doing the default navigation thingy
+    - Clicking the team planner button twice works... when it shouldn't
+    - Typing space bar while naming in the planner name starts the round...
+    - Sometimes, you accidentally reset your board by pressing D after the timer ends (should be ~1s cd)
+    - You can drag a unit into the gap between the hexes, causing the move champ to fizzle
+    - You can still (somehow?) drag the star indicators and unit count around if you click on the right spot in the board-bench gap
+    - You can hold a shop slot and roll it, leaving you with a null shop slot, but when the unit is bought the unit that was in the that shop slot gets bought instead (does that make sense?)
 
 ## Big Picture before Release
 - Update for new set

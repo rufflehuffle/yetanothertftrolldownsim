@@ -1,0 +1,375 @@
+.teams {
+    background: #000B13;
+    position: fixed;
+    top: 10vh;
+    left: 12.5vw;
+    width: 75vw;
+    height: 75vh;
+    z-index: 500;
+    user-select: none;
+    border: 1px solid #473513;
+    padding: 3vh 1vw 0 1vw;
+
+    display: none;
+    flex-direction: column;
+
+    color: #F0E6D2;
+    font-family: 'Beaufort', serif;
+}
+
+/*  =================
+    HEADER ==========
+    ================= */
+
+.teams__header {
+    display: flex;
+    align-items: center;
+}
+
+.teams__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.teams__close-btn {
+    margin-left: auto;
+    margin-right: 1vw;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 1.5rem;
+    width: 1.5vw;
+    height: 1.5vw;
+
+    cursor: pointer;
+    background: #091225;
+}
+
+.teams__hr {
+    height: 0.25rem;
+    background: #121B20;
+    margin: 0.5vh 0;
+}
+
+/*  =================
+    BUTTONS =========
+    ================= */
+
+.teams__btns {
+    display: flex;
+    align-items: center;
+    gap: 0.5vw;
+    padding: 2vh 0.5vw;
+    margin-right: 1vw;
+}
+
+.teams__sort {
+    font-family: 'Gill Sans', sans-serif;
+    border: 1px solid #6F5925;
+    background: #101A1E;
+    color: #79766B;
+    padding: 0.5rem 3rem 0.5rem 1rem;
+
+    background-image: url('../img/sort.png');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+
+    cursor: pointer;
+}
+
+.teams__right-align-btns {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5vw;
+}
+
+.teams__paste-btn,
+.teams__snapshot-btn,
+.teams__new-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #C0A366;
+    background: #1E2429;
+    padding: 0.5rem 1rem;
+    color: #F0E6D2;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.teams__paste-btn:hover,
+.teams__snapshot-btn:hover,
+.teams__new-btn:hover {
+    background: linear-gradient(#1E2429 0%, #524E40 100%);
+}
+
+.teams__paste-btn:active,
+.teams__snapshot-btn:active,
+.teams__new-btn:active {
+    background: #1E2429;
+}
+
+
+/*  =================
+    TEAM ============
+    ================= */
+
+.teams__list {
+    height: 50vh;
+    overflow-y: auto;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+    padding-bottom: 1vh;
+}
+
+.team__row {
+    display: flex;
+    background: linear-gradient(90deg, #101920 50%, #000B13 100%);
+    border: 1px solid #20262B;
+    align-items: center;
+    padding: 0.5vh 0.5vw;
+    margin-right: 1vw;
+}
+
+.team__container {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+
+    cursor: pointer;
+}
+
+.team__name {
+    color: #CDBE91;
+    font-weight: 600;
+    margin-bottom: 0.25vh;
+    font-size: 1.5rem;
+}
+
+.team__units {
+    display: flex;
+    gap: 1vw;
+}
+
+.team__unit-slot {
+    width: 4vw;
+    height: 4vw;
+    background: #0B1015;
+    border: 2px solid #040709;
+    position: relative;
+}
+
+.team__unit-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.team__kebab {
+    margin-left: auto;
+    margin-right: 3vw;
+    background-image: url('../img/kebab.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    object-fit: contain;
+    width: 0.75vw;
+    height: 3vw;
+    cursor: pointer;
+}
+
+/*  =================
+    SCROLLBAR =======
+    ================= */
+.teams__list {
+  --sb-track-color: #000b13;
+  --sb-thumb-color: #795b29;
+  --sb-size: 7px;
+}
+
+.teams__list::-webkit-scrollbar {
+  width: var(--sb-size);
+}
+
+.teams__list::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 4px;
+}
+
+.teams__list::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 4px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .teams__list {
+      scrollbar-color: var(--sb-thumb-color)
+                     var(--sb-track-color);
+  }
+}
+
+/*  =================
+    ACTIVE TOGGLE ===
+    ================= */
+
+.team__active-switch {
+    width: 3vw;
+    position: relative;
+
+    margin-left: auto;
+}
+
+.team__active-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.team__active-switch-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    cursor: pointer;
+    background: #213E47;
+
+    height: 30px;
+
+    box-sizing: border-box;
+    border-radius: 20px;
+    border: 3px solid #5D5C55;
+}
+
+.team__active-switch-icon {
+    position: absolute;
+    left: -15px;
+    top: -8px;
+
+    height: 46px;
+    width: 46px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    clip-path: circle(40%);
+    background-color: #5D5C55;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.team__active-switch-icon::before {
+    content: '';
+
+    position: absolute;
+
+    height: 40px;
+    width: 40px;
+
+    clip-path: circle(40%);
+    background-color: #1E2429;
+}
+
+.team__active-switch-symbol {
+    width: 20px;
+    height: 20px;
+
+    z-index: 2;
+}
+
+input:checked ~ .team__active-switch-slider {
+    background: #106A24;
+    border: 3px solid #997F40;
+}
+
+input:checked ~ .team__active-switch-icon {
+    transform: translateX(2vw);
+    background-color: #997F40;
+}
+
+/*  ===========================
+    UNIT ICON MODIFIERS =======
+    =========================== */
+
+.unit-slot--1-cost {
+    border: 2px solid #3E505E;
+}
+
+.unit-slot--2-cost {
+    border: 2px solid #0B7827;
+}
+
+.unit-slot--3-cost {
+    border: 2px solid #2166A6;
+}
+
+.unit-slot--4-cost {
+    border: 2px solid #B91C8C;
+}
+
+.unit-slot--5-cost {
+    border: 2px solid #B88502;
+}
+
+.unit-slot--unlocked::before {
+    content: '';
+
+    background: #CEB6EF;
+
+    position: absolute;
+    top: -12px;
+    right: -12px;
+
+    clip-path: circle(50%);
+    width: 1.4vw;
+    height: 1.4vw;
+}
+
+.unit-slot--unlocked::after {
+    content: '';
+
+    background: url('../img/unlock.png') no-repeat center, #000B13;
+
+    position: absolute;
+    top: -10px;
+    right: -10px;
+
+    clip-path: circle(50%);
+    width: 1.2vw;
+    height: 1.2vw;
+}
+
+.unit-slot--locked::before {
+    content: '';
+
+    background: #9C9A8C;
+
+    position: absolute;
+    top: -12px;
+    right: -12px;
+
+    clip-path: circle(50%);
+    width: 1.4vw;
+    height: 1.4vw;
+}
+
+.unit-slot--locked::after {
+    content: '';
+
+    background: url('../img/lock.png') no-repeat center, #000B13;
+
+    position: absolute;
+    top: -10px;
+    right: -10px;
+
+    clip-path: circle(50%);
+    width: 1.2vw;
+    height: 1.2vw;
+}
+

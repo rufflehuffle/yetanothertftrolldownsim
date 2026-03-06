@@ -14,7 +14,7 @@ import {
 } from './commands.js';
 import { triggerGenerate41Board } from './team-planner.js';
 import { teamBuilderActive, tbDragging, setTbDragging, openTeamBuilder, closeTeamBuilder } from './team-builder.js';
-import { openSavePreset, openPresets, loadPreset, lastLoadedPreset, savePresetInput } from './presets.js';
+import { openSavePreset, openPresets, loadPreset, lastLoadedPreset } from './teams.js';
 import { playSound } from './audio.js';
 import {
     getRdMode, setRdMode,
@@ -23,6 +23,7 @@ import {
     enterFreeroll, exitFreeroll
 } from './rolldown-state.js';
 import { timerControls } from './timer.js';
+import './teams.js';
 
 
 // ============================================================
@@ -284,8 +285,6 @@ document.addEventListener('mouseup', (e) => {
 
 // Hotkeys
 document.addEventListener('keydown', (e) => {
-    if (document.activeElement === savePresetInput) return;
-
     if (e.key === 'F1') {
         e.preventDefault();
         if (lastLoadedPreset) loadPreset(lastLoadedPreset);

@@ -2,6 +2,7 @@ import { pool, traits as traitTable } from './tables.js';
 import { state, saveTeamPlan, saveUnlockedOverrides, isOriginallyLocked, setPlannedAsGenerateTarget } from './state.js';
 import { render, computeTraits, getSortedTraitEntries, activeBreakpoint, nextBreakpoint } from './render.js';
 import { generate41Board } from './board-generator.js';
+import { openTeams, saveActiveTeam, lastLoadedPreset, renameTeam } from './teams.js';
 
 // ============================================================
 // Constants
@@ -53,6 +54,8 @@ const teamPlannerBtnEl  = document.querySelector('.planner-btn');
 const generateBtnEl     = document.querySelector('.planner-selected__generate-btn'); // TODO (temp): 4-1 generator
 const setTargetBtnEl    = document.querySelector('.planner-selected__set-target-btn');
 const pasteBtnEl        = document.querySelector('.planner-selected__paste-btn');
+const plannerTitleEl    = document.querySelector('.planner-selected__title');
+const plannerEditBtnEl  = document.querySelector('.planner-selected__edit-btn');
 
 // ============================================================
 // Undo stack  (stores serialised Set snapshots)
@@ -152,6 +155,7 @@ function makePickerUnit(champ) {
         renderTeamGrid();
         renderPlannerTraits();
         render();
+        saveActiveTeam();
     });
 
     // ── Right-click: toggle unlock for locked champions ──
@@ -396,15 +400,21 @@ export function toggleTeamPlan(name) {
     renderTeamGrid();
     renderPlannerTraits();
     render();
+    saveActiveTeam();
 }
 
 // ============================================================
 // Open / Close
 // ============================================================
-function openTeamPlanner() {
+function renderPlannerTitle() {
+    plannerTitleEl.textContent = lastLoadedPreset?.name ?? 'Your Team';
+}
+
+export function openTeamPlanner() {
     buildPicker();
     renderTeamGrid();
     renderPlannerTraits();
+    renderPlannerTitle();
     plannerEl.style.display = 'grid';
     plannerBackdropEl.style.display = 'block';
 }
@@ -469,6 +479,7 @@ export function loadTeamCode(code) {
     renderTeamGrid();
     renderPlannerTraits();
     render();
+    saveActiveTeam();
     return true;
 }
 
@@ -499,6 +510,7 @@ clearBtnEl?.addEventListener('click', () => {
     renderTeamGrid();
     renderPlannerTraits();
     render();
+    saveActiveTeam();
 });
 
 // Undo button
@@ -511,6 +523,37 @@ undoBtnEl?.addEventListener('click', () => {
     renderTeamGrid();
     renderPlannerTraits();
     render();
+    saveActiveTeam();
+});
+
+// Planner title edit button
+plannerEditBtnEl?.addEventListener('click', () => {
+    if (!lastLoadedPreset) return;
+    plannerTitleEl.style.display = 'none';
+    plannerEditBtnEl.style.display = 'none';
+    const input = document.createElement('input');
+    input.className = 'planner-selected__name-input';
+    input.value = lastLoadedPreset.name;
+    let committed = false;
+    const finish = (cancel = false) => {
+        if (committed) return;
+        committed = true;
+        if (!cancel) {
+            const newName = input.value.trim() || lastLoadedPreset.name;
+            renameTeam(lastLoadedPreset.id, newName);
+        }
+        plannerTitleEl.style.display = '';
+        plannerEditBtnEl.style.display = '';
+        input.remove();
+    };
+    input.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter') finish(false);
+        else if (ev.key === 'Escape') finish(true);
+    });
+    input.addEventListener('blur', () => finish(false));
+    plannerTitleEl.parentElement.insertBefore(input, plannerEditBtnEl);
+    input.focus();
+    input.select();
 });
 
 // ── TODO (temp): Generate 4-1 Board button ─────────────────────────────────
@@ -582,6 +625,13 @@ pasteBtnEl?.addEventListener('click', async () => {
         pasteBtnEl.textContent = 'INVALID CODE';
         setTimeout(() => { pasteBtnEl.textContent = 'PASTE TEAM'; }, 1500);
     }
+});
+
+// Saved teams button — show .teams panel
+const savedTeamsBtnEl = document.querySelector('.planner__saved-teams-btn');
+savedTeamsBtnEl?.addEventListener('click', () => {
+    openTeams();
+    if (plannerEl) plannerEl.style.display = 'none';
 });
 
 // Hide planner on startup

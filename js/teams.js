@@ -1,0 +1,485 @@
+import { pool } from './tables.js';
+import { state, _originallyLocked, isOriginallyLocked, saveTeamPlan, saveUnlockedOverrides } from './state.js';
+import { generate41Board } from './board-generator.js';
+import { render } from './render.js';
+import { doRoll } from './logic.js';
+import { teamBuilderActive, buildTbPicker } from './team-builder.js';
+import { history } from './commands.js';
+import { openTeamPlanner, loadTeamCode } from './team-planner.js';
+
+// ============================================================
+// Team storage
+// ============================================================
+function loadTeams() {
+    try {
+        const saved = localStorage.getItem('tft-presets');
+        return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+}
+
+function saveTeams(teams) {
+    try {
+        localStorage.setItem('tft-presets', JSON.stringify(teams));
+    } catch {}
+}
+
+function uniqueTeamName(base, teams) {
+    const names = new Set(teams.map(t => t.name));
+    if (!names.has(base)) return base;
+    let i = 2;
+    while (names.has(`${base} (${i})`)) i++;
+    return `${base} (${i})`;
+}
+
+export function renameTeam(id, newName) {
+    const all = loadTeams();
+    const t = all.find(t => t.id === id);
+    if (!t) return;
+    t.name = newName;
+    saveTeams(all);
+    if (lastLoadedPreset?.id === id) {
+        lastLoadedPreset.name = newName;
+        const titleEl = document.querySelector('.planner-selected__title');
+        if (titleEl) titleEl.textContent = newName;
+    }
+}
+
+// ============================================================
+// Panel elements
+// ============================================================
+const teamsEl         = document.querySelector('.teams');
+const teamsCloseBtnEl = document.querySelector('.teams__close-btn');
+const teamsBackdropEl = document.querySelector('.planner-backdrop');
+const teamsList       = document.querySelector('.teams__list');
+const teamsPasteBtnEl = document.querySelector('.teams__paste-btn');
+
+function isEmptyTeam(team) {
+    const hasBoard = team.board && Object.values(team.board).some(Boolean);
+    const hasPlan  = team.teamPlan?.length > 0;
+    return !hasBoard && !hasPlan;
+}
+
+function openTeams() {
+    const teams = loadTeams();
+    const pruned = teams.filter(t => {
+        if (isEmptyTeam(t)) {
+            if (lastLoadedPreset?.id === t.id) lastLoadedPreset = null;
+            return false;
+        }
+        return true;
+    });
+    if (pruned.length !== teams.length) saveTeams(pruned);
+
+    renderTeamsList();
+    teamsEl.style.display = 'flex';
+    teamsBackdropEl.style.display = 'block';
+}
+
+function closeTeams() {
+    teamsEl.style.display = 'none';
+    teamsBackdropEl.style.display = 'none';
+}
+
+// Aliased exports so main.js needs no rename changes
+export { openTeams };
+export const openPresets    = openTeams;
+export const openSavePreset = openTeams;
+
+teamsCloseBtnEl.addEventListener('click', closeTeams);
+teamsBackdropEl.addEventListener('click', (e) => {
+    if (e.target === teamsBackdropEl) closeTeams();
+});
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && teamsEl.style.display !== 'none') closeTeams();
+});
+
+// ============================================================
+// Kebab dropdown — close any open one on outside click
+// ============================================================
+let openKebabMenu = null;
+
+document.addEventListener('click', () => {
+    if (openKebabMenu) {
+        openKebabMenu.remove();
+        openKebabMenu = null;
+    }
+});
+
+// ============================================================
+// Active team — save continuously on any state change
+// ============================================================
+export let lastLoadedPreset = null;
+
+export function saveActiveTeam() {
+    if (!lastLoadedPreset) {
+        const existing = loadTeams();
+        const team = {
+            id: Date.now(),
+            name: uniqueTeamName('New Team', existing),
+            level: state.level,
+            gold: state.gold,
+            board: Object.fromEntries(
+                Object.entries(state.board).map(([k, v]) => [k, v ? { name: v.name, stars: v.stars } : null])
+            ),
+            bench: state.bench.map(u => u ? { name: u.name, stars: u.stars } : null),
+            teamPlan: [...state.teamPlan],
+            targetTeam: [...(state.targetTeam ?? [])],
+            autoGenerateTeam: false,
+            unlocks: Object.values(pool)
+                .filter(c => isOriginallyLocked(c.name) && c.unlocked)
+                .map(c => c.name),
+        };
+        existing.push(team);
+        saveTeams(existing);
+        lastLoadedPreset = team;
+        return;
+    }
+    const all = loadTeams();
+    const t = all.find(t => t.id === lastLoadedPreset.id);
+    if (!t) return;
+
+    t.board = Object.fromEntries(
+        Object.entries(state.board).map(([k, v]) => [k, v ? { name: v.name, stars: v.stars } : null])
+    );
+    t.bench      = state.bench.map(u => u ? { name: u.name, stars: u.stars } : null);
+    t.level      = state.level;
+    t.gold       = state.gold;
+    t.teamPlan   = [...state.teamPlan];
+    t.targetTeam = [...(state.targetTeam ?? [])];
+    t.unlocks    = Object.values(pool)
+        .filter(c => isOriginallyLocked(c.name) && c.unlocked)
+        .map(c => c.name);
+
+    Object.assign(lastLoadedPreset, t);
+    saveTeams(all);
+}
+
+history.addListener(saveActiveTeam);
+
+// ============================================================
+// NEW button — create blank team and open planner
+// ============================================================
+document.querySelector('.teams__new-btn').addEventListener('click', () => {
+    const teams = loadTeams();
+    const team = {
+        id: Date.now(),
+        name: uniqueTeamName('New Team', teams),
+        level: state.level,
+        gold: state.gold,
+        board: Object.fromEntries(Object.keys(state.board).map(k => [k, null])),
+        bench: Array(9).fill(null),
+        teamPlan: [],
+        targetTeam: [],
+        autoGenerateTeam: false,
+        unlocks: [],
+    };
+
+    teams.push(team);
+    saveTeams(teams);
+
+    _applyTeam(team);
+    closeTeams();
+    openTeamPlanner();
+});
+
+// ============================================================
+// PASTE TEAM button — read clipboard, create new team, apply code
+// ============================================================
+teamsPasteBtnEl.addEventListener('click', async () => {
+    let text = '';
+    try { text = await navigator.clipboard.readText(); } catch { return; }
+
+    if (!text.trim().match(/^(01|02)[0-9a-f]+(TFTSet\d+)$/i)) {
+        teamsPasteBtnEl.innerHTML = 'INVALID CODE';
+        setTimeout(() => { teamsPasteBtnEl.innerHTML = '<img src="img/paste.png"/>PASTE TEAM'; }, 1500);
+        return;
+    }
+
+    const allTeams = loadTeams();
+    const team = {
+        id: Date.now(),
+        name: uniqueTeamName('New Team', allTeams),
+        level: state.level,
+        gold: state.gold,
+        board: Object.fromEntries(Object.keys(state.board).map(k => [k, null])),
+        bench: Array(9).fill(null),
+        teamPlan: [],
+        targetTeam: [],
+        autoGenerateTeam: false,
+        unlocks: [],
+    };
+    allTeams.push(team);
+    saveTeams(allTeams);
+    _applyTeam(team);
+    closeTeams();
+    openTeamPlanner();
+    loadTeamCode(text);
+});
+
+// ============================================================
+// Render teams list using .team__row DOM pattern
+// ============================================================
+function renderTeamsList() {
+    teamsList.innerHTML = '';
+    const teams = loadTeams();
+
+    if (teams.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'teams__empty';
+        empty.textContent = 'No teams saved. Click NEW to start a new team.';
+        teamsList.appendChild(empty);
+        return;
+    }
+
+    for (const team of [...teams].reverse()) {
+        const row = document.createElement('div');
+        row.className = 'team__row';
+
+        // Container: name + meta + unit icons — click to load + open planner
+        const container = document.createElement('div');
+        container.className = 'team__container';
+
+        const nameRow = document.createElement('div');
+        nameRow.style.display = 'flex';
+        nameRow.style.alignItems = 'baseline';
+        nameRow.style.gap = '0.5rem';
+
+        const nameEl = document.createElement('div');
+        nameEl.className = 'team__name';
+        nameEl.textContent = team.name;
+
+        const levelEl = document.createElement('div');
+        levelEl.className = 'team__level';
+        levelEl.textContent = `Lv ${team.level}`;
+
+        const goldEl = document.createElement('div');
+        goldEl.className = 'team__gold';
+        goldEl.textContent = `${team.gold}g`;
+
+        nameRow.appendChild(nameEl);
+
+        const nameEditBtn = document.createElement('div');
+        nameEditBtn.className = 'team__name-edit-btn';
+        nameEditBtn.textContent = 'EDIT';
+        nameEditBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            nameEl.style.display = 'none';
+            nameEditBtn.style.display = 'none';
+            const input = document.createElement('input');
+            input.className = 'team__name-input';
+            input.value = team.name;
+            let committed = false;
+            const finish = (cancel = false) => {
+                if (committed) return;
+                committed = true;
+                if (!cancel) {
+                    const newName = input.value.trim() || team.name;
+                    renameTeam(team.id, newName);
+                    nameEl.textContent = newName;
+                    team.name = newName;
+                }
+                nameEl.style.display = '';
+                nameEditBtn.style.display = '';
+                input.remove();
+            };
+            input.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Enter') finish(false);
+                else if (ev.key === 'Escape') finish(true);
+            });
+            input.addEventListener('blur', () => finish(false));
+            nameRow.insertBefore(input, levelEl);
+            input.focus();
+            input.select();
+        });
+        nameRow.appendChild(nameEditBtn);
+
+        nameRow.appendChild(levelEl);
+        nameRow.appendChild(goldEl);
+        container.appendChild(nameRow);
+
+        // Unit slots sourced from teamPlan (planner units)
+        const unitsEl = document.createElement('div');
+        unitsEl.className = 'team__units';
+
+        const planNames = team.teamPlan ?? [];
+        for (let i = 0; i < 10; i++) {
+            const slot = document.createElement('div');
+            if (i < planNames.length) {
+                const champ = pool[planNames[i]];
+                if (champ) {
+                    slot.className = `team__unit-slot unit-slot--${champ.cost}-cost`;
+                    const img = document.createElement('img');
+                    img.src = champ.icon;
+                    img.alt = planNames[i];
+                    img.title = planNames[i];
+                    img.className = 'team__unit-icon';
+                    slot.appendChild(img);
+                } else {
+                    slot.className = 'team__unit-slot';
+                }
+            } else {
+                slot.className = 'team__unit-slot';
+            }
+            unitsEl.appendChild(slot);
+        }
+        container.appendChild(unitsEl);
+
+        container.addEventListener('click', () => {
+            loadPreset(team);
+            closeTeams();
+            openTeamPlanner();
+        });
+
+        row.appendChild(container);
+
+        // Active switch — sets team as active without closing panel
+        const switchLabel = document.createElement('label');
+        switchLabel.className = 'team__active-switch';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.checked = lastLoadedPreset?.id === team.id;
+        cb.addEventListener('change', (e) => {
+            e.stopPropagation();
+            if (!cb.checked) { cb.checked = true; return; } // can't uncheck; switch to another
+            _applyTeam(team);
+            // Update all other switches in the list
+            teamsList.querySelectorAll('.team__active-switch input').forEach(other => {
+                other.checked = (other === cb);
+            });
+        });
+        const slider = document.createElement('div');
+        slider.className = 'team__active-switch-slider';
+        const icon = document.createElement('div');
+        icon.className = 'team__active-switch-icon';
+        const sym = document.createElement('img');
+        sym.className = 'team__active-switch-symbol';
+        sym.src = 'img/team_planner.png';
+        icon.appendChild(sym);
+        switchLabel.appendChild(cb);
+        switchLabel.appendChild(slider);
+        switchLabel.appendChild(icon);
+        switchLabel.addEventListener('click', e => e.stopPropagation());
+        row.appendChild(switchLabel);
+
+        // Kebab — dropdown with auto-generate toggle + delete
+        const kebab = document.createElement('div');
+        kebab.className = 'team__kebab';
+        kebab.addEventListener('click', (e) => {
+            e.stopPropagation();
+
+            if (openKebabMenu) {
+                const prev = openKebabMenu;
+                openKebabMenu.remove();
+                openKebabMenu = null;
+                if (prev.dataset.teamId === String(team.id)) return;
+            }
+
+            const menu = document.createElement('div');
+            menu.className = 'team__kebab-menu';
+            menu.dataset.teamId = String(team.id);
+
+            const autoLabel = document.createElement('label');
+            autoLabel.className = 'team__kebab-option';
+            const autoCb = document.createElement('input');
+            autoCb.type = 'checkbox';
+            autoCb.checked = !!team.autoGenerateTeam;
+            autoCb.addEventListener('change', (ev) => {
+                ev.stopPropagation();
+                const all = loadTeams();
+                const t = all.find(t => t.id === team.id);
+                if (t) { t.autoGenerateTeam = autoCb.checked; saveTeams(all); }
+            });
+            autoLabel.appendChild(autoCb);
+            autoLabel.append(' Auto-generate on load');
+            autoLabel.addEventListener('click', e => e.stopPropagation());
+            menu.appendChild(autoLabel);
+
+            const deleteBtn = document.createElement('div');
+            deleteBtn.className = 'team__kebab-option team__kebab-delete';
+            deleteBtn.textContent = 'Delete team';
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const updated = loadTeams().filter(t => t.id !== team.id);
+                saveTeams(updated);
+                if (lastLoadedPreset?.id === team.id) lastLoadedPreset = null;
+                menu.remove();
+                openKebabMenu = null;
+                renderTeamsList();
+            });
+            menu.appendChild(deleteBtn);
+
+            kebab.appendChild(menu);
+            openKebabMenu = menu;
+        });
+
+        row.appendChild(kebab);
+        teamsList.appendChild(row);
+    }
+}
+
+// ============================================================
+// Internal: apply team state without opening/closing panels
+// ============================================================
+function _applyTeam(team) {
+    if (team.teamPlan) {
+        for (const name of _originallyLocked) {
+            if (pool[name]) pool[name].unlocked = false;
+        }
+        state.teamPlan = new Set(team.teamPlan);
+        const unlockNames = team.unlocks ?? team.teamPlan.filter(n => isOriginallyLocked(n));
+        for (const name of unlockNames) {
+            if (pool[name]) pool[name].unlocked = true;
+        }
+        saveTeamPlan();
+        saveUnlockedOverrides();
+    }
+
+    state.targetTeam = team.targetTeam?.length ? new Set(team.targetTeam) : null;
+    state.level = team.level;
+    state.xp    = 0;
+    state.gold  = team.gold;
+
+    for (const key of Object.keys(state.board)) {
+        const u = team.board?.[key];
+        state.board[key] = u ? { name: u.name, stars: u.stars } : null;
+    }
+
+    state.bench = (team.bench ?? []).map(u => u ? { name: u.name, stars: u.stars } : null);
+    while (state.bench.length < 9) state.bench.push(null);
+    state.bench = state.bench.slice(0, 9);
+
+    lastLoadedPreset = team;
+
+    if (teamBuilderActive) {
+        buildTbPicker();
+    } else {
+        doRoll(false);
+    }
+
+    render();
+    history.clear();
+}
+
+// ============================================================
+// Load team (opens planner after loading)
+// ============================================================
+export function loadPreset(team) {
+    if (team.autoGenerateTeam) {
+        // Override board/bench with a generated 4-1 layout
+        const target = team.targetTeam?.length ? new Set(team.targetTeam) : new Set(team.teamPlan ?? []);
+        const result = target.size ? generate41Board(target) : null;
+        if (result) {
+            const generated = {
+                ...team,
+                gold:  result.gold,
+                level: result.level,
+                bench: result.bench,
+                board: result.board,
+            };
+            _applyTeam(generated);
+            lastLoadedPreset = team; // keep original as the tracked preset
+            return;
+        }
+    }
+    _applyTeam(team);
+}
