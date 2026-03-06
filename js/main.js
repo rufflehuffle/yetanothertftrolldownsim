@@ -359,9 +359,8 @@ document.querySelectorAll('.bench-slot, .hex, .shop-slot, .shop-container, .star
 // ============================================================
 // Team Builder & Presets button wiring
 // ============================================================
-document.querySelector('.team-builder-button').addEventListener('click', () => openTeamBuilder(ghost, openSavePreset));
-document.querySelector('.rolldown-mode-button').addEventListener('click', closeTeamBuilder);
-document.querySelector('.presets-button').addEventListener('click', openPresets);
+document.querySelector('.builder-btn').addEventListener('click', () => openTeamBuilder(ghost, openSavePreset));
+document.querySelector('.rolldown-btn').addEventListener('click', closeTeamBuilder);
 
 // ============================================================
 // Rolldown UI Overlays

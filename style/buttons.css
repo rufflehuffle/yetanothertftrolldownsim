@@ -1,97 +1,210 @@
 /* ============================================================
-   Team Planner Button
+   Toolbar — connected rectangular bar with bottom bevel
    ============================================================ */
-.team-planner-button {
+.toolbar {
     position: fixed;
-    top: 16px;
-    right: 16px;
-    background-color: #1e3a5f;
-    color: #90c8ff;
-    border: 1px solid #2d5a8e;
-    border-radius: 6px;
-    padding: 8px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
+    top: 0;
+    right: 18vw;
+    display: flex;
+    height: 48px;
     z-index: 100;
-    letter-spacing: 0.3px;
 }
-.team-planner-button:hover {
-    background-color: #2a4f7a;
-    border-color: #4a8abf;
+
+.toolbar-trim {
+    position: absolute;
+    left: -8px;
+    background: #735D31;
+    right: -8px;
+    height: 56px;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 27px) 100%, 27px 100%);
+}
+
+.toolbar-trim::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    background: #162021;
+    right: 4px;
+    height: 53px;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 26px) 100%, 26px 100%);
+}
+
+.toolbar-left {
+    position: relative;
+    background: #21555A;
+    width: 28px;
+    height: 50px;
+    margin-right: -1px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, calc(100% - 2px) 100%);
+    transition: background 0.15s;
+}
+
+.toolbar-left-inner {
+    left: 3px;
+    position: absolute;
+    right: 0;
+    background: #162021;
+    z-index: 1;
+    width: 25px;
+    height: 48px;
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+    transition: background 0.15s;
+}
+
+.toolbar-right {
+    margin-left: -1px;
+    position: relative;
+    background: #21555A;
+    width: 28px;
+    height: 50px;
+    clip-path: polygon(0 0, 100% 0, 2px 100%, 0% 100%);
+    transition: background 0.15s;
+}
+
+.toolbar-right-inner {
+    right: 3px;
+    position: absolute;
+    background: #162021;
+    z-index: 1;
+    width: 25px;
+    height: 48px;
+    clip-path: polygon(0 0, 0% 100%, 100% 0);
+    transition: background 0.15s;
 }
 
 /* ============================================================
-   Team Builder Button
+   Buttons — flex items, connected with divider borders
    ============================================================ */
-.team-builder-button {
-    position: fixed;
-    top: 52px;
-    right: 16px;
-    background-color: #2d1e4a;
-    color: #c084fc;
-    border: 1px solid #5b3a8e;
-    border-radius: 6px;
-    padding: 8px 14px;
-    font-size: 13px;
-    font-weight: 600;
+.planner-btn,
+.builder-btn,
+.rolldown-btn,
+.options-btn {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 48px;
+    background: #162021;
     cursor: pointer;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
-    z-index: 100;
-    letter-spacing: 0.3px;
-}
-.team-builder-button:hover {
-    background-color: #3e2a65;
-    border-color: #8b5cf6;
-}
-.team-builder-button.active {
-    background-color: #4c1d95;
-    border-color: #a78bfa;
-    color: #e9d5ff;
-    box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+    user-select: none;
+    border-right: 2px solid #21555A;
+    border-bottom: 2px solid #21555A;
+    transition: background 0.15s, border-color 0.15s;
 }
 
-/* Presets button */
-.presets-button {
-    position: fixed;
-    top: 88px;
-    right: 16px;
-    background-color: #1a2a1a;
-    color: #86efac;
-    border: 1px solid #3a6a3a;
-    border-radius: 6px;
-    padding: 8px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
-    z-index: 100;
-    letter-spacing: 0.3px;
-}
-.presets-button:hover {
-    background-color: #253525;
-    border-color: #5a9a5a;
+.options-btn {
+    border-right: none;
 }
 
-/* Rolldown mode button (replaces TB button in same position when in TB mode) */
-.rolldown-mode-button {
-    position: fixed;
-    top: 52px; /* Same position as team-builder-button */
-    right: 16px;
-    background-color: #1a2a3a;
-    color: #7dd3fc;
-    border: 1px solid #2a5a7a;
-    border-radius: 6px;
-    padding: 8px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
-    z-index: 100;
-    letter-spacing: 0.3px;
+/* ============================================================
+   Hover state
+   ============================================================ */
+.planner-btn:hover,
+.builder-btn:hover,
+.rolldown-btn:hover,
+.options-btn:hover {
+    background: #1C3538;
+    border-color: #529A94;
 }
-.rolldown-mode-button:hover {
-    background-color: #1e3a52;
-    border-color: #4a8abf;
+
+.planner-btn:hover,
+.builder-btn:hover,
+.rolldown-btn:hover {
+    border-color: #529A94;
+}
+
+.planner-btn:has(+ div:hover)  {
+    border-right-color: #529A94;
+}
+
+.builder-btn:has(~ .options-btn:hover)  {
+    border-right-color: #529A94;
+}
+
+.toolbar:has(.planner-btn:hover) .toolbar-left-inner {
+    background: #1C3538;
+}
+
+.toolbar:has(.planner-btn:hover) .toolbar-left {
+    background: #529A94;
+}
+
+.toolbar:has(.options-btn:hover) .toolbar-right-inner {
+    background: #1C3538;
+}
+
+.toolbar:has(.options-btn:hover) .toolbar-right {
+    background: #529A94;
+}
+
+
+/* Icon image swap on hover */
+.planner-btn:hover .planner-btn-icon { content: url('../img/planner-btn-icon-hover.png'); }
+.builder-btn:hover .builder-btn-icon { content: url('../img/builder-btn-icon-hover.png'); }
+.rolldown-btn:hover .rolldown-btn-icon { content: url('../img/rolldown-btn-icon-hover.png'); }
+.options-btn:hover .options-btn-icon { content: url('../img/options-btn-icon-hover.png'); }
+
+/* ============================================================
+   Icons
+   ============================================================ */
+.planner-btn-icon,
+.builder-btn-icon,
+.rolldown-btn-icon,
+.options-btn-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: block;
+    pointer-events: none;
+}
+
+/* ============================================================
+   Active state — builder button when Team Builder is open
+   ============================================================ */
+.builder-btn.active {
+    background: #1C3538;
+    border-right-color: #529A94;
+}
+
+/* ============================================================
+   Hover panels — siblings inside .toolbar, positioned at bottom
+   ============================================================ */
+.btn-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 18px);
+    left: 0;
+    width: 200px;
+    background: #080C10;
+    border: 3px solid #735D31;
+    z-index: 200;
+    pointer-events: none;
+}
+
+.planner-btn:hover ~ .planner-panel { display: block; }
+.builder-btn:hover ~ .builder-panel { display: block; }
+.rolldown-btn:hover ~ .rolldown-panel { display: block; }
+.options-btn:hover ~ .options-panel { display: block; }
+
+.btn-panel__title {
+    padding: 8px 10px 6px;
+    color: #E6DDC9;
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+.btn-panel__rule {
+    height: 2px;
+    background: #464027;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.btn-panel__desc {
+    padding: 6px 10px 8px;
+    color: #8D897C;
+    font-size: 14px;
+    white-space: nowrap;
 }
