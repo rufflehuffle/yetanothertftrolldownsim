@@ -1,5 +1,6 @@
 # TODO
-
+Work on button UI
+- Describe buttons in plain english
 
 # Major
 
@@ -9,7 +10,6 @@
     - Read Don't Make Me Think and apply concepts
 
 ## Team Planner
-- Change image used in .selected to be a 
 - Filter by trait
 - Snapshot
 
@@ -30,11 +30,11 @@
 
 ## Rolldown Grading
 - Implement a rolldown replay system
-    - Also add a move function so I can track movement
 
 ## Specific trait / unit interactions
 - Make Annie, Ice Tower, and Azir summons feel less janky
 - Add T-Hex eat positioning
+- Add Ice Tower highlighting
 - Add Piltover mod selection
 
 ## Settings
@@ -62,5 +62,5 @@
     - Units can still appear in the shop after being 3 starred
     - Presets don't load with the XP in the bank
     - HUD is all messed up and clippy in TB mode
-    - Shop, planner, etc. UI don't support 7 costs well
+    - Shop, planner, etc. UI don't support 7 costs at all
     - "pool" object in tables.js is doing too much -> split into unit_info and pool

@@ -16,8 +16,8 @@ let _ghost = null;
 
 const tbPickerPanel    = document.querySelector('.tb-picker-panel');
 const tbPickerInner    = document.querySelector('.tb-picker-inner');
-const tbBuilderButton  = document.querySelector('.team-builder-button');
-const tbRolldownButton = document.querySelector('.rolldown-mode-button');
+const tbBuilderButton  = document.querySelector('.builder-btn');
+const tbRolldownButton = document.querySelector('.rolldown-btn');
 
 // ============================================================
 // Star adjuster controls (injected into every hex-wrapper)
@@ -161,7 +161,7 @@ export function openTeamBuilder(ghost, onSave) {
     document.body.classList.add('team-builder-mode');
     tbBuilderButton.classList.add('active');
     tbBuilderButton.style.display = 'none';
-    tbRolldownButton.style.display = 'block';
+    tbRolldownButton.style.display = 'flex';
 
     // Add Save button to panel header if not already there
     let saveBtn = tbPickerPanel.querySelector('.tb-save-btn');
@@ -181,7 +181,7 @@ export function closeTeamBuilder() {
     teamBuilderActive = false;
     document.body.classList.remove('team-builder-mode');
     tbBuilderButton.classList.remove('active');
-    tbBuilderButton.style.display = 'block';
+    tbBuilderButton.style.display = 'flex';
     tbRolldownButton.style.display = 'none';
     tbPickerPanel.style.display = 'none';
 }
