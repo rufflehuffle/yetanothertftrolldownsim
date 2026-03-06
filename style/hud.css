@@ -159,7 +159,7 @@
     overflow: hidden;
 }
 .level-dropdown.open .level-dropdown-menu {
-    display: block;
+    display: flex;
 }
 
 .level-option {

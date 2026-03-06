@@ -119,6 +119,10 @@
     border-right-color: #529A94;
 }
 
+.planner-btn:has(~ .rolldown-btn:hover)  {
+    border-right-color: #529A94;
+}
+
 .builder-btn:has(~ .options-btn:hover)  {
     border-right-color: #529A94;
 }

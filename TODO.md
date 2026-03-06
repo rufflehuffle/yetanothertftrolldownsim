@@ -1,13 +1,11 @@
 # TODO
-Work on button UI
-- Describe buttons in plain english
 
 # Major
 
-
 # Low Priority
-- Fix any glaring issues with UI/UX
-    - Read Don't Make Me Think and apply concepts
+## HUD
+- Level select runs into trait panel
+    - Change to open a sideways select panel
 
 ## Team Planner
 - Filter by trait
@@ -64,3 +62,13 @@ Work on button UI
     - HUD is all messed up and clippy in TB mode
     - Shop, planner, etc. UI don't support 7 costs at all
     - "pool" object in tables.js is doing too much -> split into unit_info and pool
+    - No way to get from Free Roll mode to Round Start anymore
+        - Have ESC return you to the before round start menu
+    - Need to prevent D from doing the default navigation thingy
+
+## Big Picture before Release
+- Update for new set
+- Support more viewports than my own...
+- Tune board auto generation
+- Remove any vibe coded / temp UI
+- Make UX as good as possible
