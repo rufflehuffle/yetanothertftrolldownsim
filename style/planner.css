@@ -22,6 +22,7 @@
     height: 75vh;
     z-index: 500;
     user-select: none;
+    border: 1px solid #473513;
 }
 
 .planner__header {
@@ -337,15 +338,61 @@ input:checked ~ .planner-picker__unlockable-switch-icon {
 .planner-selected__header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: left;
+}
+
+.planner-selected__edit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    padding: 0.5rem;
+    clip-path: circle(50%);
+    background: #C0A366;
+
+    margin-right: 1vw;
+
+    cursor: pointer;
+}
+
+.planner-selected__edit-btn::before {
+    content: '';
+
+    position: absolute;
+
+    height: 1.8rem;
+    width: 1.8rem;
+
+    z-index: -1;
+
+    clip-path: circle(50%);
+    background-color: #1E2429;
+}
+
+.planner-selected__header-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .planner-selected__title {
-    padding-top: 10px;
     font-size: 28px;
     color: #F0E6D2;
     font-family: 'Beaufort', 'serif';
     font-weight: bold;
+}
+
+.planner-selected__name-input {
+    border: 2px solid #C0A366;
+    font-size: 28px;
+    color: #F0E6D2;
+    font-family: 'Beaufort', 'serif';
+    font-weight: bold;
+
+    background: #0E161E;
+    width: 40%;
+    border-radius: 0;
 }
 
 .planner-selected__paste-btn {

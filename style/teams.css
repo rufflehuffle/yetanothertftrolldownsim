@@ -180,6 +180,37 @@
     width: 0.75vw;
     height: 3vw;
     cursor: pointer;
+
+    position: relative;
+}
+
+.team__kebab-menu {
+    position: absolute;
+    top: 0;
+    right: 2vw;
+
+    background: #000B13;
+    border: 1px solid #20262B;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5vh;
+    padding: 0.5vh 0.5vw;
+    z-index: 10;
+
+    border: 2px solid #6F5925;
+}
+
+.team__kebab-menu hr {
+    border: none;
+    border-top: 1px solid #20262B;
+    margin: 0;
+}
+
+.team__kebab-option {
+    display: flex;
+    cursor: pointer;
+    width: 100%;
+    white-space: nowrap;
 }
 
 /*  =================

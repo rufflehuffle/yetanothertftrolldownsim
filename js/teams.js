@@ -258,41 +258,6 @@ function renderTeamsList() {
 
         nameRow.appendChild(nameEl);
 
-        const nameEditBtn = document.createElement('div');
-        nameEditBtn.className = 'team__name-edit-btn';
-        nameEditBtn.textContent = 'EDIT';
-        nameEditBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            nameEl.style.display = 'none';
-            nameEditBtn.style.display = 'none';
-            const input = document.createElement('input');
-            input.className = 'team__name-input';
-            input.value = team.name;
-            let committed = false;
-            const finish = (cancel = false) => {
-                if (committed) return;
-                committed = true;
-                if (!cancel) {
-                    const newName = input.value.trim() || team.name;
-                    renameTeam(team.id, newName);
-                    nameEl.textContent = newName;
-                    team.name = newName;
-                }
-                nameEl.style.display = '';
-                nameEditBtn.style.display = '';
-                input.remove();
-            };
-            input.addEventListener('keydown', (ev) => {
-                if (ev.key === 'Enter') finish(false);
-                else if (ev.key === 'Escape') finish(true);
-            });
-            input.addEventListener('blur', () => finish(false));
-            nameRow.insertBefore(input, levelEl);
-            input.focus();
-            input.select();
-        });
-        nameRow.appendChild(nameEditBtn);
-
         nameRow.appendChild(levelEl);
         nameRow.appendChild(goldEl);
         container.appendChild(nameRow);
@@ -340,7 +305,13 @@ function renderTeamsList() {
         cb.checked = lastLoadedPreset?.id === team.id;
         cb.addEventListener('change', (e) => {
             e.stopPropagation();
-            if (!cb.checked) { cb.checked = true; return; } // can't uncheck; switch to another
+            if (!cb.checked) {
+                _deactivateTeam();
+                teamsList.querySelectorAll('.team__active-switch input').forEach(other => {
+                    other.checked = false;
+                });
+                return;
+            }
             _applyTeam(team);
             // Update all other switches in the list
             teamsList.querySelectorAll('.team__active-switch input').forEach(other => {
@@ -393,6 +364,7 @@ function renderTeamsList() {
             autoLabel.append(' Auto-generate on load');
             autoLabel.addEventListener('click', e => e.stopPropagation());
             menu.appendChild(autoLabel);
+            menu.appendChild(document.createElement('hr'));
 
             const deleteBtn = document.createElement('div');
             deleteBtn.className = 'team__kebab-option team__kebab-delete';
@@ -415,6 +387,24 @@ function renderTeamsList() {
         row.appendChild(kebab);
         teamsList.appendChild(row);
     }
+}
+
+// ============================================================
+// Internal: deactivate current team — clears planner, keeps board
+// ============================================================
+function _deactivateTeam() {
+    lastLoadedPreset = null;
+    try { localStorage.removeItem('tft-last-preset'); } catch {}
+
+    state.teamPlan.clear();
+    state.targetTeam = null;
+    for (const name of Object.keys(pool)) {
+        if (isOriginallyLocked(name)) pool[name].unlocked = false;
+    }
+    saveTeamPlan();
+    saveUnlockedOverrides();
+    render();
+    history.clear();
 }
 
 // ============================================================
@@ -449,6 +439,7 @@ function _applyTeam(team) {
     state.bench = state.bench.slice(0, 9);
 
     lastLoadedPreset = team;
+    try { localStorage.setItem('tft-last-preset', team.id); } catch {}
 
     if (teamBuilderActive) {
         buildTbPicker();
@@ -463,6 +454,19 @@ function _applyTeam(team) {
 // ============================================================
 // Load team (opens planner after loading)
 // ============================================================
+// ============================================================
+// Auto-load last preset on startup
+// ============================================================
+(function autoLoadLastPreset() {
+    try {
+        const lastId = localStorage.getItem('tft-last-preset');
+        if (!lastId) return;
+        const teams = loadTeams();
+        const team = teams.find(t => String(t.id) === lastId);
+        if (team) loadPreset(team);
+    } catch {}
+})();
+
 export function loadPreset(team) {
     if (team.autoGenerateTeam) {
         // Override board/bench with a generated 4-1 layout

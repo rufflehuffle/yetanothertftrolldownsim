@@ -490,6 +490,7 @@ export function loadTeamCode(code) {
 // Open/close
 teamPlannerBtnEl?.addEventListener('click', openTeamPlanner);
 closeBtnEl?.addEventListener('click', closeTeamPlanner);
+plannerBackdropEl?.addEventListener('click', closeTeamPlanner);
 
 // Escape key
 document.addEventListener('keydown', (e) => {
@@ -530,9 +531,9 @@ undoBtnEl?.addEventListener('click', () => {
 plannerEditBtnEl?.addEventListener('click', () => {
     if (!lastLoadedPreset) return;
     plannerTitleEl.style.display = 'none';
-    plannerEditBtnEl.style.display = 'none';
     const input = document.createElement('input');
     input.className = 'planner-selected__name-input';
+    input.spellcheck = false;
     input.value = lastLoadedPreset.name;
     let committed = false;
     const finish = (cancel = false) => {
@@ -551,12 +552,12 @@ plannerEditBtnEl?.addEventListener('click', () => {
         else if (ev.key === 'Escape') finish(true);
     });
     input.addEventListener('blur', () => finish(false));
-    plannerTitleEl.parentElement.insertBefore(input, plannerEditBtnEl);
+    plannerEditBtnEl.after(input);
     input.focus();
     input.select();
 });
 
-// ── TODO (temp): Generate 4-1 Board button ─────────────────────────────────
+// Generate 4-1 Board button ─────────────────────────────────
 // Simulates a standard early-game buying curve and loads the resulting
 // board + bench + gold into the main state. Close the planner so the
 // user can immediately see the result.

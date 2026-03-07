@@ -291,7 +291,7 @@ document.addEventListener('keydown', (e) => {
         return;
     }
     // Space: start round from planning, or resume from paused
-    if (e.key === ' ') {
+    if (e.key === ' ' && e.target.tagName !== 'INPUT') {
         e.preventDefault();
         if (isPlanning()) {
             timerControls.start();
