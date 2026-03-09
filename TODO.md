@@ -2,8 +2,6 @@
 
 # Major
 Disable loading saved teams and entering TB mode while in a round
-Change default behavior to not load the board on changing plans
-- Add it as a setting in the kebab
 
 # Low Priority
 ## HUD

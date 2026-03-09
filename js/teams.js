@@ -290,7 +290,7 @@ function renderTeamsList() {
         container.appendChild(unitsEl);
 
         container.addEventListener('click', () => {
-            loadPreset(team);
+            loadPreset(loadTeams().find(t => t.id === team.id) ?? team);
             closeTeams();
             openTeamPlanner();
         });
@@ -312,7 +312,7 @@ function renderTeamsList() {
                 });
                 return;
             }
-            _applyTeam(team);
+            loadPreset(loadTeams().find(t => t.id === team.id) ?? team);
             // Update all other switches in the list
             teamsList.querySelectorAll('.team__active-switch input').forEach(other => {
                 other.checked = (other === cb);
@@ -349,21 +349,42 @@ function renderTeamsList() {
             menu.className = 'team__kebab-menu';
             menu.dataset.teamId = String(team.id);
 
+            const freshTeam = loadTeams().find(t => t.id === team.id) ?? team;
+
             const autoLabel = document.createElement('label');
             autoLabel.className = 'team__kebab-option';
             const autoCb = document.createElement('input');
             autoCb.type = 'checkbox';
-            autoCb.checked = !!team.autoGenerateTeam;
+            autoCb.checked = !!freshTeam.autoGenerateTeam;
             autoCb.addEventListener('change', (ev) => {
                 ev.stopPropagation();
+                if (autoCb.checked) { loadBoardCb.checked = false; }
                 const all = loadTeams();
                 const t = all.find(t => t.id === team.id);
-                if (t) { t.autoGenerateTeam = autoCb.checked; saveTeams(all); }
+                if (t) { t.autoGenerateTeam = autoCb.checked; if (autoCb.checked) t.loadSavedBoard = false; saveTeams(all); }
             });
             autoLabel.appendChild(autoCb);
             autoLabel.append(' Auto-generate on load');
             autoLabel.addEventListener('click', e => e.stopPropagation());
             menu.appendChild(autoLabel);
+            menu.appendChild(document.createElement('hr'));
+
+            const loadBoardLabel = document.createElement('label');
+            loadBoardLabel.className = 'team__kebab-option';
+            const loadBoardCb = document.createElement('input');
+            loadBoardCb.type = 'checkbox';
+            loadBoardCb.checked = !!freshTeam.loadSavedBoard;
+            loadBoardCb.addEventListener('change', (ev) => {
+                ev.stopPropagation();
+                if (loadBoardCb.checked) { autoCb.checked = false; }
+                const all = loadTeams();
+                const t = all.find(t => t.id === team.id);
+                if (t) { t.loadSavedBoard = loadBoardCb.checked; if (loadBoardCb.checked) t.autoGenerateTeam = false; saveTeams(all); }
+            });
+            loadBoardLabel.appendChild(loadBoardCb);
+            loadBoardLabel.append(' Load saved board');
+            loadBoardLabel.addEventListener('click', e => e.stopPropagation());
+            menu.appendChild(loadBoardLabel);
             menu.appendChild(document.createElement('hr'));
 
             const deleteBtn = document.createElement('div');
@@ -410,7 +431,7 @@ function _deactivateTeam() {
 // ============================================================
 // Internal: apply team state without opening/closing panels
 // ============================================================
-function _applyTeam(team) {
+function _applyTeam(team, emptyBoard = false) {
     if (team.teamPlan) {
         for (const name of _originallyLocked) {
             if (pool[name]) pool[name].unlocked = false;
@@ -429,11 +450,12 @@ function _applyTeam(team) {
     state.gold  = team.gold;
 
     for (const key of Object.keys(state.board)) {
-        const u = team.board?.[key];
+        const u = emptyBoard ? null : team.board?.[key];
         state.board[key] = u ? { name: u.name, stars: u.stars } : null;
     }
 
-    state.bench = (team.bench ?? []).map(u => u ? { name: u.name, stars: u.stars } : null);
+    const benchSrc = emptyBoard ? [] : (team.bench ?? []);
+    state.bench = benchSrc.map(u => u ? { name: u.name, stars: u.stars } : null);
     while (state.bench.length < 9) state.bench.push(null);
     state.bench = state.bench.slice(0, 9);
 
@@ -470,5 +492,5 @@ export function loadPreset(team) {
             return;
         }
     }
-    _applyTeam(team);
+    _applyTeam(team, !team.loadSavedBoard);
 }
