@@ -19,7 +19,7 @@
     padding: 5px 28px;
     background: #090a0c;
     clip-path: polygon(0% 0%, 100% 0%, calc(100% - 20px) 100%, 20px 100%);
-    width: 462px;
+    width: clamp(200px, 36vw, 462px);
     height: 26px;
     pointer-events: auto;
     box-sizing: border-box;

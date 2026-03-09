@@ -4,7 +4,7 @@
 .toolbar {
     position: fixed;
     top: 0;
-    right: 18vw;
+    right: min(18vw, calc(50vw - 497px));
     display: flex;
     height: 48px;
     z-index: 100;
@@ -211,4 +211,11 @@
     color: #8D897C;
     font-size: 14px;
     white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+    .toolbar {
+        /* top: 28px;  stack below the 26px-tall timer bar */
+        right: 0;
+    }
 }
