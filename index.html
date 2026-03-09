@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="style/trait.css">
     <link rel="stylesheet" href="style/planner.css">
     <link rel="stylesheet" href="style/teams.css">
+    <link rel="stylesheet" href="style/popup.css">
     <title>TFT Rolldown Simulator</title>
 </head>
 <body>
@@ -293,6 +294,18 @@
 
     <div class="board-count">0/8</div>
     <div class="board">
+        <div class="no-comp-popup" style="display:none;">
+            <div class="no-comp-popup--empty">
+                <div class="no-comp-popup__title">No Champions Selected</div>
+                <div class="no-comp-popup__desc">Add champions to your Team Planner to get started.</div>
+                <button class="no-comp-popup__btn no-comp-popup__open-btn">Open Team Planner</button>
+            </div>
+            <div class="no-comp-popup--has-plan" style="display:none;">
+                <div class="no-comp-popup__title">Board is Empty</div>
+                <div class="no-comp-popup__desc">Generate a 4-1 board from your Team Planner.</div>
+                <button class="no-comp-popup__btn no-comp-popup__generate-btn">Generate Board</button>
+            </div>
+        </div>
         <div class="board-row">
             <div class="hex-wrapper"><div class="hex A1"></div><div class="star-indicator"></div></div>
             <div class="hex-wrapper"><div class="hex A2"></div><div class="star-indicator"></div></div>
