@@ -1,0 +1,59 @@
+.no-comp-popup--empty,
+.no-comp-popup--has-plan {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+}
+
+.no-comp-popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    background: #0D1416;
+    border: 1px solid #947842;
+    padding: 20px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    pointer-events: auto;
+}
+
+.no-comp-popup__title {
+    font-family: 'Beaufort', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #C8AA6E;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.no-comp-popup__desc {
+    font-family: 'Beaufort', serif;
+    font-size: 12px;
+    color: #A09B8C;
+    text-align: center;
+}
+
+.no-comp-popup__btn {
+    font-family: 'Beaufort', serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #C8AA6E;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: linear-gradient(180deg, #1a2a3a 0%, #0d1416 100%);
+    border: 2px solid #42829C;
+    padding: 6px 16px;
+    cursor: pointer;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.no-comp-popup__btn:hover {
+    background: linear-gradient(180deg, #22354a 0%, #111c22 100%);
+}

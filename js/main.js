@@ -20,10 +20,17 @@ import {
     getRdMode, setRdMode,
     isPlanning, isRound, isPaused, isRoundEnd, isFreeroll,
     startRound, pauseRound, resumeRound, finishRound, returnToPlanning,
-    enterFreeroll, exitFreeroll
+    enterFreeroll, exitFreeroll, setStartGuard
 } from './rolldown-state.js';
 import { timerControls } from './timer.js';
 import './teams.js';
+import { updateNoCompPopup } from './popup.js';
+
+// Block starting a round when board and planner are both empty
+setStartGuard(() => {
+    const boardEmpty = Object.values(state.board).every(v => v === null);
+    return !(boardEmpty && state.teamPlan.size === 0);
+});
 
 
 // ============================================================
@@ -379,11 +386,12 @@ const rdPauseFreerollBtn   = document.querySelector('.rd-pause-overlay__freeroll
 function updateOverlayContent() {
     const mode = getRdMode();
     if (mode === 'planning') {
+        const canStart = !(Object.values(state.board).every(v => v === null) && state.teamPlan.size === 0);
         rdShopOverlayHint.textContent = 'Space to start';
         rdShopOverlayPresetName.textContent = '';
         rdShopPrimaryBtn.textContent = '▶  Start Round';
         rdShopPrimaryBtn.style.display = '';
-        rdShopPrimaryBtn.disabled = false;
+        rdShopPrimaryBtn.disabled = !canStart;
         rdOverlayTbBtn.style.display = '';
         rdOverlayPresetsBtn.style.display = '';
         rdOverlayFreerollBtn.style.display = '';
@@ -475,8 +483,10 @@ rdPauseFreerollBtn.addEventListener('click', () => {
     enterFreeroll();
 });
 
-// Keep overlay content fresh on every mode change
+// Keep overlay content fresh on every mode change and state change
 document.addEventListener('rdmodechange', () => updateOverlayContent());
+history.addListener(updateOverlayContent);
+document.addEventListener('teamplanchange', updateOverlayContent);
 
 // Init overlay content
 updateOverlayContent();
@@ -530,3 +540,4 @@ document.querySelector('.planner-selected__clear-btn')
 // Init
 // ============================================================
 doRoll(false);
+updateNoCompPopup();

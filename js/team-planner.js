@@ -573,6 +573,7 @@ export function triggerGenerate41Board() {
     state.board = result.board;
     closeTeamPlanner();
     render();
+    document.dispatchEvent(new CustomEvent('teamplanchange'));
     return true;
 }
 

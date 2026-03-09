@@ -57,9 +57,15 @@ export function setRdMode(newMode) {
 // The timer control functions (start/pause/reset/lock) are wired
 // in main.js after the timer module initialises.
 
+let _startGuard = null;
+
+/** Register a function that returns true if starting a round is allowed. */
+export function setStartGuard(fn) { _startGuard = fn; }
+
 /** Player clicks "Start Round" from planning screen. */
 export function startRound() {
     if (_state.mode !== 'planning') return false;
+    if (_startGuard && !_startGuard()) return false;
     setRdMode('round');
     return true;
 }

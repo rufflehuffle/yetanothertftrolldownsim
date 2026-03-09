@@ -3,12 +3,6 @@ import { pool } from './tables.js';
 // ============================================================
 // State
 // ============================================================
-function loadTeamPlan() {
-    try {
-        const saved = localStorage.getItem('tft-team-plan');
-        return saved ? new Set(JSON.parse(saved)) : new Set();
-    } catch { return new Set(); }
-}
 
 export let state = {
     gold: 9999,
@@ -22,7 +16,7 @@ export let state = {
         C1: null, C2: null, C3: null, C4: null, C5: null, C6: null, C7: null,
         D1: null, D2: null, D3: null, D4: null, D5: null, D6: null, D7: null,
     },
-    teamPlan: loadTeamPlan(),
+    teamPlan: new Set(),
     targetTeam: null,
 };
 
@@ -34,6 +28,7 @@ export function saveTeamPlan() {
     try {
         localStorage.setItem('tft-team-plan', JSON.stringify([...state.teamPlan]));
     } catch {}
+    document.dispatchEvent(new CustomEvent('teamplanchange'));
 }
 
 export function applyPersistedUnlocks() {

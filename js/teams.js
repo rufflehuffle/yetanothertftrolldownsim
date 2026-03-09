@@ -420,7 +420,6 @@ function _applyTeam(team) {
         for (const name of unlockNames) {
             if (pool[name]) pool[name].unlocked = true;
         }
-        saveTeamPlan();
         saveUnlockedOverrides();
     }
 
@@ -438,6 +437,8 @@ function _applyTeam(team) {
     while (state.bench.length < 9) state.bench.push(null);
     state.bench = state.bench.slice(0, 9);
 
+    if (team.teamPlan) saveTeamPlan(); // fires teamplanchange after board/bench are set
+
     lastLoadedPreset = team;
     try { localStorage.setItem('tft-last-preset', team.id); } catch {}
 
@@ -450,22 +451,6 @@ function _applyTeam(team) {
     render();
     history.clear();
 }
-
-// ============================================================
-// Load team (opens planner after loading)
-// ============================================================
-// ============================================================
-// Auto-load last preset on startup
-// ============================================================
-(function autoLoadLastPreset() {
-    try {
-        const lastId = localStorage.getItem('tft-last-preset');
-        if (!lastId) return;
-        const teams = loadTeams();
-        const team = teams.find(t => String(t.id) === lastId);
-        if (team) loadPreset(team);
-    } catch {}
-})();
 
 export function loadPreset(team) {
     if (team.autoGenerateTeam) {
