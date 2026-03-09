@@ -1,5 +1,6 @@
 node_modules/
 test-results/
+test-screenshots/
 package-lock.json
 .git/
 docs/
