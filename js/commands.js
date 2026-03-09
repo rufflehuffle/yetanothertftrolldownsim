@@ -6,6 +6,7 @@ import {
     hoveredSlot
 } from './logic.js';
 import { pool } from './tables.js';
+import { record } from './round.js';
 
 // ============================================================
 // State snapshot / restore
@@ -94,7 +95,9 @@ export class RollCommand {
     execute() {
         if (state.gold < 2) return false;
         this._snap = snapshotState();
-        return doRoll(true) !== false;
+        const ok = doRoll(true) !== false;
+        if (ok) record({ type: 'roll', goldBefore: this._snap.gold, shopBefore: [...this._snap.shop], shopAfter: [...state.shop] });
+        return ok;
     }
     undo() { if (this._snap) restoreState(this._snap); }
 }
@@ -103,7 +106,9 @@ export class BuyXpCommand {
     execute() {
         if (state.gold < 4 || state.level >= 10) return false;
         this._snap = snapshotState();
-        return buyXp() !== false;
+        const ok = buyXp() !== false;
+        if (ok) record({ type: 'buyXp', goldBefore: this._snap.gold, levelBefore: this._snap.level, xpBefore: this._snap.xp, levelAfter: state.level, xpAfter: state.xp });
+        return ok;
     }
     undo() { if (this._snap) restoreState(this._snap); }
 }
@@ -116,7 +121,9 @@ export class BuyCommand {
     execute() {
         if (!this._name || state.gold < pool[this._name].cost) return false;
         this._snap = snapshotState();
-        return buyChamp(this._name, this._idx) !== false;
+        const ok = buyChamp(this._name, this._idx) !== false;
+        if (ok) record({ type: 'buy', champName: this._name, cost: pool[this._name].cost, shopIndex: this._idx, goldBefore: this._snap.gold });
+        return ok;
     }
     undo() { if (this._snap) restoreState(this._snap); }
 }
@@ -131,6 +138,7 @@ export class SellCommand {
         this._snap = snapshotState();
         sellUnit(this._unit, this._loc);
         applyBoardEffects(); // calls render() internally
+        record({ type: 'sell', champName: this._unit.name, stars: this._unit.stars, location: this._loc, goldGained: state.gold - this._snap.gold, goldBefore: this._snap.gold });
         return true;
     }
     undo() { if (this._snap) restoreState(this._snap); }
@@ -143,7 +151,10 @@ export class MoveUnitCommand {
     }
     execute() {
         this._snap = snapshotState();
-        return moveUnit(this._from, this._to);
+        const unit = getUnitAt(this._from);
+        const ok = moveUnit(this._from, this._to);
+        if (ok && unit) record({ type: 'move', champName: unit.name, stars: unit.stars, from: this._from, to: this._to });
+        return ok;
     }
     undo() { if (this._snap) restoreState(this._snap); }
 }
@@ -154,16 +165,16 @@ export class MoveHoveredCommand {
     }
     execute() {
         if (!this._slot) return false;
-        let from, to;
+        let from, to, unit;
         if (this._slot.type === 'bench') {
-            const unit = state.bench[this._slot.index];
+            unit = state.bench[this._slot.index];
             if (!unit) return false;
             const key = findEmptyBoardHex();
             if (!key) return false;
             from = { type: 'bench', index: this._slot.index };
             to   = { type: 'board', key };
         } else if (this._slot.type === 'board') {
-            const unit = state.board[this._slot.key];
+            unit = state.board[this._slot.key];
             if (!unit) return false;
             const i = state.bench.findIndex(s => s === null);
             if (i === -1) return false;
@@ -173,7 +184,9 @@ export class MoveHoveredCommand {
             return false;
         }
         this._snap = snapshotState();
-        return moveUnit(from, to);
+        const ok = moveUnit(from, to);
+        if (ok && unit) record({ type: 'move', champName: unit.name, stars: unit.stars, from, to });
+        return ok;
     }
     undo() { if (this._snap) restoreState(this._snap); }
 }
