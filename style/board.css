@@ -1,15 +1,45 @@
+:root {
+    --hex-w: clamp(48px, min(9vh, 7.5vw), 80px);
+    --hex-h: calc(var(--hex-w) * 1.15);
+    --hex-gap: 4px;
+    --row-offset: calc(var(--hex-w) * 0.5 + 2px);
+    --row-overlap: calc(var(--hex-h) * -0.217);
+    --timer-h: 36px;
+    --hud-h: 200px;
+}
+
+@media (max-width: 900px) {
+    :root { --hud-h: 130px; }
+}
+
+.board-area {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--timer-h) 0 var(--hud-h);
+    box-sizing: border-box;
+    gap: 6px;
+    pointer-events: none;
+}
+
 .board-row {
     display: flex;
-    gap: 4px;
+    gap: var(--hex-gap);
 }
 
 .board-row.offset {
-    margin-left: 42px; /* half of hex width (80px) + half of gap (4px) */
+    margin-left: var(--row-offset);
 }
 
 .hex {
-    width: 80px;
-    height: 92px;
+    width: var(--hex-w);
+    height: var(--hex-h);
     background-color: #2a2a2a;
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     display: flex;
@@ -26,8 +56,8 @@
 }
 
 .bench-slot {
-    width: 80px;
-    height: 92px;
+    width: var(--hex-w);
+    height: var(--hex-h);
     background-color: #2a2a2a;
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     cursor: pointer;
@@ -40,12 +70,8 @@
 }
 
 .board-count {
-    position: fixed;
-    top: 100px;
-    left: 50%;
-    transform: translateX(-50%);
     font-family: 'Beaufort', 'serif';
-    font-size: 50px;
+    font-size: clamp(20px, 3vmin, 36px);
     font-weight: 700;
     color: #60a5fa;
     user-select: none;
@@ -56,23 +82,18 @@
     display: flex;
     flex-direction: column;
     gap: 0;
-    position: fixed;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
+    pointer-events: auto;
 }
 
 .board-row + .board-row {
-    margin-top: -20px;
+    margin-top: var(--row-overlap);
 }
 
 .bench {
     display: flex;
-    gap: 4px;
-    position: fixed;
-    top: calc(40% + 174px);
-    left: 50%;
-    transform: translateX(-50%);
+    gap: var(--hex-gap);
+    pointer-events: auto;
 }
 
 .hex-wrapper {

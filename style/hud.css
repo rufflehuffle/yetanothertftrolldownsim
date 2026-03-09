@@ -376,3 +376,10 @@
     display: flex;
     align-items: center;
 }
+
+@media (max-width: 900px) {
+    .hud {
+        transform: translateX(-50%) scale(0.62);
+        transform-origin: center bottom;
+    }
+}

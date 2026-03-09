@@ -4,7 +4,7 @@
 .trait-panel {
     position: fixed;
     /* sit just left of the board */
-    right: calc(50% + 400px);
+    right: min(calc(50% + 400px), calc(100% - 210px));
     top: 20%;
     width: 200px;
     display: flex;
@@ -204,4 +204,15 @@
 }
 .trait-tooltip .tt-unit-inactive .tt-unit-name {
     color: #555;
+}
+
+@media (max-width: 900px) {
+    .trait-panel {
+        right: unset;
+        left: 0;
+        top: 80px;      /* below stacked toolbar */
+        width: 165px;
+        max-height: 40vh;
+        overflow-y: auto;
+    }
 }
