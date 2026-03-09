@@ -39,6 +39,7 @@ setStartGuard(() => {
 const ghost = document.createElement('img');
 ghost.classList.add('drag-ghost');
 ghost.draggable = false;
+ghost.style.display = 'none';
 document.body.appendChild(ghost);
 let shopGhostEl = null, shopGhostSlotEl = null, shopGhostSlotIndex = -1;
 
@@ -46,10 +47,10 @@ let shopGhostEl = null, shopGhostSlotEl = null, shopGhostSlotIndex = -1;
 // Sell Zone & drag state
 // ============================================================
 const sellZone = document.querySelector('.sell-zone');
-const shopEl   = document.querySelector('.shop');
+const hudEl    = document.querySelector('.hud');
 
-function isOverShop(x, y) {
-    const rect = shopEl.getBoundingClientRect();
+function isOverHud(x, y) {
+    const rect = hudEl.getBoundingClientRect();
     return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
 }
 
@@ -237,7 +238,7 @@ document.addEventListener('mousemove', (e) => {
         shopGhostEl.style.opacity = isInSlotCenter(e.clientX, e.clientY, shopGhostSlotEl) ? '1' : '0.8';
     }
     if (dragging.type !== 'shop') {
-        const overShop = isOverShop(e.clientX, e.clientY);
+        const overShop = isOverHud(e.clientX, e.clientY);
         sellZone.style.display = overShop ? 'flex' : 'none';
         if (!overShop) sellZone.classList.remove('active');
     }
@@ -287,7 +288,13 @@ document.addEventListener('mouseup', (e) => {
         return;
     }
     if (dragging?.type === 'shop' && dragMoved) handleShopDragEnd(e);
-    else endDrag();
+    else if (dragging && dragging.type !== 'shop' && isOverHud(e.clientX, e.clientY)) {
+        if (!isPlanning() && !isRoundEnd()) {
+            const unit = getUnitAt(dragging);
+            if (unit) dispatch(new SellCommand(unit, dragging));
+        }
+        endDrag();
+    } else endDrag();
 });
 
 // Hotkeys
@@ -300,7 +307,7 @@ document.addEventListener('keydown', (e) => {
     // Space: start round from planning, or resume from paused
     if (e.key === ' ' && e.target.tagName !== 'INPUT') {
         e.preventDefault();
-        if (isPlanning()) {
+        if (isPlanning() && !rdShopPrimaryBtn.disabled) {
             timerControls.start();
             startRound();
         } else if (isPaused()) {
@@ -309,9 +316,11 @@ document.addEventListener('keydown', (e) => {
         }
         return;
     }
-    // Escape: pause the round
+    // Escape: exit free roll, or pause the round
     if (e.key === 'Escape') {
-        if (isRound()) {
+        if (isFreeroll()) {
+            exitFreeroll();
+        } else if (isRound()) {
             timerControls.pause();
             pauseRound();
         }
@@ -463,9 +472,9 @@ rdOverlayGenerateBtn.addEventListener('click', () => {
 // Pause overlay: Reset to last preset
 rdPauseResetBtn.addEventListener('click', () => {
     if (!lastLoadedPreset) return;
-    timerControls.reset();
     loadPreset(lastLoadedPreset);
-    returnToPlanning();
+    timerControls.reset();
+    setRdMode('planning');
     updateOverlayContent();
 });
 

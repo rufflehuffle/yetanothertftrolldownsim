@@ -1,7 +1,7 @@
 import { state } from './state.js';
 import { openTeamPlanner, triggerGenerate41Board } from './team-planner.js';
 import { history } from './commands.js';
-import { isPlanning, isFreeroll } from './rolldown-state.js';
+import { isPlanning } from './rolldown-state.js';
 
 const popupEl       = document.querySelector('.no-comp-popup');
 const emptyEl       = document.querySelector('.no-comp-popup--empty');
@@ -18,7 +18,7 @@ function isPlannerEmpty() {
 }
 
 export function updateNoCompPopup() {
-    const active = isPlanning() || isFreeroll();
+    const active = isPlanning();
     const boardEmpty = isBoardEmpty();
     const plannerEmpty = isPlannerEmpty();
 
