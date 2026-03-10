@@ -200,6 +200,17 @@ input:checked ~ .planner-picker__unlockable-switch-icon {
     font-weight: bold;
 }
 
+.planner-picker__group-header {
+    align-items: center;
+    gap: 8px;
+}
+
+.planner-picker__group-icon {
+    width: 18px;
+    height: 18px;
+}
+
+
 .planner-picker__unit-container {
     display: inline-block;
     position: relative;

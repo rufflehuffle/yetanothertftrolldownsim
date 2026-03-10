@@ -3,6 +3,7 @@ import { state, saveTeamPlan, saveUnlockedOverrides, isOriginallyLocked, setPlan
 import { render, computeTraits, getSortedTraitEntries, activeBreakpoint, nextBreakpoint } from './render.js';
 import { generate41Board } from './board-generator.js';
 import { openTeams, saveActiveTeam, lastLoadedPreset, renameTeam } from './teams.js';
+import { initFilter, getActiveFilterTraits } from './filter.js';
 
 // ============================================================
 // Constants
@@ -201,6 +202,41 @@ export function buildPicker() {
     const filterRow = pickerEl.querySelector('.planner-picker__filter-container');
     pickerEl.innerHTML = '';
     if (filterRow) pickerEl.appendChild(filterRow);
+
+    const activeTraits = getActiveFilterTraits();
+
+    if (activeTraits.length > 0) {
+        // Trait-grouped mode: reverse alphabetical
+        const sorted = [...activeTraits].sort((a, b) => b.localeCompare(a));
+        for (const traitName of sorted) {
+            const traitData = traitTable[traitName];
+            if (!traitData) continue;
+            const champs = Object.values(pool).filter(c => c.synergies.includes(traitName));
+            if (!champs.length) continue;
+
+            const group = document.createElement('div');
+            group.className = 'planner-picker__group';
+
+            const header = document.createElement('div');
+            header.className = 'planner-picker__group-header';
+
+            const headerIcon = document.createElement('img');
+            headerIcon.className = 'planner-picker__group-icon';
+            headerIcon.src = traitData.icon;
+            headerIcon.alt = '';
+            header.appendChild(headerIcon);
+
+            const headerText = document.createElement('div');
+            headerText.className = 'planner-picker__group-text';
+            headerText.textContent = traitName;
+            header.appendChild(headerText);
+
+            group.appendChild(header);
+            champs.forEach(c => group.appendChild(makePickerUnit(c)));
+            pickerEl.appendChild(group);
+        }
+        return;
+    }
 
     for (const cost of COST_TIERS) {
         const champs = Object.values(pool).filter(c => c.cost === cost);
@@ -635,6 +671,10 @@ savedTeamsBtnEl?.addEventListener('click', () => {
     openTeams();
     if (plannerEl) plannerEl.style.display = 'none';
 });
+
+// Wire up filter modal
+initFilter(document.querySelector('.planner-picker__filter-btn'));
+document.addEventListener('filterchange', buildPicker);
 
 // Hide planner on startup
 if (plannerEl) plannerEl.style.display = 'none';

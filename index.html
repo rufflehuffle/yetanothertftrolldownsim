@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="style/planner.css">
     <link rel="stylesheet" href="style/teams.css">
     <link rel="stylesheet" href="style/popup.css">
+    <link rel="stylesheet" href="style/filter.css">
 </head>
 <body>
     <!-- Top Round Timer Bar -->
@@ -285,6 +286,19 @@
             </div>
         </div>
         <div class="teams__list"></div>
+    </div>
+
+    <!-- Filter Backdrop -->
+    <div class="filter-backdrop" id="filterBackdrop"></div>
+
+    <!-- Filter Modal -->
+    <div class="filter" id="filterModal">
+        <div class="filter__header">
+            <span class="filter__title">TRAIT FILTER</span>
+            <button class="filter__clear-btn" id="filterClear">CLEAR ALL</button>
+            <button class="filter__close-btn" id="filterClose">✕</button>
+        </div>
+        <div class="filter__traits"></div>
     </div>
 
     <div class="board-area">

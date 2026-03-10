@@ -1,0 +1,171 @@
+/* =================
+   FILTER MODAL
+   ================= */
+
+.filter-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 599;
+}
+
+.filter-backdrop--open {
+    display: block;
+}
+
+.filter {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(460px, 72vw, 720px);
+    background: #000B13;
+    border: 2px solid #73654A;
+    z-index: 600;
+    user-select: none;
+}
+
+.filter--open {
+    display: flex;
+}
+
+/* ----- Header ----- */
+
+.filter__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-bottom: 2px solid #846A33;
+    background: #182226;
+    flex-shrink: 0;
+}
+
+.filter__title {
+    font-family: 'Beaufort', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #F0E6D2;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    flex: 1;
+}
+
+.filter__clear-btn {
+    font-family: 'Beaufort', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #A09B8C;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.filter__clear-btn:hover {
+    color: #C8AA6E;
+    border-color: #947842;
+}
+
+.filter__close-btn {
+    font-size: 14px;
+    color: #A09B8C;
+    background: none;
+    border: none;
+    padding: 2px 6px;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.15s;
+}
+
+.filter__close-btn:hover {
+    color: #C8AA6E;
+}
+
+/* ----- Trait Grid ----- */
+
+.filter__traits {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    padding: 12px 14px 14px;
+    background: linear-gradient(#1B2026 0%, #010B12 100%);
+}
+
+.filter__trait-column {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+.filter__trait-column:not(:last-child) {
+    border-right: 1px solid #1F242A;
+}
+
+.filter__trait {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 6px;
+    cursor: pointer;
+}
+
+/* Outer hex — black "border" layer */
+.filter__trait-symbol {
+    display: inline-block;
+    flex-shrink: 0;
+    background-color: black;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    padding: 1px 1px 0 1px;
+    opacity: 0.6;
+    transition: opacity 0.1s, background-color 0.1s;
+}
+
+.filter__trait:hover .filter__trait-symbol {
+    background-color: #D6B127;
+    opacity: 1;
+}
+
+/* Inner hex — icon layer */
+.filter__trait-symbol::before {
+    content: "";
+    display: block;
+    width: 28px;
+    height: 28px;
+    background-image: var(--symbol-img, '');
+    background-size: 65%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #383838;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    transition: background-color 0.1s;
+}
+
+.filter__trait--active .filter__trait-symbol {
+    opacity: 1;
+}
+
+.filter__trait--active .filter__trait-symbol::before {
+    background-color: #86672C;
+}
+
+.filter__trait-name {
+    font-family: 'Beaufort', serif;
+    font-size: 16px;
+    color: #CDBE91;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.1s;
+    min-width: 60px;
+}
