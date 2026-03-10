@@ -1,6 +1,6 @@
 import { pool, traits as traitTable } from './tables.js';
 import { state, saveTeamPlan, saveUnlockedOverrides, isOriginallyLocked, setPlannedAsGenerateTarget } from './state.js';
-import { render, computeTraits, getSortedTraitEntries, activeBreakpoint, nextBreakpoint } from './render.js';
+import { render, computeTraits, getSortedTraitEntries, activeBreakpoint, nextBreakpoint, showTraitTooltip, positionTooltip } from './render.js';
 import { generate41Board } from './board-generator.js';
 import { openTeams, saveActiveTeam, lastLoadedPreset, renameTeam } from './teams.js';
 import { initFilter, getActiveFilterTraits } from './filter.js';
@@ -38,6 +38,63 @@ const TRAIT_TIER_CLASS = {
     Legendary: 'symbol--legendary',
     Prismatic: 'symbol--prismatic',
 };
+
+// ============================================================
+// Unit info panel (singleton, fixed-positioned on body)
+// ============================================================
+const unitInfoPanel = document.createElement('div');
+unitInfoPanel.className = 'planner__unit-info';
+document.body.appendChild(unitInfoPanel);
+
+function showUnitInfo(champ, anchorEl) {
+    unitInfoPanel.innerHTML = '';
+
+    const header = document.createElement('div');
+    header.className = 'unit-info__header';
+
+    const panelName = document.createElement('div');
+    panelName.className = 'unit-info__name';
+    panelName.textContent = champ.name;
+    header.appendChild(panelName);
+
+    const panelRole = document.createElement('div');
+    panelRole.className = 'unit-info__role';
+    panelRole.textContent = `${champ.damageType} ${champ.role}`;
+    header.appendChild(panelRole);
+
+    unitInfoPanel.appendChild(header);
+
+    const hr = document.createElement('hr');
+    hr.className = 'unit-info__hr';
+    unitInfoPanel.appendChild(hr);
+
+    const traitsContainer = document.createElement('div');
+    traitsContainer.className = 'unit-info__traits';
+    for (const trait of champ.synergies) {
+        const traitEl = document.createElement('div');
+        traitEl.className = 'unit-info__trait';
+        traitEl.textContent = trait;
+        traitsContainer.appendChild(traitEl);
+    }
+    unitInfoPanel.appendChild(traitsContainer);
+
+    const isLocked = isOriginallyLocked(champ.name);
+    if (isLocked) {
+        const lockHint = document.createElement('div');
+        lockHint.className = 'unit-info__lock-hint';
+        lockHint.textContent = pool[champ.name].unlocked ? 'MB2 to Lock' : 'MB2 to Unlock';
+        unitInfoPanel.appendChild(lockHint);
+    }
+
+    const rect = anchorEl.getBoundingClientRect();
+    unitInfoPanel.style.left = `${rect.right + 8}px`;
+    unitInfoPanel.style.top = `${rect.top}px`;
+    unitInfoPanel.style.display = 'block';
+}
+
+function hideUnitInfo() {
+    unitInfoPanel.style.display = 'none';
+}
 
 // ============================================================
 // Element refs
@@ -102,7 +159,7 @@ function makePickerUnit(champ) {
     // Unit card
     const card = document.createElement('div');
     card.className = `planner-picker__unit ${COST_CLASS[champ.cost] ?? ''}`;
-    if (isSelected) card.classList.add('picker-unit--selected');
+    if (isSelected) card.classList.add('picker__unit--selected');
 
     // Champion image
     const img = document.createElement('img');
@@ -139,6 +196,10 @@ function makePickerUnit(champ) {
     nameEl.textContent = champ.name;
     container.appendChild(nameEl);
 
+    // Info panel — populate singleton and position it on hover
+    card.addEventListener('mouseenter', () => showUnitInfo(champ, card));
+    container.addEventListener('mouseleave', hideUnitInfo);
+
     // ── Left-click: toggle team plan ──
     card.addEventListener('click', () => {
         pushUndo();
@@ -166,6 +227,8 @@ function makePickerUnit(champ) {
             pool[champ.name].unlocked = !pool[champ.name].unlocked;
             saveUnlockedOverrides();
             refreshPickerUnit(container, champ);
+            const hint1 = unitInfoPanel.querySelector('.unit-info__lock-hint');
+            if (hint1) hint1.textContent = pool[champ.name].unlocked ? 'MB2 to Lock' : 'MB2 to Unlock';
             // Also refresh the badge in the selected grid if this unit is there
             const selectedSlot = teamGridEl.querySelector(`.planner-selected__unit[data-name="${CSS.escape(champ.name)}"]`);
             if (selectedSlot) {
@@ -186,12 +249,13 @@ function refreshPickerUnit(container, champ) {
     const isSelected = state.teamPlan.has(champ.name);
 
     const card = container.querySelector('.planner-picker__unit');
-    card.classList.toggle('picker-unit--selected', isSelected);
+    card.classList.toggle('picker__unit--selected', isSelected);
 
     // Refresh lock badge — only for originally-locked champions
     const existingBadge = card.querySelector('.planner-picker__unit-lock-status');
     if (existingBadge) existingBadge.remove();
     if (isLocked) card.appendChild(makeLockBadge(isLocked, isUnlocked, true));
+
 }
 
 // ============================================================
@@ -337,6 +401,8 @@ export function renderTeamGrid() {
                     e.preventDefault();
                     pool[name].unlocked = !pool[name].unlocked;
                     saveUnlockedOverrides();
+                    const hint2 = unitInfoPanel.querySelector('.unit-info__lock-hint');
+                    if (hint2) hint2.textContent = pool[name].unlocked ? 'MB2 to Lock' : 'MB2 to Unlock';
                     // Refresh badge in place
                     const existing = slot.querySelector('.planner-selected__unit-lock-status');
                     if (existing) existing.remove();
@@ -346,6 +412,10 @@ export function renderTeamGrid() {
                     if (container) refreshPickerUnit(container, pool[name]);
                 });
             }
+
+            // Info panel on hover
+            slot.addEventListener('mouseenter', () => showUnitInfo(champ, slot));
+            slot.addEventListener('mouseleave', hideUnitInfo);
 
             // Left-click to remove
             slot.addEventListener('click', () => {
@@ -376,7 +446,10 @@ export function renderPlannerTraits() {
 
     const entries = getSortedTraitEntries(traitCounts);
 
-    for (const [traitName, count] of entries.slice(0, 10)) {
+    const MAX_TRAITS = 10;
+    const traitRows = entries.slice(0, MAX_TRAITS);
+
+    for (const [traitName, count] of traitRows) {
         const traitData = traitTable[traitName];
         if (!traitData) continue;
 
@@ -401,6 +474,9 @@ export function renderPlannerTraits() {
         symbolImg.src = traitData.icon;
         symbolImg.alt = traitName;
         symbol.appendChild(symbolImg);
+        symbol.addEventListener('mouseenter', (e) => showTraitTooltip(e, traitName, activeBP));
+        symbol.addEventListener('mousemove', positionTooltip);
+        symbol.addEventListener('mouseleave', () => { document.querySelector('.trait-tooltip').style.display = 'none'; });
         row.appendChild(symbol);
 
         // Count
@@ -410,6 +486,16 @@ export function renderPlannerTraits() {
         countEl.textContent = isActive ? count : `${count} / ${traitData.breakpoints[0]}`;
         row.appendChild(countEl);
 
+        traitsEl.appendChild(row);
+    }
+
+    // Fill remaining slots with empty hex placeholders
+    for (let i = traitRows.length; i < MAX_TRAITS; i++) {
+        const row = document.createElement('div');
+        row.className = 'planner-traits-container';
+        const symbol = document.createElement('div');
+        symbol.className = 'planner-traits__symbol symbol--inactive planner-traits__symbol--empty';
+        row.appendChild(symbol);
         traitsEl.appendChild(row);
     }
 }

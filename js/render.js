@@ -82,7 +82,7 @@ export function nextBreakpoint(traitName, count) {
 const traitPanel   = document.querySelector('.trait-panel');
 const traitTooltip = document.querySelector('.trait-tooltip');
 
-function positionTooltip(e) {
+export function positionTooltip(e) {
     const tw = traitTooltip.offsetWidth;
     const th = traitTooltip.offsetHeight;
     let x = e.clientX + 14;
@@ -93,7 +93,7 @@ function positionTooltip(e) {
     traitTooltip.style.top  = `${y}px`;
 }
 
-function showTraitTooltip(e, traitName, count, activeBP) {
+export function showTraitTooltip(e, traitName, activeBP) {
     const lines = [];
     if (activeBP > 0) {
         lines.push(`<span class="tt-active">✦ ${traitName} (${activeBP} active)</span>`);
@@ -217,7 +217,7 @@ export function renderTraits() {
             info.append(inactiveCount);
         }
 
-        row.addEventListener('mouseenter', (e) => showTraitTooltip(e, traitName, count, activeBP));
+        row.addEventListener('mouseenter', (e) => showTraitTooltip(e, traitName, activeBP));
         row.addEventListener('mousemove', positionTooltip);
         row.addEventListener('mouseleave', () => { traitTooltip.style.display = 'none'; });
 
