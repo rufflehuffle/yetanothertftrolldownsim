@@ -2,7 +2,7 @@ import { state } from './state.js';
 import { render } from './render.js';
 import { boardCount, findEmptyBoardHex } from './logic.js';
 import { applyBoardEffects } from './effects.js';
-import { finishRound } from './rolldown-state.js';
+import { finishRound, isRound, isPaused, pauseRound, resumeRound } from './rolldown-state.js';
 
 // ============================================================
 // Round Timer
@@ -166,6 +166,28 @@ timerControls.setDuration   = (secs) => {
         updateDisplay();
     }
 };
+
+// ============================================================
+// Timer pause button
+// ============================================================
+const timerPauseBtn = document.querySelector('.timer-pause-btn');
+
+function updateTimerPauseBtn() {
+    const active = isRound() || isPaused();
+    timerPauseBtn.style.display = active ? '' : 'none';
+    timerPauseBtn.textContent = isPaused() ? '▶' : '‖';
+}
+
+timerPauseBtn.addEventListener('click', () => {
+    if (isRound()) {
+        pauseRound();
+    } else if (isPaused()) {
+        resumeRound();
+    }
+});
+
+document.addEventListener('rdmodechange', updateTimerPauseBtn);
+updateTimerPauseBtn();
 
 // ============================================================
 // State machine → timer side effects

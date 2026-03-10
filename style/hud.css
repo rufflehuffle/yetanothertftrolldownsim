@@ -62,15 +62,12 @@
   vertical-align: middle;
 }
 
-.gold:hover {
-    text-decoration: underline dotted rgba(255,255,0,0.5);
-}
 
 .gold-input {
     width: 60px;
     background: #1a1a1a;
-    color: #f5c518;
-    border: 1px solid #f5c518;
+    color: #F0E6D2;
+    border: 1px solid #F0E6D2;
     border-radius: 4px;
     padding: 1px 4px;
     font-size: inherit;
@@ -82,6 +79,52 @@
 .gold-input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+/* Persistent gold input (always in DOM, visible only in planning/team-builder) */
+.gold-coin-prefix,
+.gold-input.gold-persistent {
+    display: none;
+}
+
+.gold-coin-prefix::before {
+    content: url('https://wiki.leagueoflegends.com/en-us/images/thumb/Gold_colored_icon.png/20px-Gold_colored_icon.png?39991');
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.gold-input.gold-persistent {
+    font-family: 'Beaufort', serif;
+    font-size: 20px;
+    cursor: text;
+}
+
+body.rd-planning .gold,
+body.rd-roundEnd .gold,
+body.rd-freeroll .gold,
+body.team-builder-mode .gold {
+    display: none;
+}
+
+body.rd-planning .gold-coin-prefix,
+body.rd-planning .gold-input.gold-persistent,
+body.rd-roundEnd .gold-coin-prefix,
+body.rd-roundEnd .gold-input.gold-persistent,
+body.rd-freeroll .gold-coin-prefix,
+body.rd-freeroll .gold-input.gold-persistent,
+body.team-builder-mode .gold-coin-prefix,
+body.team-builder-mode .gold-input.gold-persistent {
+    display: inline-block;
+}
+
+body.rd-planning .gold-container,
+body.rd-roundEnd .gold-container,
+body.rd-freeroll .gold-container,
+body.team-builder-mode .gold-container {
+    z-index: 51;
 }
 
 
@@ -133,16 +176,59 @@
 
 .level-display {
     cursor: pointer;
-    padding: 1px 5px;
-    border: 1px solid transparent;
+    padding: 2px 6px;
+    border: 1px solid #3a4a5a;
     border-radius: 4px;
-    transition: border-color 0.15s;
+    background: rgba(144, 200, 255, 0.06);
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
 .level-display:hover {
-    border-color: #555;
+    border-color: #6a9fd8;
+    background: rgba(144, 200, 255, 0.12);
+    box-shadow: 0 0 0 1px rgba(144, 200, 255, 0.15);
 }
 .level-dropdown.open .level-display {
     border-color: #90c8ff;
+    background: rgba(144, 200, 255, 0.16);
+}
+.level-caret {
+    font-size: 7px;
+    color: #6a9fd8;
+    line-height: 1;
+    transition: color 0.15s, transform 0.15s;
+    display: inline-block;
+}
+.level-display:hover .level-caret {
+    color: #90c8ff;
+}
+.level-dropdown.open .level-caret {
+    color: #90c8ff;
+    transform: scaleY(1.2);
+}
+
+/* During rolldown (round / paused / roundEnd) — non-interactable */
+.rd-round .level-display,
+.rd-paused .level-display,
+.rd-roundEnd .level-display {
+    cursor: default;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+}
+.rd-round .level-display:hover,
+.rd-paused .level-display:hover,
+.rd-roundEnd .level-display:hover {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+}
+.rd-round .level-caret,
+.rd-paused .level-caret,
+.rd-roundEnd .level-caret {
+    display: none;
 }
 
 .level-dropdown-menu {

@@ -343,7 +343,7 @@ function renderXpBar() {
     const xpText = document.querySelector('.xp-bar-text');
     const levelDisplay = document.querySelector('.level-display');
     if (levelDisplay) {
-        levelDisplay.textContent = `Lvl ${state.level}`;
+        levelDisplay.firstChild.textContent = `Lvl ${state.level}`;
         document.querySelectorAll('.level-option').forEach(opt => {
             opt.classList.toggle('active', Number(opt.dataset.value) === state.level);
         });
@@ -373,6 +373,10 @@ function renderOdds() {
 // ============================================================
 export function render() {
     document.querySelector('.gold').textContent = state.gold;
+    const goldInput = document.querySelector('.gold-persistent');
+    if (goldInput && document.activeElement !== goldInput) {
+        goldInput.value = state.gold;
+    }
 
     renderXpBar();
     renderOdds();

@@ -1,11 +1,61 @@
-import { pool } from './tables.js';
+import { pool, traits as traitTable } from './tables.js';
 import { state, _originallyLocked, isOriginallyLocked, saveTeamPlan, saveUnlockedOverrides } from './state.js';
-import { generate41Board } from './board-generator.js';
+import { generate41Board, buildTraitCounts } from './board-generator.js';
 import { render } from './render.js';
 import { doRoll } from './logic.js';
 import { teamBuilderActive, buildTbPicker } from './team-builder.js';
 import { history } from './commands.js';
 import { openTeamPlanner, loadTeamCode } from './team-planner.js';
+
+// ============================================================
+// Auto team name — "<Most Active Trait> <Main Carry Name>"
+// Deterministic (alphabetical tiebreaking) so the name stays
+// stable across repeated saves.
+// ============================================================
+function generateTeamName(teamPlanNames) {
+    const names = [...teamPlanNames].filter(n => pool[n]);
+    if (!names.length) return 'New Team';
+
+    const traitCounts = buildTraitCounts(names);
+
+    // Most active trait: prefer those at a breakpoint, then highest count, then alphabetical
+    let bestTrait = null, bestCount = 0, bestIsActive = false;
+    for (const [trait, count] of Object.entries(traitCounts)) {
+        const bp = traitTable[trait]?.breakpoints ?? [];
+        const isActive = bp.some(b => count >= b);
+        if (
+            !bestTrait ||
+            (isActive && !bestIsActive) ||
+            (isActive === bestIsActive && count > bestCount) ||
+            (isActive === bestIsActive && count === bestCount && trait < bestTrait)
+        ) {
+            bestTrait = trait;
+            bestCount = count;
+            bestIsActive = isActive;
+        }
+    }
+
+    // Main carry: highest-scoring non-Tank; prefer 4-cost; alphabetical tiebreak
+    const carries = names.map(n => pool[n]).filter(c => c && c.role !== 'Tank');
+    const carryScore = (champ) => {
+        let s = champ.synergies.reduce((acc, t) => acc + (traitCounts[t] ?? 0), 0);
+        for (const t of champ.synergies) {
+            const bp = traitTable[t]?.breakpoints ?? [];
+            if (bp.some(b => (traitCounts[t] ?? 0) >= b)) s += 3;
+        }
+        return s;
+    };
+    const fourCostCarries = carries.filter(c => c.cost === 4);
+    const carryPool = fourCostCarries.length ? fourCostCarries : carries;
+    const mainCarry = carryPool.reduce((best, c) => {
+        if (!best) return c;
+        const diff = carryScore(c) - carryScore(best);
+        return diff > 0 || (diff === 0 && c.name < best.name) ? c : best;
+    }, null);
+
+    const carryName = mainCarry?.name ?? names[0];
+    return bestTrait ? `${bestTrait} ${carryName}` : carryName;
+}
 
 // ============================================================
 // Team storage
@@ -36,6 +86,7 @@ export function renameTeam(id, newName) {
     const t = all.find(t => t.id === id);
     if (!t) return;
     t.name = newName;
+    t.nameIsAuto = false;
     saveTeams(all);
     if (lastLoadedPreset?.id === id) {
         lastLoadedPreset.name = newName;
@@ -115,7 +166,8 @@ export function saveActiveTeam() {
         const existing = loadTeams();
         const team = {
             id: Date.now(),
-            name: uniqueTeamName('New Team', existing),
+            name: uniqueTeamName(generateTeamName(state.teamPlan), existing),
+            nameIsAuto: true,
             level: state.level,
             gold: state.gold,
             board: Object.fromEntries(
@@ -150,6 +202,15 @@ export function saveActiveTeam() {
         .filter(c => isOriginallyLocked(c.name) && c.unlocked)
         .map(c => c.name);
 
+    if (t.nameIsAuto !== false) {
+        const autoName = uniqueTeamName(generateTeamName(state.teamPlan), all.filter(x => x.id !== t.id));
+        if (autoName !== t.name) {
+            t.name = autoName;
+            const titleEl = document.querySelector('.planner-selected__title');
+            if (titleEl) titleEl.textContent = autoName;
+        }
+    }
+
     Object.assign(lastLoadedPreset, t);
     saveTeams(all);
 }
@@ -163,7 +224,8 @@ document.querySelector('.teams__new-btn').addEventListener('click', () => {
     const teams = loadTeams();
     const team = {
         id: Date.now(),
-        name: uniqueTeamName('New Team', teams),
+        name: uniqueTeamName(generateTeamName(state.teamPlan), teams),
+        nameIsAuto: true,
         level: state.level,
         gold: state.gold,
         board: Object.fromEntries(Object.keys(state.board).map(k => [k, null])),
@@ -198,7 +260,8 @@ teamsPasteBtnEl.addEventListener('click', async () => {
     const allTeams = loadTeams();
     const team = {
         id: Date.now(),
-        name: uniqueTeamName('New Team', allTeams),
+        name: uniqueTeamName(generateTeamName(state.teamPlan), allTeams),
+        nameIsAuto: true,
         level: state.level,
         gold: state.gold,
         board: Object.fromEntries(Object.keys(state.board).map(k => [k, null])),
