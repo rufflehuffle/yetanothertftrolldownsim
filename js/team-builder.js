@@ -158,6 +158,7 @@ export function buildTbPicker() {
 export function openTeamBuilder(ghost, onSave) {
     _ghost = ghost;
     teamBuilderActive = true;
+    document.dispatchEvent(new CustomEvent('tbmodechange'));
     document.body.classList.add('team-builder-mode');
     tbBuilderButton.classList.add('active');
     tbBuilderButton.style.display = 'none';
@@ -179,6 +180,7 @@ export function openTeamBuilder(ghost, onSave) {
 
 export function closeTeamBuilder() {
     teamBuilderActive = false;
+    document.dispatchEvent(new CustomEvent('tbmodechange'));
     document.body.classList.remove('team-builder-mode');
     tbBuilderButton.classList.remove('active');
     tbBuilderButton.style.display = 'flex';

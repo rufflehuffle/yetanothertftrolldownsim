@@ -1,5 +1,5 @@
 import { pool } from './tables.js';
-import { state } from './state.js';
+import { state, saveTeamPlan } from './state.js';
 import { render, renderShopSlot } from './render.js';
 import {
     doRoll, getChampAt, getUnitAt,
@@ -13,7 +13,7 @@ import {
     MoveUnitCommand, MoveHoveredCommand
 } from './commands.js';
 import { triggerGenerate41Board } from './team-planner.js';
-import { teamBuilderActive, tbDragging, setTbDragging, openTeamBuilder, closeTeamBuilder } from './team-builder.js';
+import { tbDragging, setTbDragging, openTeamBuilder, closeTeamBuilder } from './team-builder.js';
 import { openSavePreset, openPresets, loadPreset, lastLoadedPreset } from './teams.js';
 import { playSound } from './audio.js';
 import {
@@ -304,7 +304,7 @@ document.addEventListener('keydown', (e) => {
         if (lastLoadedPreset) loadPreset(lastLoadedPreset);
         return;
     }
-    // Space: start round from planning, or resume from paused
+    // Space: start round from planning, pause/resume during round
     if (e.key === ' ' && e.target.tagName !== 'INPUT') {
         e.preventDefault();
         if (isPlanning() && !rdShopPrimaryBtn.disabled) {
@@ -313,6 +313,9 @@ document.addEventListener('keydown', (e) => {
         } else if (isPaused()) {
             timerControls.resume();
             resumeRound();
+        } else if (isRound()) {
+            timerControls.pause();
+            pauseRound();
         }
         return;
     }
@@ -336,7 +339,8 @@ document.addEventListener('keydown', (e) => {
         history.redo();
         return;
     }
-    if (e.key === 'd') {
+    if (e.target.tagName === 'INPUT') return;
+    if (e.key === 'd' || e.key === 'D') {
         if (!e.repeat) {
             if (isRoundEnd() && lastLoadedPreset) {
                 // In roundEnd: D resets to last preset instead of rolling
@@ -350,10 +354,10 @@ document.addEventListener('keydown', (e) => {
         }
     }
     if (e.key === 'f' || e.key === 'F') { if (!e.repeat && !isPlanning() && !isRoundEnd()) dispatch(new BuyXpCommand()); }
-    if (e.key === 'w') {
+    if (e.key === 'w' || e.key === 'W') {
         dispatch(new MoveHoveredCommand());
     }
-    if (e.key === 'e') {
+    if (e.key === 'e' || e.key === 'E') {
         // Block selling before the round starts
         if (isPlanning() || isRoundEnd()) return;
         if (dragging && dragging.type !== 'shop') {
@@ -510,38 +514,27 @@ document.querySelector('.planner-selected__clear-btn')
     });
 
 // ============================================================
-// Gold Editor
+// Gold Editor (persistent input)
 // ============================================================
 (function () {
-    const goldEl = document.querySelector('.gold');
-
-    function startGoldEdit() {
-        const current = state.gold;
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.value = current;
-        input.className = 'gold-input';
-        input.min = 0;
-        goldEl.replaceWith(input);
-        input.select();
-
-        function commit() {
-            const val = parseInt(input.value, 10);
-            state.gold = isNaN(val) ? current : Math.max(0, val);
-            input.replaceWith(goldEl);
-            render();
-        }
-
-        input.addEventListener('blur', commit);
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') { e.preventDefault(); commit(); }
-            if (e.key === 'Escape') { input.replaceWith(goldEl); }
-        });
-        input.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
-    }
-
-    goldEl.addEventListener('click', () => { if (teamBuilderActive) startGoldEdit(); });
-    goldEl.addEventListener('dblclick', () => { if (!teamBuilderActive) startGoldEdit(); });
+    // Persistent input: always visible in planning/roundEnd/team-builder modes
+    const goldInput = document.querySelector('.gold-persistent');
+    let persistentOriginal = state.gold;
+    goldInput.addEventListener('focus', () => {
+        persistentOriginal = state.gold;
+        goldInput.select();
+    });
+    goldInput.addEventListener('blur', () => {
+        const val = parseInt(goldInput.value, 10);
+        state.gold = isNaN(val) ? persistentOriginal : Math.max(0, val);
+        render();
+    });
+    goldInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); goldInput.blur(); }
+        if (e.key === 'Escape') { goldInput.value = state.gold; goldInput.blur(); }
+    });
+    goldInput.addEventListener('mousedown', (e) => e.stopPropagation());
+    goldInput.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
 })();
 
 

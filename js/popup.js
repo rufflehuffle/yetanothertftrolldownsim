@@ -2,6 +2,7 @@ import { state } from './state.js';
 import { openTeamPlanner, triggerGenerate41Board } from './team-planner.js';
 import { history } from './commands.js';
 import { isPlanning } from './rolldown-state.js';
+import { teamBuilderActive } from './team-builder.js';
 
 const popupEl       = document.querySelector('.no-comp-popup');
 const emptyEl       = document.querySelector('.no-comp-popup--empty');
@@ -22,7 +23,7 @@ export function updateNoCompPopup() {
     const boardEmpty = isBoardEmpty();
     const plannerEmpty = isPlannerEmpty();
 
-    if (!active || !boardEmpty) {
+    if (!active || !boardEmpty || teamBuilderActive) {
         popupEl.style.display = 'none';
         return;
     }
@@ -48,3 +49,4 @@ generateBtn.addEventListener('click', () => {
 history.addListener(updateNoCompPopup);
 document.addEventListener('rdmodechange', updateNoCompPopup);
 document.addEventListener('teamplanchange', updateNoCompPopup);
+document.addEventListener('tbmodechange', updateNoCompPopup);

@@ -33,6 +33,7 @@
                 <input class="timer-input" type="number" value="30" min="1" max="999" title="Set duration (seconds)">
                 <span class="timer-value" style="display:none;">30</span>
             </div>
+            <button class="timer-pause-btn" title="Pause / Resume (Space)" style="display:none;">‖</button>
         </div>
     </div>
 
@@ -45,7 +46,7 @@
         <div class="level-panel">
             <div class="level-xp-row">
                 <div class="level-dropdown">
-                    <div class="level-display">Lvl 8</div>
+                    <div class="level-display">Lvl 8<span class="level-caret">▲</span></div>
                     <div class="level-dropdown-menu">
                         <div class="level-option" data-value="2">2</div>
                         <div class="level-option" data-value="3">3</div>
@@ -94,6 +95,8 @@
                 </div>
                 <div class="gold-container">
                     <div class="gold">50</div>
+                    <span class="gold-coin-prefix"></span>
+                    <input class="gold-input gold-persistent" type="number" min="0" value="50">
                 </div>
             </div>
             <div class="shop">

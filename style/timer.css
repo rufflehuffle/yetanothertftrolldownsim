@@ -92,6 +92,22 @@
     color: #64748b;
 }
 
+.timer-pause-btn {
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid #EAE0CD;
+    color: #EAE0CD;
+    font-size: 13px;
+    cursor: pointer;
+    width: 20px;
+    height: 16px;
+    line-height: 1;
+    text-align: center;
+    padding: 0;
+    opacity: 0.7;
+}
+.timer-pause-btn:hover { opacity: 1; }
+
 /* Board lock when expired — shop greyed out, others just blocked */
 body.timer-locked .shop-slot {
     pointer-events: none;

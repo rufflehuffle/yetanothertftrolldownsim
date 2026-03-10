@@ -3,7 +3,7 @@ body.team-builder-mode .hud .shop-container .shop {
     display: none;
 }
 body.team-builder-mode .hud .shop-container .gold-container {
-    display: block; /* keep gold visible */
+    display: flex; /* keep gold visible */
 }
 body.team-builder-mode .roll-button {
     display: none;

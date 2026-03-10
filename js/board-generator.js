@@ -92,7 +92,7 @@ function simulateShop(level, taken) {
 // ============================================================
 // Build trait count map from a list of champion names.
 // ============================================================
-function buildTraitCounts(names) {
+export function buildTraitCounts(names) {
     const counts = {};
     for (const name of names) {
         for (const t of (pool[name]?.synergies ?? [])) {
