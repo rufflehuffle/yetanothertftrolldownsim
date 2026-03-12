@@ -221,11 +221,11 @@ function getTraitFillerNames(targetNames, mainCarry, mainTank, traitCounts) {
 // ============================================================
 // Assign board units to hex positions with even spread placement.
 //
-// Board layout (A = front row, D = back row):
-//   D1  D2  D3  D4  D5  D6  D7    ← backline
-//     C1  C2  C3  C4  C5  C6  C7
-//       B1  B2  B3  B4  B5  B6  B7
-//         A1  A2  A3  A4  A5  A6  A7  ← frontline
+// Board layout (A = front row / top, D = back row / bottom):
+//   A1  A2  A3  A4  A5  A6  A7  ← frontline (no offset)
+//     B1  B2  B3  B4  B5  B6  B7  (offset)
+//   C1  C2  C3  C4  C5  C6  C7  (no offset)
+//     D1  D2  D3  D4  D5  D6  D7  ← backline (offset)
 //
 // Backline (Caster / Marksman / Specialist):
 //   • Main carry (highest cost/stars) → random D1 or D7

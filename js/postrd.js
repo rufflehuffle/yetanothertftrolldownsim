@@ -1,14 +1,14 @@
 import { pool } from './tables.js';
 import { state } from './state.js';
+import { getEvents } from './round.js';
+import { calcSpeed } from './grading-speed.js';
+import { calcAccuracy } from './grading-accuracy.js';
+import { calcPositioning } from './grading-positioning.js';
 
 // ============================================================
 // Pentagon geometry constants
 // ============================================================
 const METRICS = ['Speed', 'Discipline', 'Accuracy', 'Positioning', 'Flexibility'];
-const GRADES  = ['S', 'A', 'B', 'C'];
-
-const GRADE_RADIUS = { S: 90, A: 67.5, B: 45, C: 22.5 };
-const GRADE_VALUE  = { S: 4,  A: 3,    B: 2,  C: 1    };
 
 // Degrees measured from positive x-axis (SVG coords), clockwise
 const AXIS_ANGLES = [-90, -18, 54, 126, 198];
@@ -70,10 +70,6 @@ tabs.forEach(tab => {
 // ============================================================
 // Helpers
 // ============================================================
-function randomGrade() {
-    return GRADES[Math.floor(Math.random() * GRADES.length)];
-}
-
 function axisPoint(angleDeg, radius) {
     const rad = angleDeg * Math.PI / 180;
     return { x: CENTER.x + radius * Math.cos(rad), y: CENTER.y + radius * Math.sin(rad) };
@@ -85,12 +81,6 @@ function mk(tag, attrs = {}) {
     return el;
 }
 
-function overallGrade(avg) {
-    if (avg >= 3.5) return 'S';
-    if (avg >= 2.5) return 'A';
-    if (avg >= 1.5) return 'B';
-    return 'C';
-}
 
 // ============================================================
 // Final Board
@@ -115,7 +105,7 @@ function renderFinalBoard() {
 // ============================================================
 // Pentagon Chart
 // ============================================================
-function buildPentagonSvg(grades) {
+function buildPentagonSvg(scores) {
     while (pentaSvg.firstChild) pentaSvg.removeChild(pentaSvg.firstChild);
 
     const outerPts = AXIS_ANGLES.map(a => axisPoint(a, 90));
@@ -150,7 +140,7 @@ function buildPentagonSvg(grades) {
     }
 
     // Grade tick labels along top spoke
-    for (const [label, y] of [['S', 58], ['A', 80], ['B', 103], ['C', 125]]) {
+    for (const [label, y] of [['S', 58], ['A', 80], ['B', 103], ['C', 125], ['D', 140]]) {
         const t = mk('text', {
             x: 168, y,
             fill: '#3d5560', 'font-size': 9,
@@ -173,8 +163,8 @@ function buildPentagonSvg(grades) {
     pentaSvg.appendChild(defs);
 
     // Score polygon
-    const scorePts = grades.map((g, i) => {
-        const pt = axisPoint(AXIS_ANGLES[i], GRADE_RADIUS[g] ?? 22.5);
+    const scorePts = scores.map((s, i) => {
+        const pt = axisPoint(AXIS_ANGLES[i], (s / 100) * 90);
         return `${pt.x.toFixed(1)},${pt.y.toFixed(1)}`;
     }).join(' ');
     pentaSvg.appendChild(mk('polygon', {
@@ -185,8 +175,8 @@ function buildPentagonSvg(grades) {
     }));
 
     // Vertex dots
-    for (let i = 0; i < grades.length; i++) {
-        const pt = axisPoint(AXIS_ANGLES[i], GRADE_RADIUS[grades[i]] ?? 22.5);
+    for (let i = 0; i < scores.length; i++) {
+        const pt = axisPoint(AXIS_ANGLES[i], (scores[i] / 100) * 90);
         pentaSvg.appendChild(mk('circle', {
             cx: pt.x.toFixed(1), cy: pt.y.toFixed(1), r: 3, fill: '#42829C',
         }));
@@ -201,7 +191,7 @@ function buildPentagonSvg(grades) {
             fill: '#C8AA6E', 'font-size': 16,
             'font-family': 'Beaufort,serif', 'font-weight': 900,
         });
-        gradeT.textContent = grades[i];
+        gradeT.textContent = scoreToGrade(scores[i]);
         pentaSvg.appendChild(gradeT);
 
         const labelT = mk('text', {
@@ -314,17 +304,29 @@ function renderScoreHistory() {
 // ============================================================
 // Main entry point
 // ============================================================
+function scoreToGrade(score) {
+    if (score >= 100) return 'S';
+    if (score >= 75)  return 'A';
+    if (score >= 50)  return 'B';
+    if (score >= 25)  return 'C';
+    return 'D';
+}
+
 function openPostRd() {
-    // Random grades per metric
-    const grades = METRICS.map(randomGrade);
+    // Numeric scores (0–100) per metric; real data replaces placeholders as metrics are implemented
+    const scores = METRICS.map(() => Math.floor(Math.random() * 100));
 
-    // Overall grade from average grade value
-    const avg = grades.reduce((s, g) => s + GRADE_VALUE[g], 0) / grades.length;
-    const grade = overallGrade(avg);
+    const events = getEvents();
 
-    // Score: weighted by avg + small random variance
-    const score = Math.min(100, Math.max(0, Math.round(avg * 20 + Math.random() * 10 + 5)));
-    state.rolldownHistory.push(score);
+    // Speed (index 0), Accuracy (index 2), and Positioning (index 3) are driven by real round data
+    scores[0] = calcSpeed(events);
+    scores[2] = calcAccuracy(events);
+    scores[3] = calcPositioning(state.board);
+
+    // Overall grade and history score from average
+    const avg = scores.reduce((s, v) => s + v, 0) / scores.length;
+    const grade = scoreToGrade(avg);
+    state.rolldownHistory.push(Math.round(avg));
 
     // Reset to Performance tab
     tabs.forEach((t, i) => {
@@ -339,7 +341,7 @@ function openPostRd() {
     // Populate sections
     gradeValue.textContent = grade;
     renderFinalBoard();
-    buildPentagonSvg(grades);
+    buildPentagonSvg(scores);
     renderScoreHistory();
 
     openModal();

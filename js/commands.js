@@ -96,7 +96,7 @@ export class RollCommand {
         if (state.gold < 2) return false;
         this._snap = snapshotState();
         const ok = doRoll(true) !== false;
-        if (ok) record({ type: 'roll', goldBefore: this._snap.gold, shopBefore: [...this._snap.shop], shopAfter: [...state.shop] });
+        if (ok) record({ type: 'roll', goldBefore: this._snap.gold, goldAfter: state.gold, shopBefore: [...this._snap.shop], shopAfter: [...state.shop], bench: this._snap.bench, board: this._snap.board, teamPlan: [...state.teamPlan] });
         return ok;
     }
     undo() { if (this._snap) restoreState(this._snap); }
@@ -107,7 +107,7 @@ export class BuyXpCommand {
         if (state.gold < 4 || state.level >= 10) return false;
         this._snap = snapshotState();
         const ok = buyXp() !== false;
-        if (ok) record({ type: 'buyXp', goldBefore: this._snap.gold, levelBefore: this._snap.level, xpBefore: this._snap.xp, levelAfter: state.level, xpAfter: state.xp });
+        if (ok) record({ type: 'buyXp', goldBefore: this._snap.gold, goldAfter: state.gold, levelBefore: this._snap.level, xpBefore: this._snap.xp, levelAfter: state.level, xpAfter: state.xp });
         return ok;
     }
     undo() { if (this._snap) restoreState(this._snap); }
@@ -122,7 +122,7 @@ export class BuyCommand {
         if (!this._name || state.gold < pool[this._name].cost) return false;
         this._snap = snapshotState();
         const ok = buyChamp(this._name, this._idx) !== false;
-        if (ok) record({ type: 'buy', champName: this._name, cost: pool[this._name].cost, shopIndex: this._idx, goldBefore: this._snap.gold });
+        if (ok) record({ type: 'buy', champName: this._name, cost: pool[this._name].cost, shopIndex: this._idx, goldBefore: this._snap.gold, goldAfter: state.gold });
         return ok;
     }
     undo() { if (this._snap) restoreState(this._snap); }
@@ -138,7 +138,7 @@ export class SellCommand {
         this._snap = snapshotState();
         sellUnit(this._unit, this._loc);
         applyBoardEffects(); // calls render() internally
-        record({ type: 'sell', champName: this._unit.name, stars: this._unit.stars, location: this._loc, goldGained: state.gold - this._snap.gold, goldBefore: this._snap.gold });
+        record({ type: 'sell', champName: this._unit.name, stars: this._unit.stars, location: this._loc, goldGained: state.gold - this._snap.gold, goldBefore: this._snap.gold, goldAfter: state.gold });
         return true;
     }
     undo() { if (this._snap) restoreState(this._snap); }
