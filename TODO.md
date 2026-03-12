@@ -1,21 +1,17 @@
 # TODO
+Start on post-rolldown screen
 
 # Major
 Disable loading saved teams and entering TB mode while in a round
 
 # Low Priority
 ## HUD
-- Level select runs into trait panel
-    - Change to open a sideways select panel
 
 ## Team Planner
-- Filter by trait
 - Snapshot
 
 ## Trait Indicators
-- Units on hover should have a colored border indicating their rarity
-- Unlockable units should show whether or not they're locked or unlocked
-    - If locked, show how close to unlock condition
+- Units in hover info panel should have a colored border indicating their rarity
 
 ## Shop
 - Change star up animation to be a ring-like effect
@@ -38,10 +34,7 @@ Disable loading saved teams and entering TB mode while in a round
 
 ## Settings
 - Change hotkeys
-- Add reload planner on reset setting
-
-## Presets
-- Add editing of presets
+- Add regenerate planner on reset setting
 
 ## Misc
 
@@ -52,6 +45,14 @@ Disable loading saved teams and entering TB mode while in a round
 - Make a bot that simulates another player rolling down
 
 ## Known Bugs / Issues
+    - Units can still appear in the shop after being 3 starred
+    - You can hold a shop slot and roll it, leaving you with a null shop slot, but when the unit is bought the unit that was in the that shop slot gets bought instead (does that make sense?)
+
+    - You can drag a unit into the gap between the hexes, causing the move champ to fizzle
+    - You can still (somehow?) drag the star indicators and unit count around if you click on the right spot in the board-bench gap
+
+
+
     - Inactive traits move around based on the order of units on the board
         - Correct order has something to do with the trait breakpoints maybe?
         - Shurima (2 > 3 > 4) is above Warden (2 > 3 > 4 > 5) which is above Piltover (2 > 4 > 6)
@@ -59,16 +60,12 @@ Disable loading saved teams and entering TB mode while in a round
         - Alphabetical order seems to be the least important
     - Galio can be fielded
     - Ice Tower, Tibbers, and Azir Soldiers have hardcoded hex placements when summoned and overwrite units in those hexes
-    - Units can still appear in the shop after being 3 starred
     - Presets don't load with the XP in the bank
     - HUD is all messed up and clippy in TB mode
     - Shop, planner, etc. UI don't support 7 costs at all
     - "pool" object in tables.js is doing too much -> split into unit_info and pool
     - Need to prevent D from doing the default navigation thingy
     - Sometimes, you accidentally reset your board by pressing D after the timer ends (should be ~1s cd)
-    - You can drag a unit into the gap between the hexes, causing the move champ to fizzle
-    - You can still (somehow?) drag the star indicators and unit count around if you click on the right spot in the board-bench gap
-    - You can hold a shop slot and roll it, leaving you with a null shop slot, but when the unit is bought the unit that was in the that shop slot gets bought instead (does that make sense?)
     - Unlock condition doesn't load properly
 
 ## Big Picture before Release

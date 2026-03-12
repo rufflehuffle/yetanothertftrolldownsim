@@ -1,5 +1,5 @@
 import { pool, traits as traitTable } from './tables.js';
-import { state, saveTeamPlan, saveUnlockedOverrides, isOriginallyLocked, setPlannedAsGenerateTarget } from './state.js';
+import { state, saveTeamPlan, saveUnlockedOverrides, isOriginallyLocked, setPlannedAsGenerateTarget, syncTeamPlanSlots } from './state.js';
 import { render, computeTraits, getSortedTraitEntries, activeBreakpoint, nextBreakpoint, showTraitTooltip, positionTooltip } from './render.js';
 import { generate41Board } from './board-generator.js';
 import { openTeams, saveActiveTeam, lastLoadedPreset, renameTeam } from './teams.js';
@@ -122,7 +122,7 @@ const undoStack = [];
 const UNDO_LIMIT = 20;
 
 function pushUndo() {
-    undoStack.push([...state.teamPlan]);
+    undoStack.push({ plan: [...state.teamPlan], slots: [...state.teamPlanSlots] });
     if (undoStack.length > UNDO_LIMIT) undoStack.shift();
 }
 
@@ -206,10 +206,14 @@ function makePickerUnit(champ) {
         if (state.teamPlan.has(champ.name)) {
             hideUnitInfo();
             state.teamPlan.delete(champ.name);
+            const si = state.teamPlanSlots.indexOf(champ.name);
+            if (si !== -1) state.teamPlanSlots[si] = null;
             if (isOriginallyLocked(champ.name)) pool[champ.name].unlocked = false;
         } else {
             if (state.teamPlan.size >= TEAM_MAX) return;
             state.teamPlan.add(champ.name);
+            const ei = state.teamPlanSlots.indexOf(null);
+            if (ei !== -1) state.teamPlanSlots[ei] = champ.name;
             if (isOriginallyLocked(champ.name)) pool[champ.name].unlocked = true;
         }
         saveTeamPlan();
@@ -340,10 +344,8 @@ function getCostColor(cost) {
 export function renderTeamGrid() {
     teamGridEl.innerHTML = '';
 
-    const selected = [...state.teamPlan];
-
     for (let i = 0; i < TEAM_MAX; i++) {
-        const name  = selected[i] ?? null;
+        const name  = state.teamPlanSlots[i] ?? null;
         const champ = name ? pool[name] : null;
 
         const slot = document.createElement('div');
@@ -508,10 +510,14 @@ export function renderPlannerTraits() {
 export function toggleTeamPlan(name) {
     if (state.teamPlan.has(name)) {
         state.teamPlan.delete(name);
+        const si = state.teamPlanSlots.indexOf(name);
+        if (si !== -1) state.teamPlanSlots[si] = null;
         if (isOriginallyLocked(name)) pool[name].unlocked = false;
     } else {
         if (state.teamPlan.size >= TEAM_MAX) return;
         state.teamPlan.add(name);
+        const ei = state.teamPlanSlots.indexOf(null);
+        if (ei !== -1) state.teamPlanSlots[ei] = name;
         if (isOriginallyLocked(name)) pool[name].unlocked = true;
     }
     saveTeamPlan();
@@ -544,6 +550,7 @@ export function openTeamPlanner() {
 }
 
 function closeTeamPlanner() {
+    hideUnitInfo();
     plannerEl.style.display = 'none';
     plannerBackdropEl.style.display = 'none';
 }
@@ -597,6 +604,7 @@ export function loadTeamCode(code) {
         state.teamPlan.add(name);
         if (isOriginallyLocked(name)) pool[name].unlocked = true;
     }
+    syncTeamPlanSlots(names);
     saveTeamPlan();
     saveUnlockedOverrides();
     buildPicker();
@@ -625,6 +633,7 @@ document.addEventListener('keydown', (e) => {
 clearBtnEl?.addEventListener('click', () => {
     pushUndo();
     state.teamPlan.clear();
+    state.teamPlanSlots.fill(null);
     saveTeamPlan();
     // Reset any unlocked overrides that were set via the planner
     for (const name of Object.keys(pool)) {
@@ -642,7 +651,8 @@ clearBtnEl?.addEventListener('click', () => {
 undoBtnEl?.addEventListener('click', () => {
     if (!undoStack.length) return;
     const prev = undoStack.pop();
-    state.teamPlan = new Set(prev);
+    state.teamPlan = new Set(prev.plan);
+    state.teamPlanSlots = [...prev.slots];
     saveTeamPlan();
     buildPicker();
     renderTeamGrid();

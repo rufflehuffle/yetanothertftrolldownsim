@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="style/teams.css">
     <link rel="stylesheet" href="style/popup.css">
     <link rel="stylesheet" href="style/filter.css">
+    <link rel="stylesheet" href="style/postrd.css">
 </head>
 <body>
     <!-- Top Round Timer Bar -->
@@ -367,7 +368,85 @@
     </div>
 
 
+    <!-- Post-Rolldown Modal -->
+    <div class="postrd" id="postrd" role="dialog" aria-modal="true" aria-label="Post-Rolldown Review">
+
+        <div class="postrd__backdrop" id="postrd-backdrop"></div>
+
+        <div class="postrd__panel">
+
+            <header class="postrd__header">
+                <nav class="postrd__tabs" role="tablist">
+                    <button class="postrd__tab postrd__tab--active"
+                            role="tab"
+                            data-tab="performance"
+                            aria-selected="true"
+                            aria-controls="postrd-performance">
+                        Performance
+                    </button>
+                    <button class="postrd__tab"
+                            role="tab"
+                            data-tab="analysis"
+                            aria-selected="false"
+                            aria-controls="postrd-analysis">
+                        Analysis
+                    </button>
+                </nav>
+                <button class="postrd__close" id="postrd-close" aria-label="Close">&times;</button>
+            </header>
+
+            <div class="postrd__body">
+
+                <div class="postrd-performance postrd__panel-content postrd__panel-content--active"
+                     id="postrd-performance"
+                     role="tabpanel">
+
+                    <div class="postrd-performance__grade">
+                        <span class="postrd-performance__grade-label">Grade</span>
+                        <span class="postrd-performance__grade-value" id="postrd-grade-value">—</span>
+                    </div>
+
+                    <div class="postrd-performance__comp">
+                        <span class="postrd-performance__section-title">Final Board</span>
+                        <div class="postrd-comp__units" id="postrd-comp-units"></div>
+                    </div>
+
+                    <div class="postrd-pentascore">
+                        <span class="postrd-performance__section-title">Score Breakdown</span>
+                        <svg class="postrd-pentascore__svg"
+                             id="postrd-pentagon-svg"
+                             viewBox="0 0 320 258"
+                             xmlns="http://www.w3.org/2000/svg"
+                             aria-label="Score breakdown pentagon"></svg>
+                    </div>
+
+                    <div class="postrd-performance__history">
+                        <span class="postrd-performance__section-title">Score History</span>
+                        <div class="postrd-performance__history-chart">
+                            <svg id="score-history-svg"
+                                 class="postrd-history__svg"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 aria-label="Score history chart"></svg>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="postrd-analysis postrd__panel-content"
+                     id="postrd-analysis"
+                     role="tabpanel"
+                     hidden>
+                    <span class="postrd-performance__section-title">Round Detail</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
     <script type="module" src="js/preload.js"></script>
     <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/postrd.js"></script>
 </body>
 </html>

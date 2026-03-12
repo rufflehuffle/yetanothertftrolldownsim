@@ -71,6 +71,7 @@ function lockBoard() {
     document.body.classList.add('timer-locked');
     fillBoardFromBench();
     finishRound();
+    document.dispatchEvent(new CustomEvent('roundcomplete'));
 }
 
 function unlockBoard() {

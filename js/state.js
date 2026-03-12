@@ -17,11 +17,21 @@ export let state = {
         D1: null, D2: null, D3: null, D4: null, D5: null, D6: null, D7: null,
     },
     teamPlan: new Set(),
+    teamPlanSlots: Array(10).fill(null), // positional slots for the planner grid
     targetTeam: null,
+    rolldownHistory: [],  // numeric scores for past rolldowns
 };
 
 export function setPlannedAsGenerateTarget() {
     state.targetTeam = new Set(state.teamPlan);
+}
+
+/** Rebuild teamPlanSlots from an ordered names array (compact, left-to-right). */
+export function syncTeamPlanSlots(names) {
+    state.teamPlanSlots.fill(null);
+    for (let i = 0; i < names.length && i < 10; i++) {
+        state.teamPlanSlots[i] = names[i] ?? null;
+    }
 }
 
 export function saveTeamPlan() {

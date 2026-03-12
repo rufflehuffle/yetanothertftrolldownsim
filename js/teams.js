@@ -1,5 +1,5 @@
 import { pool, traits as traitTable } from './tables.js';
-import { state, _originallyLocked, isOriginallyLocked, saveTeamPlan, saveUnlockedOverrides } from './state.js';
+import { state, _originallyLocked, isOriginallyLocked, saveTeamPlan, saveUnlockedOverrides, syncTeamPlanSlots } from './state.js';
 import { generate41Board, buildTraitCounts } from './board-generator.js';
 import { render } from './render.js';
 import { doRoll } from './logic.js';
@@ -481,6 +481,7 @@ function _deactivateTeam() {
     try { localStorage.removeItem('tft-last-preset'); } catch {}
 
     state.teamPlan.clear();
+    syncTeamPlanSlots([]);
     state.targetTeam = null;
     for (const name of Object.keys(pool)) {
         if (isOriginallyLocked(name)) pool[name].unlocked = false;
@@ -500,6 +501,7 @@ function _applyTeam(team, emptyBoard = false) {
             if (pool[name]) pool[name].unlocked = false;
         }
         state.teamPlan = new Set(team.teamPlan);
+        syncTeamPlanSlots(team.teamPlan);
         const unlockNames = team.unlocks ?? team.teamPlan.filter(n => isOriginallyLocked(n));
         for (const name of unlockNames) {
             if (pool[name]) pool[name].unlocked = true;
