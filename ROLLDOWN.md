@@ -59,6 +59,14 @@ Discipline
 - -2 if they kept rolling even though all their units were 2*
 
 ## TODO
-- Create skeleton for rolldown modal
-    - Have it appear after rolldown
-    - 
+- Add rolldown scoring
+    - Score discipline
+    - Score flexibility
+
+- Implement round detail
+- Implement rolldown history
+
+- Add star indicators to units on final board
+    - Should go on the top of the unit
+- Add active traits to the top of the final board panel
+- Sort units on the final board
