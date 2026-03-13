@@ -96,7 +96,7 @@ export class RollCommand {
         if (state.gold < 2) return false;
         this._snap = snapshotState();
         const ok = doRoll(true) !== false;
-        if (ok) record({ type: 'roll', goldBefore: this._snap.gold, goldAfter: state.gold, shopBefore: [...this._snap.shop], shopAfter: [...state.shop], bench: this._snap.bench, board: this._snap.board, teamPlan: [...state.teamPlan] });
+        if (ok) record({ type: 'roll', goldBefore: this._snap.gold, goldAfter: state.gold, shopBefore: [...this._snap.shop], shopAfter: [...state.shop], bench: this._snap.bench, board: this._snap.board, teamPlan: [...state.teamPlan], level: this._snap.level });
         return ok;
     }
     undo() { if (this._snap) restoreState(this._snap); }

@@ -4,6 +4,8 @@ import { getEvents } from './round.js';
 import { calcSpeed } from './grading-speed.js';
 import { calcAccuracy } from './grading-accuracy.js';
 import { calcPositioning } from './grading-positioning.js';
+import { calcFlexibility } from './grading-flexibility.js';
+import { calcDiscipline } from './grading-discipline.js';
 
 // ============================================================
 // Pentagon geometry constants
@@ -318,10 +320,12 @@ function openPostRd() {
 
     const events = getEvents();
 
-    // Speed (index 0), Accuracy (index 2), and Positioning (index 3) are driven by real round data
+    // Speed (index 0), Discipline (index 1), Accuracy (index 2), Positioning (index 3), and Flexibility (index 4) are driven by real round data
     scores[0] = calcSpeed(events);
+    scores[1] = calcDiscipline(events);
     scores[2] = calcAccuracy(events);
     scores[3] = calcPositioning(state.board);
+    scores[4] = calcFlexibility(events);
 
     // Overall grade and history score from average
     const avg = scores.reduce((s, v) => s + v, 0) / scores.length;
