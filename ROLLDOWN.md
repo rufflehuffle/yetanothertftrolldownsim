@@ -57,9 +57,10 @@ Discipline — measures whether you stopped rolling at the right time
 
 
 ## TODO
-- Implement round detail
 - Implement rolldown history
 
+- Round detail
+    - Include insights on areas where you can improve your score. for example: you lost discipline points here (overrolled)
 - Add star indicators to units on final board
     - Should go on the top of the unit
 - Add active traits to the top of the final board panel

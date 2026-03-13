@@ -1,6 +1,7 @@
 import { pool } from './tables.js';
 import { state } from './state.js';
 import { getEvents } from './round.js';
+import { initAnalysis } from './postrd-analysis.js';
 import { calcSpeed } from './grading-speed.js';
 import { calcAccuracy } from './grading-accuracy.js';
 import { calcPositioning } from './grading-positioning.js';
@@ -347,6 +348,7 @@ function openPostRd() {
     renderFinalBoard();
     buildPentagonSvg(scores);
     renderScoreHistory();
+    initAnalysis(events);
 
     openModal();
 }

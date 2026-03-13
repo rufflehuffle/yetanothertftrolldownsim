@@ -302,6 +302,6 @@ document.addEventListener('roundcomplete', () => {
     console.log('[grading-discipline] Roll event log:', rolls);
     rolls.forEach((roll, i) => {
         const gpsp = avgGoldPerStrengthPoint(roll.board, roll.bench, roll.level, roll.teamPlan);
-        console.log(`[grading-discipline] Roll ${i + 1} avgGoldPerStrengthPoint: ${Math.round(gpsp * 10) / 10}`);
+        console.log(`[grading-discipline] Roll ${i + 1} avgGoldPerStrengthPoint: ${Math.round(gpsp * 100) / 100}`);
     });
 });

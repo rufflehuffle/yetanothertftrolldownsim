@@ -23,6 +23,8 @@
     <link rel="stylesheet" href="style/popup.css">
     <link rel="stylesheet" href="style/filter.css">
     <link rel="stylesheet" href="style/postrd.css">
+    <link rel="stylesheet" href="style/postrd-performance.css">
+    <link rel="stylesheet" href="style/postrd-analysis.css">
 </head>
 <body>
     <!-- Top Round Timer Bar -->
@@ -436,7 +438,44 @@
                      id="postrd-analysis"
                      role="tabpanel"
                      hidden>
-                    <span class="postrd-performance__section-title">Round Detail</span>
+
+                    <div class="postrd-rd">
+
+                        <div class="postrd-rd__screen">
+
+                            <div class="postrd-rd__left">
+                                <div class="postrd-rd__traits" id="rd-traits"></div>
+                            </div>
+
+                            <div class="postrd-rd__board-area">
+                                <div class="postrd-rd__board" id="rd-board"></div>
+                                <div class="postrd-rd__bench" id="rd-bench"></div>
+                            </div>
+
+                        </div>
+
+                        <div class="postrd-rd__hud">
+                            <div class="postrd-rd__hud-inner">
+                                <div class="postrd-rd__stats">
+                                    <div class="postrd-rd__stat">
+                                        <span class="rd-stat-level" id="rd-level">Lv. 8</span>
+                                        <span class="rd-stat-value" id="rd-gold">—</span>
+                                    </div>
+                                </div>
+                                <div class="postrd-rd__shop-section">
+                                    <span class="rd-stat-label">Shop</span>
+                                    <div class="postrd-rd__shop" id="rd-shop"></div>
+                                    <div class="postrd-rd__shop-controls">
+                                        <button class="rd-ctrl-btn" id="rd-prev">&#8592;</button>
+                                        <span class="rd-ctrl-label" id="rd-roll-label">—</span>
+                                        <button class="rd-ctrl-btn" id="rd-next">&#8594;</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>
