@@ -19,50 +19,44 @@ Modal that pops up after a rolldown and has the following tabs:
 
 ## Scoring Heuristics
 
-Speed
-- Check if player properly completed their turn
-    - Were any units auto-fielded? -> if yes, -1 grade
-    - Did you need to roll more? -> if yes, -1 grade
-    - If yes, give an A
-- Extra points for >20 shops seen in one turn -> give +1 grade
+Speed — measures whether you had enough APM to complete your turn
+- Counts actions: buys, sells, rolls, and moves (bench-to-bench moves excluded)
+- Duration is measured to the last counted action (not round end), so short rolldowns aren't penalised for finishing early
+- APM = total actions / (duration in minutes)
+- Roll volume bonus (highest tier only): +5 for ≥10 rolls, +10 for ≥15, +20 for ≥20
+- Score = min(100, APM + rollBonus)
 
-Accuracy
-- Major mistakes:
-    - Player missed a copy of their main carries
-    - Not holding a 5 cost unit that fits onto the board
-    - Selling additional copies of their carries
-- Minor mistakes:
-    - Player missed a copy of a filler unit
+Accuracy — measures whether you bought every unit you were rolling for
+- A missed unit is one that appeared in the shop while the player had an existing copy (on board, bench, or in team plan), could be afforded at roll time, but was not bought before the next roll
+- Duplicate shop slots for the same champion are collapsed — each champion counts at most once per roll
+- Penalty: −5 per missed unit (floor 0)
+- TODO: weight main carries/tanks more heavily; account for gold-constrained misses
 
-Positioning
-- Major mistakes:
-    - Tank in the back line
-    - Carry in the front line
-- Minor mistakes:
-    - Main carry not in the corner
-    - Strongest tank not in front of the main carry
+Positioning — measures how well your board is set up for combat
+- Boolean checks (−10 each if failing):
+    - Main ranged carry (Marksman/Caster/Specialist) is in D1 or D7
+    - Strongest melee carry (Fighter/Assassin) is adjacent to strongest tank
+    - Main tank is in the A-row zone directly in front of the corner ranged carry (D1 → A1–A4; D7 → A4–A7)
+- Per-unit checks (−5 per offending unit):
+    - Melee carries placed in the back row (D hexes)
+    - Ranged carries not in the back row (D row)
+    - Melee carries with no adjacent tank
 
-Flexibility
-- Give the player a C if they did not hold other possible units
-- Major mistakes:
-    - Not holding alternate 4 cost tanks
-- Minor mistakes (-1 can still get an A):
-    - Not holding alternate 4 cost carries
-    - Not holding alternate 3 cost tanks
-    - Not holding splashable 5 costs
+Flexibility — measures whether you picked up stronger tank alternatives when they appeared
+- Scores whether the player picked up alternate tanks that appeared in the shop
+- An alternate tank qualifies if it is: (a) Tank role, (b) has a tank synergy trait (Defender / Bruiser / Juggernaut / Warden) whose first breakpoint is reachable with existing board + bench, (c) stronger at 2★ than the main tank's current reference strength, and (d) equal or higher cost than the main tank
+- Main tank reference: strongest 2★ Tank on board (if available); otherwise the strongest Tank in team plan at its current star level; falls back to strongest Tank on board
+- Penalty: −15 per missed alternate tank opportunity (floor 0)
 
-Discipline
-- Give the player an A by default
-- Track avg. # of gold until the next upgrade
-- +1 if they stopped rolling at the correct time
-- -1 if they slightly overrolled
-- -2 if they kept rolling even though all their units were 2*
+Discipline — measures whether you stopped rolling at the right time
+- At each roll event, computes avgGoldPerStrengthPoint: expected gold cost to gain 1 board-strength point via the most efficient available upgrade path
+- Upgrade paths considered: board 1★ units upgrading to 2★, bench 1★ units upgrading to 2★ (may displace weakest board unit), and team-plan units not yet acquired (buying 1 copy may displace weakest board unit)
+- Board strength uses a weighted sum: strongest Tank ×8, strongest carry ×5, all others ×1
+- Probability model: p(slot = unit) = shop_odds[level][cost] × (unit_remaining / tier_remaining); expected copies per shop = 5p
+- Penalty: −5 × Σ max(0, avgGoldPerStrengthPoint − 1) across all roll events (floor 0)
+
 
 ## TODO
-- Add rolldown scoring
-    - Score discipline
-    - Score flexibility
-
 - Implement round detail
 - Implement rolldown history
 
