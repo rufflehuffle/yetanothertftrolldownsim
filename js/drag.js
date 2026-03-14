@@ -75,6 +75,9 @@ export function handleDragStart(e, location) {
 
 export function handleDrop(location) {
     if (!dragging || dragging.type === 'shop') return;
+    const isBoardBenchSwap = (dragging.type === 'board' && location.type === 'bench') ||
+                             (dragging.type === 'bench' && location.type === 'board');
+    if (isPlanning() && isBoardBenchSwap) { playSound('board_full.mp3'); endDrag(); return; }
     const ok = dispatch(new MoveUnitCommand(dragging, location));
     if (!ok) playSound('board_full.mp3');
     else     playSound('unit_drop.mp3');
@@ -155,7 +158,7 @@ sellZone.addEventListener('mouseleave', () => {
 });
 sellZone.addEventListener('mouseup', () => {
     if (!dragging) return;
-    if (isPlanning() || isRoundEnd()) { endDrag(); return; }
+    if ((isPlanning() || isRoundEnd()) && dragging.type !== 'bench') { endDrag(); return; }
     const unit = dragging.type === 'shop' ? null : getUnitAt(dragging);
     if (unit) dispatch(new SellCommand(unit, dragging));
     endDrag();
@@ -275,7 +278,7 @@ document.addEventListener('mouseup', (e) => {
     }
     if (dragging?.type === 'shop' && dragMoved) handleShopDragEnd(e);
     else if (dragging && dragging.type !== 'shop' && isOverHud(e.clientX, e.clientY)) {
-        if (!isPlanning() && !isRoundEnd()) {
+        if (!isPlanning() && !isRoundEnd() || (isPlanning() && dragging.type === 'bench')) {
             const unit = getUnitAt(dragging);
             if (unit) dispatch(new SellCommand(unit, dragging));
         }

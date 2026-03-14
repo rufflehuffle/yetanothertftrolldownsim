@@ -7,6 +7,7 @@ import {
 import { timerControls } from './timer.js';
 import { lastLoadedPreset, loadPreset } from './teams.js';
 import { dragging, endDrag } from './drag.js';
+import { playSound } from './audio.js';
 import { rdShopPrimaryBtn, updateOverlayContent } from './overlay.js';
 
 document.addEventListener('keydown', (e) => {
@@ -70,10 +71,13 @@ document.addEventListener('keydown', (e) => {
     }
     if (e.key === 'f' || e.key === 'F') { if (!e.repeat && !isPlanning() && !isRoundEnd()) dispatch(new BuyXpCommand()); }
     if (e.key === 'w' || e.key === 'W') {
+        if (isPlanning()) { playSound('board_full.mp3'); return; }
         dispatch(new MoveHoveredCommand());
     }
     if (e.key === 'e' || e.key === 'E') {
-        if (isPlanning() || isRoundEnd()) return;
+        if (isRoundEnd()) return;
+        const activeSlot = (dragging && dragging.type !== 'shop') ? dragging : hoveredSlot;
+        if (isPlanning() && activeSlot?.type !== 'bench') return;
         if (dragging && dragging.type !== 'shop') {
             const unit = getUnitAt(dragging);
             if (unit) dispatch(new SellCommand(unit, dragging));
