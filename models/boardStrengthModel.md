@@ -213,18 +213,18 @@ Simulated via `dps/dps_sim.py` using a discrete time-step (10 ms) over a fixed 2
 | Single target assumed for non-AOE units | Multi-target splash counts are hardcoded in unit data, not derived from board state |
 | Conditional hits excluded | Zilean's death explosion, Caitlyn's ricochet on kill — these require target HP tracking |
 | No items modelled | Base stats only; attack speed, AP, and AD items are excluded |
-| No trait bonuses | Freljord, Anima Squad, etc. are not applied |
+| No trait bonuses | Freljord, Invoker, etc. are not applied |
 | No crowd-control interaction | Stuns cast by DPS units (LeBlanc) are not deducted from enemy DPS |
 | No Chill interaction | Anivia's Crit-if-Chilled bonus is not modelled |
 | Annie special cast | First cast costs 160 mana (global DoT); subsequent casts cost 20 mana (fireball). Modelled via `first_cast_hits` + `subsequent_mana_cost` fields |
 | Ziggs passive bomb | Replaces physical autos with magic-damage bouncing bombs; AD = 0 in unit data |
-| **Limited unit pool** | Only 14 carry/DPS units were included in the simulation (see table below). Many relevant damage dealers (Seraphine, Jinx, Jinx, Kai'Sa, Jhin, Yunara, Viktor, etc.) are absent. Averages and normalizations reflect only the modelled subset and should be treated as directional rather than exhaustive |
+| **Limited unit pool** | 19 carry/DPS units are included in the simulation (see table below). Notable absences include Jinx, Kai'Sa, and other physical carries. Averages and normalizations reflect only the modelled subset and should be treated as directional rather than exhaustive |
 
 ---
 
 ### DPS — Average by Cost
 
-Outliers removed per group using IQR × 1.5. Groups with fewer than 4 units skip outlier removal (all groups here have ≤ 2 units, so removal is skipped). Normalized to average 1-cost 1★ DPS (29).
+Outliers removed per group using IQR × 1.5. Groups with fewer than 4 units skip outlier removal (2-cost has 2 units, so removal is skipped there). Normalized to average 1-cost 1★ DPS (29).
 
 | Cost | Star | Avg DPS | Norm DPS |
 |------|------|---------|----------|
@@ -236,15 +236,15 @@ Outliers removed per group using IQR × 1.5. Groups with fewer than 4 units skip
 | 2 | 3★ | 95 | 3.28 |
 | 3 | 1★ | 46 | 1.59 |
 | 3 | 2★ | 69 | 2.38 |
-| 3 | 3★ | 114 | 3.93 |
-| 4 | 1★ | 60 | 2.07 |
-| 4 | 2★ | 90 | 3.1 |
-| 4 | 3★ | 346 | 11.93 |
-| 5 | 1★ | 60 | 2.07 |
-| 5 | 2★ | 91 | 3.14 |
-| 5 | 3★ | 334 | 11.52 |
+| 3 | 3★ | 116 | 4.0 |
+| 4 | 1★ | 62 | 2.14 |
+| 4 | 2★ | 93 | 3.21 |
+| 4 | 3★ | 299 | 10.31 |
+| 5 | 1★ | 54 | 1.86 |
+| 5 | 2★ | 81 | 2.79 |
+| 5 | 3★ | 294 | 10.14 |
 
-> **Note:** 4-cost and 5-cost 3★ averages spike sharply due to breakpoint scaling (e.g. Lissandra 3★ ability damage jumps to 2800/2800, Lux 3★ beam to 1600/900, Ziggs 3★ bomb to 500 passive). These 3★ values are not representative of typical combat; they reflect late-game hyperscaling on a very small unit sample.
+> **Note:** 4-cost and 5-cost 3★ averages spike sharply due to breakpoint scaling (e.g. Lissandra 3★ ability damage jumps to 2800/2800, Lux 3★ beam to 1600/900, Ziggs 3★ bomb to 500 passive, Miss Fortune 3★ first wave targets 6 enemies). These 3★ values are not representative of typical combat; they reflect late-game hyperscaling. IQR outlier removal keeps Miss Fortune 3★ out of the 4-cost 3★ average (outlier threshold ≈ 474), bringing it closer to the Lissandra/Lux/Yunara/Seraphine cluster.
 
 ---
 
@@ -281,6 +281,9 @@ Normalized to the lowest 1-cost 1★ DPS: Kog'Maw 1★ = 22.
 | 3 | LeBlanc | 1★ | 38 | 1.73 | 2 |
 | 3 | LeBlanc | 2★ | 58 | 2.64 | 2 |
 | 3 | LeBlanc | 3★ | 99 | 4.5 | 2 |
+| 3 | Malzahar | 1★ | 48 | 2.18 | 4 |
+| 3 | Malzahar | 2★ | 72 | 3.27 | 4 |
+| 3 | Malzahar | 3★ | 124 | 5.64 | 4 |
 | 3 | Milio | 1★ | 39 | 1.77 | 2 |
 | 3 | Milio | 2★ | 59 | 2.68 | 2 |
 | 3 | Milio | 3★ | 92 | 4.18 | 2 |
@@ -293,9 +296,21 @@ Normalized to the lowest 1-cost 1★ DPS: Kog'Maw 1★ = 22.
 | 4 | Lux | 1★ | 64 | 2.91 | 3 |
 | 4 | Lux | 2★ | 96 | 4.36 | 3 |
 | 4 | Lux | 3★ | 334 | 15.18 | 3 |
+| 4 | Miss Fortune | 1★ | 92 | 4.18 | 5 |
+| 4 | Miss Fortune | 2★ | 138 | 6.27 | 5 |
+| 4 | Miss Fortune | 3★ | 1306 | 59.36 | 5 |
+| 4 | Seraphine | 1★ | 33 | 1.5 | 7 |
+| 4 | Seraphine | 2★ | 50 | 2.27 | 7 |
+| 4 | Seraphine | 3★ | 222 | 10.09 | 7 |
+| 4 | Yunara | 1★ | 66 | 3.0 | 4 |
+| 4 | Yunara | 2★ | 99 | 4.5 | 4 |
+| 4 | Yunara | 3★ | 282 | 12.82 | 4 |
 | 5 | Annie | 1★ | 28 | 1.27 | 2 |
 | 5 | Annie | 2★ | 42 | 1.91 | 2 |
 | 5 | Annie | 3★ | 150 | 6.82 | 2 |
+| 5 | Kindred | 1★ | 35 | 1.59 | 1 |
+| 5 | Kindred | 2★ | 52 | 2.36 | 1 |
+| 5 | Kindred | 3★ | 172 | 7.82 | 1 |
 | 5 | Ziggs | 1★ | 54 | 2.45 | 1 |
 | 5 | Ziggs | 2★ | 87 | 3.95 | 1 |
 | 5 | Ziggs | 3★ | 740 | 33.64 | 1 |
@@ -308,3 +323,13 @@ Normalized to the lowest 1-cost 1★ DPS: Kog'Maw 1★ = 22.
 > **Ziggs 3★ outlier:** Passive bomb scales to 500 magic damage per auto at 3★ (vs 40/65 at lower stars), producing a massive DPS spike. This represents true breakpoint scaling and is not an artifact of the simulation.
 >
 > **Annie 1★/2★ underperformance:** Annie's first cast (global DoT, 160 mana cost) is strong but the subsequent fireball casts do low damage at 1★/2★. The simulation does not model the sustained DoT's interaction with enemies dying, so lower-star Annie DPS is somewhat underestimated relative to reality.
+>
+> **Miss Fortune 3★ spike:** At 3★ the wave count and target count both scale sharply (6 targets per wave, 5 casts in 25 s), producing 1306 DPS — a significant outlier removed by IQR from the 4-cost average. Lower-star Miss Fortune (92/138 DPS) is more representative of practical performance.
+>
+> **Kindred 1★/2★ underestimate:** The zone lasts only 2.5 s at 1★/2★, yielding ~5 secondary arrows. At 3★ the 99 s zone covers the full combat window, so 3★ DPS is a reasonable upper bound while 1★/2★ values significantly understate reality.
+
+## Items
+Model simply as a 1.5x multiplier for each item on a unit. Currently, items are not implemented so naively assume that the strongest tank (highest EHP) and strongest carry (highest DPS) has their contribution multiplied by a factor of 5 (simulating holding 3 items).
+
+## Traits
+Assume every trait active on a unit multiplies its own strength (tank EHP for tanks and DPS for dps units) by 1.25 (+0.25 for each breakpoint) (1.25 for 1st breakpoint, 1.5 for second, and so on), stacking multiplicatively with other traits.

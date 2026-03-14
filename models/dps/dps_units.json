@@ -271,6 +271,26 @@
     }
   },
 
+  "Malzahar": {
+    "cost": 3,
+    "role": "caster",
+    "atk_dmg": [30, 45, 68],
+    "atk_spd": 0.80,
+    "starting_mana": 0,
+    "mana_cost": 35,
+    "ability": {
+      "name": "Void Swarm",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [480, 720, 1280],
+          "targets": 1,
+          "note": "2 Voidlings × 8 attacks × 30/45/80 each"
+        }
+      ]
+    }
+  },
+
   "Lux": {
     "cost": 4,
     "role": "caster",
@@ -316,6 +336,79 @@
           "magic_dmg": [415, 625, 2800],
           "targets": 2,
           "note": "split among enemies within 2 hexes; modelled as 2 targets sharing full value"
+        }
+      ]
+    }
+  },
+
+  "Seraphine": {
+    "cost": 4,
+    "role": "caster",
+    "atk_dmg": [30, 45, 68],
+    "atk_spd": 0.75,
+    "starting_mana": 0,
+    "mana_cost": 20,
+    "ability": {
+      "name": "Grand Encore",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [35, 55, 300],
+          "targets": 3,
+          "note": "3 notes per cast, each dealing 35/55/300 to a nearby enemy"
+        },
+        {
+          "magic_dmg": [68, 101, 550],
+          "targets": 1,
+          "note": "wave on 12-note cast (every 4th), 270/405/2200 averaged over 4 casts; reduced 30% per enemy passed — modelled as 1 target"
+        }
+      ]
+    }
+  },
+
+  "Miss Fortune": {
+    "cost": 4,
+    "role": "caster",
+    "atk_dmg": [55, 83, 124],
+    "atk_spd": 0.75,
+    "starting_mana": 0,
+    "mana_cost": 30,
+    "ability": {
+      "name": "Heartbreaker",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [245, 370, 3070],
+          "damage_type": "physical",
+          "targets": 2,
+          "note": "first wave; 3★ targets 6 — not modelled. Passive ricochet not modelled."
+        },
+        {
+          "magic_dmg": [131, 197, 3275],
+          "damage_type": "physical",
+          "targets": 2,
+          "note": "rest waves: base 1 + every-3rd-cast bonus = 4/3 avg; 98/148/2456 × 4/3"
+        }
+      ]
+    }
+  },
+
+  "Yunara": {
+    "cost": 4,
+    "role": "marksman",
+    "atk_dmg": [60, 90, 135],
+    "atk_spd": 0.80,
+    "starting_mana": 0,
+    "mana_cost": 50,
+    "ability": {
+      "name": "Transcendent State",
+      "cast_time": 0,
+      "hits": [
+        {
+          "magic_dmg": [88, 132, 475],
+          "damage_type": "physical",
+          "targets": 6,
+          "note": "4s laser burst: ~6 autos at 1★/2★ (AS ×1.8); 3★ fires ~13 lasers at AS ×4.0 — underestimated. Crit true damage not modelled."
         }
       ]
     }
@@ -395,6 +488,27 @@
           "magic_dmg": [310, 490, 5000],
           "targets": 3,
           "note": "midpoint between min (70/105/3000) and max (550/875/7000) damage across epicenter distance; modelled as 3 targets"
+        }
+      ]
+    }
+  },
+
+  "Kindred": {
+    "cost": 5,
+    "role": "marksman",
+    "atk_dmg": [73, 110, 164],
+    "atk_spd": 0.90,
+    "starting_mana": 80,
+    "mana_cost": 200,
+    "ability": {
+      "name": "Lamb's Respite",
+      "cast_time": 0,
+      "hits": [
+        {
+          "magic_dmg": [25, 38, 999],
+          "damage_type": "physical",
+          "targets": 5,
+          "note": "secondary arrow per attack during 2.5s zone at doubled AS (~5 arrows at 1★/2★); 3★ zone lasts 99s (entire combat, ~45 arrows) — significantly underestimated. Shield/heal not modelled."
         }
       ]
     }

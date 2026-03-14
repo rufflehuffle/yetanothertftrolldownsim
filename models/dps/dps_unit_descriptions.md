@@ -184,6 +184,22 @@ Armor: 25 | MR: 25 | AS: 0.90
 
 ---
 
+### Malzahar
+
+**Role:** Magic Caster
+
+**Ability: Void Swarm** (0 / 35 mana)
+Summon 2 Voidlings that each attack a nearby enemy 8 times. Each attack deals 30/45/80 magic damage.
+
+Armor: 25 | MR: 25 | AS: 0.80
+
+| Stat | 1★ | 2★ | 3★ |
+|------|-----|-----|-----|
+| Health | 650 | 1170 | 2106 |
+| Attack Damage | 30 | 45 | 68 |
+
+---
+
 ## 4-Cost
 
 ### Lux
@@ -215,6 +231,54 @@ Armor: 30 | MR: 30 | AS: 0.75
 |------|-----|-----|-----|
 | Health | 800 | 1440 | 2592 |
 | Attack Damage | 30 | 45 | 68 |
+
+---
+
+### Seraphine
+
+**Role:** Magic Caster
+
+**Ability: Grand Encore** (0 / 20 mana)
+Gain 3 notes. For each one active, deal 35/55/300 magic damage to a nearby enemy. While holding 12 notes on cast, consume them to project a wave of energy. Allies hit restore 40/80/400 Health. Enemies hit take 270/405/2200 magic damage, reduced by 30% for each enemy it's passed through.
+
+Armor: 30 | MR: 30 | AS: 0.75
+
+| Stat | 1★ | 2★ | 3★ |
+|------|-----|-----|-----|
+| Health | 800 | 1440 | 2592 |
+| Attack Damage | 30 | 45 | 68 |
+
+---
+
+### Miss Fortune
+
+**Role:** Attack Caster
+
+**Ability: Heartbreaker** (0 / 30 mana)
+Passive: Attacks ricochet to the highest current Health enemy, dealing 50/50/100% damage. Active: Fire waves of bullets that land on the 2/2/6 nearest enemies. The first wave deals 245/370/3070 physical damage and the rest deal 98/148/2456 physical damage. Every 3rd cast, increase the number of waves by 1.
+
+Armor: 30 | MR: 30 | AS: 0.75
+
+| Stat | 1★ | 2★ | 3★ |
+|------|-----|-----|-----|
+| Health | 800 | 1440 | 2592 |
+| Attack Damage | 55 | 83 | 124 |
+
+---
+
+### Yunara
+
+**Role:** Attack Marksman
+
+**Ability: Transcendent State** (0 / 50 mana)
+For the next 4 seconds, gain 80/80/300% Attack Speed, infinite range, and replace attacks with lasers. Lasers deal 88/132/475 physical damage in a line, reduced by 75/75/30% for each enemy they pass through. When lasers critically strike, they deal 33% bonus true damage.
+
+Armor: 30 | MR: 30 | AS: 0.80
+
+| Stat | 1★ | 2★ | 3★ |
+|------|-----|-----|-----|
+| Health | 800 | 1440 | 2592 |
+| Attack Damage | 60 | 90 | 135 |
 
 ---
 
@@ -266,3 +330,19 @@ Armor: 30 | MR: 30 | AS: 0.90
 |------|-----|-----|-----|
 | Health | 900 | 1620 | 2916 |
 | Attack Damage | 0 | 0 | 0 |
+
+---
+
+### Kindred
+
+**Role:** Attack Marksman
+
+**Ability: Lamb's Respite** (80 / 200 mana)
+Dash, then create a 2-hex radius zone for 2.5/2.5/99 seconds that shields allies within for 350/750/10000 Health for the zone's duration. While active, double current Attack Speed and on attack, fire a secondary arrow at a nearby enemy that deals 25/38/999 physical damage. When the zone ends, heal all allies for 8% of damage dealt while it was up and dash away.
+
+Armor: 40 | MR: 40 | AS: 0.90
+
+| Stat | 1★ | 2★ | 3★ |
+|------|-----|-----|-----|
+| Health | 900 | 1620 | 2916 |
+| Attack Damage | 73 | 110 | 164 |
