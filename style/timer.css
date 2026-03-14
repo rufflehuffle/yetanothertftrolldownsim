@@ -115,6 +115,20 @@ body.timer-locked .shop-slot {
     cursor: not-allowed;
 }
 
+@media (min-width: 2560px) {
+    .top-timer-bar {
+        transform: translateX(-50%) scale(1.5);
+        transform-origin: top center;
+    }
+}
+
+@media (min-width: 3840px) {
+    .top-timer-bar {
+        transform: translateX(-50%) scale(2.0);
+        transform-origin: top center;
+    }
+}
+
 body.timer-locked .roll-button,
 body.timer-locked .buy-xp-button,
 body.timer-locked .hex,

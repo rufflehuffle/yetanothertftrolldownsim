@@ -33,6 +33,7 @@ const AXIS_LABEL_POS = [
 const modal      = document.getElementById('postrd');
 const backdrop   = document.getElementById('postrd-backdrop');
 const closeBtn   = document.getElementById('postrd-close');
+const openBtn    = document.getElementById('postrd-open-btn');
 const gradeValue = document.getElementById('postrd-grade-value');
 const compUnits  = document.getElementById('postrd-comp-units');
 const pentaSvg   = document.getElementById('postrd-pentagon-svg');
@@ -48,6 +49,9 @@ function openModal()  { modal.classList.add('postrd--open'); }
 function closeModal() { modal.classList.remove('postrd--open'); }
 
 closeBtn.addEventListener('click', closeModal);
+openBtn.addEventListener('click', () => {
+    modal.classList.contains('postrd--open') ? closeModal() : openModal();
+});
 retryBtn.addEventListener('click', () => {
     closeModal();
     document.dispatchEvent(new CustomEvent('postrd-retry'));

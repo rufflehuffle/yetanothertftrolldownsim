@@ -100,6 +100,21 @@ function handleDrop(location) {
     endDrag();
 }
 
+function findNearestHexToPoint(x, y) {
+    const boardEl = document.querySelector('.board');
+    const boardRect = boardEl.getBoundingClientRect();
+    if (x < boardRect.left || x > boardRect.right || y < boardRect.top || y > boardRect.bottom) return null;
+    let nearest = null, minDist = Infinity;
+    document.querySelectorAll('.hex').forEach(hex => {
+        const rect = hex.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dist = Math.hypot(x - cx, y - cy);
+        if (dist < minDist) { minDist = dist; nearest = hex; }
+    });
+    return nearest;
+}
+
 function isInSlotCenter(x, y, slotEl) {
     const rect = slotEl.getBoundingClientRect();
     return x >= rect.left + rect.width * 0.25 &&
@@ -294,6 +309,15 @@ document.addEventListener('mouseup', (e) => {
             if (unit) dispatch(new SellCommand(unit, dragging));
         }
         endDrag();
+    } else if (dragging && dragging.type !== 'shop') {
+        // Dropped in a gap — snap to nearest board hex if inside the board area
+        const nearestHex = findNearestHexToPoint(e.clientX, e.clientY);
+        if (nearestHex) {
+            const key = [...nearestHex.classList].find(c => c !== 'hex');
+            handleDrop({ type: 'board', key });
+        } else {
+            endDrag();
+        }
     } else endDrag();
 });
 

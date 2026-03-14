@@ -217,7 +217,7 @@
     bottom: -2px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 13px;
+    font-size: clamp(13px, 1.35vmin, 5vmin);
     line-height: 1;
     letter-spacing: 1px;
     pointer-events: none;

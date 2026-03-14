@@ -216,3 +216,17 @@
         overflow-y: auto;
     }
 }
+
+@media (min-width: 2560px) {
+    .trait-panel {
+        transform: scale(1.5);
+        transform-origin: top right;
+    }
+}
+
+@media (min-width: 3840px) {
+    .trait-panel {
+        transform: scale(2.0);
+        transform-origin: top right;
+    }
+}
