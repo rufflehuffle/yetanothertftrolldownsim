@@ -184,3 +184,127 @@ Normalized to the lowest 1-cost 1★ EHP: Illaoi 1★ = 1,479.
 | 5 | Tahm Kench | 1★ | 2095 | 1.42 |
 | 5 | Tahm Kench | 2★ | 3508 | 2.37 |
 | 5 | Tahm Kench | 3★ | 6052 | 4.09 |
+
+## DPS
+
+Simulated via `dps/dps_sim.py` using a discrete time-step (10 ms) over a fixed 25 s combat window against a single dummy target with 100 Armor and 100 Magic Resist.
+
+### Simulation Parameters & Assumptions
+
+| Parameter | Value | Notes |
+|---|---|---|
+| Combat duration | 25 s | Fixed window; DoT damage is capped at time remaining |
+| Dummy Armor | 100 | Physical damage multiplied by 100/200 = 0.5 |
+| Dummy Magic Resist | 100 | Magic damage multiplied by 100/200 = 0.5 |
+| Time step | 10 ms | Discrete simulation; sub-10 ms timing effects are ignored |
+| Mana per auto (caster) | 7 | Flat per-auto mana gain for caster-role units |
+| Mana regen (caster) | 2 / s | Passive regen; ticks every step, capped at mana_cost |
+| Mana per auto (marksman) | 10 | Higher per-auto gain; no passive regen |
+| Mana regen (marksman) | 0 / s | Marksmen rely entirely on autos for mana |
+| Cast time (caster) | 1 s | Auto timer is frozen during cast animation |
+| Cast time (marksman) | 0 s | Abilities are modifiers on autos; no animation freeze |
+| Target count | As specified per unit | AOE splash targets encoded in `hits[].targets` |
+| Mana cap | = mana\_cost | Mana cannot exceed the cast threshold |
+
+### Shortcuts & Limitations
+
+| Item | Detail |
+|---|---|
+| Single target assumed for non-AOE units | Multi-target splash counts are hardcoded in unit data, not derived from board state |
+| Conditional hits excluded | Zilean's death explosion, Caitlyn's ricochet on kill — these require target HP tracking |
+| No items modelled | Base stats only; attack speed, AP, and AD items are excluded |
+| No trait bonuses | Freljord, Anima Squad, etc. are not applied |
+| No crowd-control interaction | Stuns cast by DPS units (LeBlanc) are not deducted from enemy DPS |
+| No Chill interaction | Anivia's Crit-if-Chilled bonus is not modelled |
+| Annie special cast | First cast costs 160 mana (global DoT); subsequent casts cost 20 mana (fireball). Modelled via `first_cast_hits` + `subsequent_mana_cost` fields |
+| Ziggs passive bomb | Replaces physical autos with magic-damage bouncing bombs; AD = 0 in unit data |
+| **Limited unit pool** | Only 14 carry/DPS units were included in the simulation (see table below). Many relevant damage dealers (Seraphine, Jinx, Jinx, Kai'Sa, Jhin, Yunara, Viktor, etc.) are absent. Averages and normalizations reflect only the modelled subset and should be treated as directional rather than exhaustive |
+
+---
+
+### DPS — Average by Cost
+
+Outliers removed per group using IQR × 1.5. Groups with fewer than 4 units skip outlier removal (all groups here have ≤ 2 units, so removal is skipped). Normalized to average 1-cost 1★ DPS (29).
+
+| Cost | Star | Avg DPS | Norm DPS |
+|------|------|---------|----------|
+| 1 | 1★ | 29 | 1.0 |
+| 1 | 2★ | 44 | 1.52 |
+| 1 | 3★ | 66 | 2.28 |
+| 2 | 1★ | 36 | 1.24 |
+| 2 | 2★ | 56 | 1.93 |
+| 2 | 3★ | 95 | 3.28 |
+| 3 | 1★ | 46 | 1.59 |
+| 3 | 2★ | 69 | 2.38 |
+| 3 | 3★ | 114 | 3.93 |
+| 4 | 1★ | 60 | 2.07 |
+| 4 | 2★ | 90 | 3.1 |
+| 4 | 3★ | 346 | 11.93 |
+| 5 | 1★ | 60 | 2.07 |
+| 5 | 2★ | 91 | 3.14 |
+| 5 | 3★ | 334 | 11.52 |
+
+> **Note:** 4-cost and 5-cost 3★ averages spike sharply due to breakpoint scaling (e.g. Lissandra 3★ ability damage jumps to 2800/2800, Lux 3★ beam to 1600/900, Ziggs 3★ bomb to 500 passive). These 3★ values are not representative of typical combat; they reflect late-game hyperscaling on a very small unit sample.
+
+---
+
+### DPS — Per Unit
+
+Normalized to the lowest 1-cost 1★ DPS: Kog'Maw 1★ = 22.
+
+| Cost | Name | Star | DPS | Norm DPS | Casts |
+|------|------|------|-----|----------|-------|
+| 1 | Anivia | 1★ | 36 | 1.64 | 4 |
+| 1 | Anivia | 2★ | 51 | 2.32 | 4 |
+| 1 | Anivia | 3★ | 74 | 3.36 | 4 |
+| 1 | Caitlyn | 1★ | 36 | 1.64 | 2 |
+| 1 | Caitlyn | 2★ | 54 | 2.45 | 2 |
+| 1 | Caitlyn | 3★ | 83 | 3.77 | 2 |
+| 1 | Kog'Maw | 1★ | 22 | 1.0 | 4 |
+| 1 | Kog'Maw | 2★ | 32 | 1.45 | 4 |
+| 1 | Kog'Maw | 3★ | 49 | 2.23 | 4 |
+| 1 | Lulu | 1★ | 27 | 1.23 | 2 |
+| 1 | Lulu | 2★ | 41 | 1.86 | 2 |
+| 1 | Lulu | 3★ | 61 | 2.77 | 2 |
+| 1 | Sona | 1★ | 26 | 1.18 | 4 |
+| 1 | Sona | 2★ | 40 | 1.82 | 4 |
+| 1 | Sona | 3★ | 61 | 2.77 | 4 |
+| 2 | Orianna | 1★ | 28 | 1.27 | 3 |
+| 2 | Orianna | 2★ | 42 | 1.91 | 3 |
+| 2 | Orianna | 3★ | 71 | 3.23 | 3 |
+| 2 | Teemo | 1★ | 45 | 2.05 | 5 |
+| 2 | Teemo | 2★ | 70 | 3.18 | 5 |
+| 2 | Teemo | 3★ | 119 | 5.41 | 5 |
+| 3 | Ahri | 1★ | 51 | 2.32 | 5 |
+| 3 | Ahri | 2★ | 77 | 3.5 | 5 |
+| 3 | Ahri | 3★ | 134 | 6.09 | 5 |
+| 3 | LeBlanc | 1★ | 38 | 1.73 | 2 |
+| 3 | LeBlanc | 2★ | 58 | 2.64 | 2 |
+| 3 | LeBlanc | 3★ | 99 | 4.5 | 2 |
+| 3 | Milio | 1★ | 39 | 1.77 | 2 |
+| 3 | Milio | 2★ | 59 | 2.68 | 2 |
+| 3 | Milio | 3★ | 92 | 4.18 | 2 |
+| 3 | Vayne | 1★ | 54 | 2.45 | 5 |
+| 3 | Vayne | 2★ | 81 | 3.68 | 5 |
+| 3 | Vayne | 3★ | 130 | 5.91 | 5 |
+| 4 | Lissandra | 1★ | 56 | 2.55 | 2 |
+| 4 | Lissandra | 2★ | 84 | 3.82 | 2 |
+| 4 | Lissandra | 3★ | 359 | 16.32 | 2 |
+| 4 | Lux | 1★ | 64 | 2.91 | 3 |
+| 4 | Lux | 2★ | 96 | 4.36 | 3 |
+| 4 | Lux | 3★ | 334 | 15.18 | 3 |
+| 5 | Annie | 1★ | 28 | 1.27 | 2 |
+| 5 | Annie | 2★ | 42 | 1.91 | 2 |
+| 5 | Annie | 3★ | 150 | 6.82 | 2 |
+| 5 | Ziggs | 1★ | 54 | 2.45 | 1 |
+| 5 | Ziggs | 2★ | 87 | 3.95 | 1 |
+| 5 | Ziggs | 3★ | 740 | 33.64 | 1 |
+| 5 | Zilean | 1★ | 99 | 4.5 | 4 |
+| 5 | Zilean | 2★ | 143 | 6.5 | 4 |
+| 5 | Zilean | 3★ | 112 | 5.09 | 4 |
+
+> **Zilean 3★ anomaly:** DPS drops from 2★ to 3★ because the death-explosion hit (conditional on target dying) is excluded. At 3★ the death explosion carries most of the expected damage; without it, the Time Bomb DoT alone (1000/s × remaining time) drives the number but less frequently triggers than the excluded conditional. Treat Zilean 3★ DPS as a significant underestimate.
+>
+> **Ziggs 3★ outlier:** Passive bomb scales to 500 magic damage per auto at 3★ (vs 40/65 at lower stars), producing a massive DPS spike. This represents true breakpoint scaling and is not an artifact of the simulation.
+>
+> **Annie 1★/2★ underperformance:** Annie's first cast (global DoT, 160 mana cost) is strong but the subsequent fireball casts do low damage at 1★/2★. The simulation does not model the sustained DoT's interaction with enemies dying, so lower-star Annie DPS is somewhat underestimated relative to reality.

@@ -1,0 +1,402 @@
+{
+  "_schema": {
+    "cost": "gold cost",
+    "role": "sim role key — 'caster' (7 mana/auto + 2 mana/s regen, 1s cast time) or 'marksman' (10 mana/auto, no regen, 0s cast time). Attack/Magic prefix is flavour only; no effect on simulation.",
+    "atk_dmg": "[1★, 2★, 3★] physical attack damage",
+    "atk_spd": "attacks per second (constant across stars)",
+    "starting_mana": "flat value",
+    "mana_cost": "flat value",
+    "ability.cast_time": "seconds locked out of attacking while casting (1 for casters, 0 for marksmen)",
+    "ability.auto_magic_dmg": "[1★, 2★, 3★] magic damage per auto attack (passive bomb/replacement — added on top of physical auto)",
+    "ability.auto_magic_targets": "number of targets hit by magic auto (default 1)",
+    "ability.hits[].magic_dmg": "[1★, 2★, 3★] magic damage per instance",
+    "ability.hits[].damage_type": "'magic' (default) | 'physical' | 'true'",
+    "ability.hits[].targets": "number of targets hit by this instance",
+    "ability.hits[].per_second": "bool — magic_dmg is per second; multiply by duration for total",
+    "ability.hits[].duration": "[1★, 2★, 3★] seconds (for DoTs)",
+    "ability.hits[].note": "optional clarification",
+    "ability.first_cast_hits": "hit array used only on the first cast (e.g. Annie's global DoT); subsequent casts use hits[]",
+    "ability.subsequent_mana_cost": "mana cost applied after the first cast (e.g. Annie 160 → 20)"
+  },
+
+  "Anivia": {
+    "cost": 1,
+    "role": "caster",
+    "atk_dmg": [30, 45, 68],
+    "atk_spd": 0.75,
+    "starting_mana": 0,
+    "mana_cost": 40,
+    "ability": {
+      "name": "Frostbite",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [325, 455, 650],
+          "targets": 1,
+          "note": "Critically Strikes if target is Chilled; not modelled by default"
+        }
+      ]
+    }
+  },
+
+  "Caitlyn": {
+    "cost": 1,
+    "role": "caster",
+    "atk_dmg": [45, 68, 101],
+    "atk_spd": 0.75,
+    "starting_mana": 0,
+    "mana_cost": 80,
+    "ability": {
+      "name": "Ace in the Hole",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [515, 775, 1205],
+          "damage_type": "physical",
+          "targets": 1,
+          "note": "hits first enemy in path; ricochet on kill not modelled"
+        }
+      ]
+    }
+  },
+
+  "Lulu": {
+    "cost": 1,
+    "role": "caster",
+    "atk_dmg": [25, 38, 56],
+    "atk_spd": 0.70,
+    "starting_mana": 20,
+    "mana_cost": 70,
+    "ability": {
+      "name": "Whimsy",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [330, 500, 750],
+          "targets": 1,
+          "note": "primary target; CC (dance) not modelled"
+        },
+        {
+          "magic_dmg": [140, 210, 315],
+          "targets": 1,
+          "note": "bounce to nearest enemy"
+        }
+      ]
+    }
+  },
+
+  "Kog'Maw": {
+    "cost": 1,
+    "role": "caster",
+    "atk_dmg": [20, 30, 45],
+    "atk_spd": 0.70,
+    "starting_mana": 0,
+    "mana_cost": 30,
+    "ability": {
+      "name": "Caustic Spittle",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [140, 200, 300],
+          "targets": 1,
+          "note": "primary target; armor/MR shred not modelled"
+        },
+        {
+          "magic_dmg": [70, 100, 150],
+          "targets": 1,
+          "note": "50% splash to adjacent enemies; modelled as 1 target"
+        }
+      ]
+    }
+  },
+
+  "Sona": {
+    "cost": 1,
+    "role": "caster",
+    "atk_dmg": [20, 30, 45],
+    "atk_spd": 0.70,
+    "starting_mana": 0,
+    "mana_cost": 30,
+    "ability": {
+      "name": "Power Chord",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [130, 195, 300],
+          "targets": 2
+        }
+      ]
+    }
+  },
+
+  "Orianna": {
+    "cost": 2,
+    "role": "caster",
+    "atk_dmg": [30, 45, 68],
+    "atk_spd": 0.70,
+    "starting_mana": 20,
+    "mana_cost": 50,
+    "ability": {
+      "name": "Command: Protect",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [200, 300, 550],
+          "targets": 1,
+          "note": "primary target"
+        },
+        {
+          "magic_dmg": [120, 180, 300],
+          "targets": 1,
+          "note": "split among enemies in 1-hex radius; modelled as 1 target taking full splash"
+        }
+      ]
+    }
+  },
+
+  "Teemo": {
+    "cost": 2,
+    "role": "caster",
+    "atk_dmg": [35, 53, 79],
+    "atk_spd": 0.75,
+    "starting_mana": 0,
+    "mana_cost": 30,
+    "ability": {
+      "name": "Toxic Dart",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [130, 200, 330],
+          "targets": 1,
+          "note": "initial dart damage"
+        },
+        {
+          "magic_dmg": [35, 55, 100],
+          "targets": 1,
+          "per_second": true,
+          "duration": [8, 8, 8],
+          "note": "poison DoT per second for 8s; each cast targets a new unpoisoned enemy"
+        }
+      ]
+    }
+  },
+
+  "Ahri": {
+    "cost": 3,
+    "role": "caster",
+    "atk_dmg": [30, 45, 68],
+    "atk_spd": 0.80,
+    "starting_mana": 0,
+    "mana_cost": 30,
+    "ability": {
+      "name": "Fox-Fire",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [410, 625, 1125],
+          "targets": 1,
+          "note": "averaged over 3-cast cycle: casts 1-2 fire 3 flames to 1 target (3×dmg each), cast 3 fires 9 flames split across 3 targets (3×dmg each); total per cycle = 15×dmg, avg = 5×dmg per cast"
+        }
+      ]
+    }
+  },
+
+  "LeBlanc": {
+    "cost": 3,
+    "role": "caster",
+    "atk_dmg": [35, 53, 79],
+    "atk_spd": 0.75,
+    "starting_mana": 0,
+    "mana_cost": 60,
+    "ability": {
+      "name": "Distortions",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [300, 450, 800],
+          "targets": 1,
+          "note": "primary target; also Stunned for 1s"
+        },
+        {
+          "magic_dmg": [180, 270, 500],
+          "targets": 2,
+          "note": "up to 2 nearby enemies"
+        }
+      ]
+    }
+  },
+
+  "Milio": {
+    "cost": 3,
+    "role": "caster",
+    "atk_dmg": [30, 45, 68],
+    "atk_spd": 0.75,
+    "starting_mana": 0,
+    "mana_cost": 60,
+    "ability": {
+      "name": "Ultra Mega Fire Kick!!!",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [190, 285, 445],
+          "targets": 3,
+          "note": "bounces 3 times, each hitting a different enemy"
+        },
+        {
+          "magic_dmg": [160, 240, 375],
+          "targets": 1,
+          "note": "last bounce AOE in 1-hex radius; modelled as 1 target"
+        }
+      ]
+    }
+  },
+
+  "Vayne": {
+    "cost": 3,
+    "role": "marksman",
+    "atk_dmg": [70, 105, 158],
+    "atk_spd": 0.90,
+    "starting_mana": 0,
+    "mana_cost": 40,
+    "ability": {
+      "name": "Tumble",
+      "cast_time": 0,
+      "hits": [
+        {
+          "magic_dmg": [116, 175, 300],
+          "damage_type": "true",
+          "targets": 1
+        }
+      ]
+    }
+  },
+
+  "Lux": {
+    "cost": 4,
+    "role": "caster",
+    "atk_dmg": [30, 45, 68],
+    "atk_spd": 0.75,
+    "starting_mana": 0,
+    "mana_cost": 50,
+    "ability": {
+      "name": "Final Spark",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [360, 545, 1700],
+          "targets": 2,
+          "note": "ball (30/45/100) + beam (330/500/1600) combined on the 2 ball-hit enemies"
+        },
+        {
+          "magic_dmg": [90, 135, 900],
+          "targets": 2,
+          "note": "beam-only damage to other enemies in path; modelled as 2 targets"
+        }
+      ]
+    }
+  },
+
+  "Lissandra": {
+    "cost": 4,
+    "role": "caster",
+    "atk_dmg": [30, 45, 68],
+    "atk_spd": 0.75,
+    "starting_mana": 20,
+    "mana_cost": 65,
+    "ability": {
+      "name": "Frozen Tomb",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [315, 475, 2800],
+          "targets": 1,
+          "note": "primary target; also Stunned for 1s. Chilled targets take 12% more — not modelled by default"
+        },
+        {
+          "magic_dmg": [415, 625, 2800],
+          "targets": 2,
+          "note": "split among enemies within 2 hexes; modelled as 2 targets sharing full value"
+        }
+      ]
+    }
+  },
+
+  "Zilean": {
+    "cost": 5,
+    "role": "caster",
+    "atk_dmg": [40, 60, 90],
+    "atk_spd": 0.90,
+    "starting_mana": 0,
+    "mana_cost": 35,
+    "ability": {
+      "name": "Visions of the End",
+      "cast_time": 1,
+      "hits": [
+        {
+          "magic_dmg": [90, 135, 1000],
+          "targets": 1,
+          "per_second": true,
+          "duration": [18, 16, 1],
+          "note": "DoT per second until target dies or 18/16/1s instant-kill threshold; cap duration at remaining combat time"
+        },
+        {
+          "magic_dmg": [150, 225, 4000],
+          "targets": 1,
+          "note": "AOE explosion on target death in 1-hex radius; conditional on target dying. Zilean also gains 15 mana on detonation."
+        }
+      ]
+    }
+  },
+
+  "Annie": {
+    "cost": 5,
+    "role": "caster",
+    "atk_dmg": [30, 45, 68],
+    "atk_spd": 0.85,
+    "starting_mana": 0,
+    "mana_cost": 160,
+    "ability": {
+      "name": "Enraged Inferno",
+      "cast_time": 1,
+      "subsequent_mana_cost": 20,
+      "first_cast_hits": [
+        {
+          "magic_dmg": [33, 50, 178],
+          "targets": 4,
+          "per_second": true,
+          "duration": [45, 45, 45],
+          "note": "global DoT: 1500/2250/8000 over 45s to all enemies; modelled as 4 targets, duration capped at remaining combat time"
+        }
+      ],
+      "hits": [
+        {
+          "magic_dmg": [240, 360, 3000],
+          "targets": 1,
+          "note": "subsequent cast fireball (mana cost drops to 20 after first cast)"
+        }
+      ]
+    }
+  },
+
+  "Ziggs": {
+    "cost": 5,
+    "role": "marksman",
+    "atk_dmg": [0, 0, 0],
+    "atk_spd": 0.90,
+    "starting_mana": 0,
+    "mana_cost": 140,
+    "ability": {
+      "name": "Mega Inferno Bomb",
+      "cast_time": 0,
+      "auto_magic_dmg": [40, 65, 500],
+      "auto_magic_targets": 2,
+      "hits": [
+        {
+          "magic_dmg": [310, 490, 5000],
+          "targets": 3,
+          "note": "midpoint between min (70/105/3000) and max (550/875/7000) damage across epicenter distance; modelled as 3 targets"
+        }
+      ]
+    }
+  }
+}
