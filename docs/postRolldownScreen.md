@@ -65,3 +65,8 @@ Discipline — measures whether you stopped rolling at the right time
     - Should go on the top of the unit
 - Add active traits to the top of the final board panel
 - Sort units on the final board
+
+- Things not currently being graded but are important
+    - Check for player fielding the correct units / their strongest possible board (no dupes, correct traits in etc.)
+    - Check for player missing a unit they need to field a trait
+    - Check for whether or not the player should've kept rolling but stopped
