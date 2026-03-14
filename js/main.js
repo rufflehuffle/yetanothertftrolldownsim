@@ -482,6 +482,14 @@ rdPauseResetBtn.addEventListener('click', () => {
     updateOverlayContent();
 });
 
+document.addEventListener('postrd-retry', () => {
+    if (!lastLoadedPreset) return;
+    loadPreset(lastLoadedPreset);
+    timerControls.reset();
+    setRdMode('planning');
+    updateOverlayContent();
+});
+
 // Pause overlay: End Round Early
 rdPauseEndBtn.addEventListener('click', () => {
     timerControls.reset();

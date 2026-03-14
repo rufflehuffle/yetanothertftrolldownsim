@@ -37,6 +37,7 @@ const gradeValue = document.getElementById('postrd-grade-value');
 const compUnits  = document.getElementById('postrd-comp-units');
 const pentaSvg   = document.getElementById('postrd-pentagon-svg');
 const histSvg    = document.getElementById('score-history-svg');
+const retryBtn   = document.getElementById('postrd-retry-btn');
 const tabs       = modal.querySelectorAll('.postrd__tab');
 const panels     = modal.querySelectorAll('.postrd__panel-content');
 
@@ -47,6 +48,10 @@ function openModal()  { modal.classList.add('postrd--open'); }
 function closeModal() { modal.classList.remove('postrd--open'); }
 
 closeBtn.addEventListener('click', closeModal);
+retryBtn.addEventListener('click', () => {
+    closeModal();
+    document.dispatchEvent(new CustomEvent('postrd-retry'));
+});
 backdrop.addEventListener('click', closeModal);
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && modal.classList.contains('postrd--open')) closeModal();

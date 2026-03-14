@@ -131,3 +131,28 @@
 .postrd-comp__unit-slot--3-cost { border-color: #2166A6; }
 .postrd-comp__unit-slot--4-cost { border-color: #B91C8C; }
 .postrd-comp__unit-slot--5-cost { border-color: #B88502; }
+
+/* Retry button */
+.postrd-performance__retry {
+    display: flex;
+    justify-content: center;
+    padding-top: 8px;
+}
+
+.postrd-performance__retry-btn {
+    background: transparent;
+    border: 2px solid #675F4C;
+    color: #A09B8C;
+    padding: 4px 20px;
+    font-family: 'Beaufort', serif;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.postrd-performance__retry-btn:hover {
+    border-color: #C0A366;
+    color: #F0E6D2;
+}
