@@ -8,7 +8,7 @@ import { timerControls } from './timer.js';
 import { lastLoadedPreset, loadPreset, openPresets, openSavePreset } from './teams.js';
 import { openTeamBuilder } from './team-builder.js';
 import { ghost } from './drag.js';
-import { triggerGenerate41Board } from './team-planner.js';
+import { triggerGenerate41Board } from './planner.js';
 import { history } from './commands.js';
 
 // ============================================================

@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { openTeamPlanner, triggerGenerate41Board } from './team-planner.js';
+import { openTeamPlanner, triggerGenerate41Board } from './planner.js';
 import { openTeams } from './teams.js';
 import { history } from './commands.js';
 import { isPlanning } from './rolldown-state.js';

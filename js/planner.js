@@ -3,7 +3,7 @@ import { state, saveTeamPlan, saveUnlockedOverrides, isOriginallyLocked, setPlan
 import { render, computeTraits, getSortedTraitEntries, activeBreakpoint, nextBreakpoint, showTraitTooltip, positionTooltip } from './render.js';
 import { generate41Board } from './board-generator.js';
 import { openTeams, saveActiveTeam, lastLoadedPreset, renameTeam } from './teams.js';
-import { initFilter, getActiveFilterTraits } from './filter.js';
+import { initFilter, getActiveFilterTraits } from './planner-filter.js';
 
 // ============================================================
 // Constants

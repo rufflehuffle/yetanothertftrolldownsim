@@ -2,7 +2,7 @@ import { pool } from './tables.js';
 import { state, isOriginallyLocked } from './state.js';
 import { render } from './render.js';
 import { getUnitAt, findEmptyBoardHex } from './logic.js';
-import { COST_TIERS, COST_LABELS, COST_COLORS } from './team-planner.js';
+import { COST_TIERS, COST_LABELS, COST_COLORS } from './planner.js';
 
 // ============================================================
 // Team Builder state

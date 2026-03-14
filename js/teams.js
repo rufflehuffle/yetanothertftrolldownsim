@@ -5,7 +5,7 @@ import { render } from './render.js';
 import { doRoll } from './logic.js';
 import { teamBuilderActive, buildTbPicker } from './team-builder.js';
 import { history } from './commands.js';
-import { openTeamPlanner, loadTeamCode } from './team-planner.js';
+import { openTeamPlanner, loadTeamCode } from './planner.js';
 
 // ============================================================
 // Auto team name — "<Most Active Trait> <Main Carry Name>"
