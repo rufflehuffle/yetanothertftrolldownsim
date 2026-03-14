@@ -26,6 +26,9 @@ Cost,Name,Star,DPS,Norm DPS,Casts
 3,LeBlanc,1★,38,1.73,2
 3,LeBlanc,2★,58,2.64,2
 3,LeBlanc,3★,99,4.5,2
+3,Malzahar,1★,48,2.18,4
+3,Malzahar,2★,72,3.27,4
+3,Malzahar,3★,124,5.64,4
 3,Milio,1★,39,1.77,2
 3,Milio,2★,59,2.68,2
 3,Milio,3★,92,4.18,2
@@ -38,9 +41,21 @@ Cost,Name,Star,DPS,Norm DPS,Casts
 4,Lux,1★,64,2.91,3
 4,Lux,2★,96,4.36,3
 4,Lux,3★,334,15.18,3
+4,Miss Fortune,1★,92,4.18,5
+4,Miss Fortune,2★,138,6.27,5
+4,Miss Fortune,3★,1306,59.36,5
+4,Seraphine,1★,33,1.5,7
+4,Seraphine,2★,50,2.27,7
+4,Seraphine,3★,222,10.09,7
+4,Yunara,1★,66,3.0,4
+4,Yunara,2★,99,4.5,4
+4,Yunara,3★,282,12.82,4
 5,Annie,1★,28,1.27,2
 5,Annie,2★,42,1.91,2
 5,Annie,3★,150,6.82,2
+5,Kindred,1★,35,1.59,1
+5,Kindred,2★,52,2.36,1
+5,Kindred,3★,172,7.82,1
 5,Ziggs,1★,54,2.45,1
 5,Ziggs,2★,87,3.95,1
 5,Ziggs,3★,740,33.64,1
