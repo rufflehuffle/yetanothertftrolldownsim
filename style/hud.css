@@ -469,3 +469,17 @@ body.team-builder-mode .gold-container {
         transform-origin: center bottom;
     }
 }
+
+@media (min-width: 2560px) {
+    .hud {
+        transform: translateX(-50%) scale(1.5);
+        transform-origin: center bottom;
+    }
+}
+
+@media (min-width: 3840px) {
+    .hud {
+        transform: translateX(-50%) scale(2.0);
+        transform-origin: center bottom;
+    }
+}

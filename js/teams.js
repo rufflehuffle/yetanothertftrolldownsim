@@ -559,3 +559,20 @@ export function loadPreset(team) {
     }
     _applyTeam(team, !team.loadSavedBoard);
 }
+
+// ============================================================
+// Seed default presets into localStorage if not already present
+// ============================================================
+function _presetsEmpty() {
+    try { return loadTeams().length === 0; } catch { return true; }
+}
+if (_presetsEmpty()) {
+    fetch('default-presets.json')
+        .then(r => r.json())
+        .then(data => {
+            if (_presetsEmpty()) {
+                localStorage.setItem('tft-presets', JSON.stringify(data));
+            }
+        })
+        .catch(() => {});
+}

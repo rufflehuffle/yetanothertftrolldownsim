@@ -1,11 +1,15 @@
 # TODO
-Start on post-rolldown screen
-
-# Major
-Disable loading saved teams and entering TB mode while in a round
+- Add default teams
+- Add QHD & 4K support
+- Add feedback to round detail
+- Tune grading
+- Add support for Fast 9 and 1-cost, 2-cost, and 3-cost RR rolldowns
+  - Currently, grading and auto board generation only make sense in the context of Fast 8 comps
 
 # Low Priority
-## HUD
+## Team Generation
+- Team generation is still a little wonky... sometimes you have too much junk on your board or some units don't make sense.
+- Ends up being a little too distracting from the actual rolldown.
 
 ## Team Planner
 - Snapshot
@@ -23,9 +27,6 @@ Disable loading saved teams and entering TB mode while in a round
 - Add tick sfx (plays every 1s while holding a unit, also plays when switching the hex you're hovering over)
 - Investigate how often champion SFX play
 
-## Rolldown Grading
-- Implement a rolldown replay system
-
 ## Specific trait / unit interactions
 - Make Annie, Ice Tower, and Azir summons feel less janky
 - Add T-Hex eat positioning
@@ -37,11 +38,11 @@ Disable loading saved teams and entering TB mode while in a round
 - Add regenerate planner on reset setting
 
 ## Misc
+- Disable loading saved teams and entering TB mode while in a round
 
 # Ideas
 - Add items
 - Add augments
-- Rolldown grading
 - Make a bot that simulates another player rolling down
 
 ## Known Bugs / Issues
@@ -72,5 +73,4 @@ Disable loading saved teams and entering TB mode while in a round
 - Update for new set
 - Support more viewports than my own...
 - Tune board auto generation
-- Remove any vibe coded / temp UI
 - Make UX as good as possible

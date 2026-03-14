@@ -691,7 +691,47 @@ input:checked ~ .planner-picker__unlockable-switch-icon {
     z-index: 2;
 }
 
+.generate-btn__tooltip {
+    top: auto;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    white-space: normal;
+    z-index: 2000;
+}
+
+.generate-btn__tooltip .btn-panel__desc,
+.set-target-btn__tooltip .btn-panel__desc {
+    white-space: normal;
+    font-weight: normal;
+}
+
+.generate-desc--target { display: none; }
+.planner-selected__generate-btn.has-target .generate-desc--plan { display: none; }
+.planner-selected__generate-btn.has-target .generate-desc--target { display: block; }
+
+.planner-selected__generate-btn:hover .generate-btn__tooltip {
+    display: block;
+}
+
+.set-target-btn__tooltip {
+    top: auto;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    white-space: normal;
+    z-index: 2000;
+    width: 200px;
+}
+
+.planner-selected__set-target-btn:not(.has-target):hover .set-target-btn__tooltip {
+    display: block;
+}
+
 .planner-selected__generate-btn {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;

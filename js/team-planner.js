@@ -545,6 +545,7 @@ export function openTeamPlanner() {
     renderTeamGrid();
     renderPlannerTraits();
     renderPlannerTitle();
+    refreshSetTargetBtn();
     plannerEl.style.display = 'grid';
     plannerBackdropEl.style.display = 'block';
 }
@@ -740,9 +741,16 @@ function refreshTargetPreview() {
     targetPreviewEl.style.display = 'grid';
 }
 
+function refreshSetTargetBtn() {
+    const hasTarget = !!(state.targetTeam?.size);
+    setTargetBtnEl?.classList.toggle('has-target', hasTarget);
+    generateBtnEl?.classList.toggle('has-target', hasTarget);
+}
+
 setTargetBtnEl?.addEventListener('click', () => {
     setPlannedAsGenerateTarget();
     refreshTargetPreview();
+    refreshSetTargetBtn();
 });
 
 setTargetBtnEl?.addEventListener('mouseenter', refreshTargetPreview);

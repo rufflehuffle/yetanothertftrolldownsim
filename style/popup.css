@@ -57,3 +57,15 @@
 .no-comp-popup__btn:hover {
     background: linear-gradient(180deg, #22354a 0%, #111c22 100%);
 }
+
+@media (min-width: 2560px) {
+    .no-comp-popup {
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+}
+
+@media (min-width: 3840px) {
+    .no-comp-popup {
+        transform: translate(-50%, -50%) scale(2.0);
+    }
+}

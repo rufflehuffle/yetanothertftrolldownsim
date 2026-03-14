@@ -219,3 +219,17 @@
         right: 0;
     }
 }
+
+@media (min-width: 2560px) {
+    .toolbar {
+        transform: scale(1.5);
+        transform-origin: right top;
+    }
+}
+
+@media (min-width: 3840px) {
+    .toolbar {
+        transform: scale(2.0);
+        transform-origin: right top;
+    }
+}
