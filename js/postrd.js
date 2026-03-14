@@ -110,6 +110,13 @@ function renderFinalBoard() {
         img.src = champ.icon;
         img.alt = unit.name;
         slot.appendChild(img);
+        if (unit.stars) {
+            const starEl = document.createElement('span');
+            starEl.className = 'postrd-comp__star-indicator';
+            starEl.textContent = '★'.repeat(unit.stars);
+            starEl.style.color = unit.stars === 3 ? '#f0c040' : unit.stars === 2 ? '#a0c4ff' : '#d1d5db';
+            slot.appendChild(starEl);
+        }
         compUnits.appendChild(slot);
     }
 }

@@ -778,6 +778,19 @@ savedTeamsBtnEl?.addEventListener('click', () => {
     if (plannerEl) plannerEl.style.display = 'none';
 });
 
+// Clear button: wipe the entire team plan
+clearBtnEl?.addEventListener('click', () => {
+    pushUndo();
+    state.teamPlan.clear();
+    state.teamPlanSlots.fill(null);
+    saveTeamPlan();
+    buildPicker();
+    renderTeamGrid();
+    renderPlannerTraits();
+    render();
+    saveActiveTeam();
+});
+
 // Wire up filter modal
 initFilter(document.querySelector('.planner-picker__filter-btn'));
 document.addEventListener('filterchange', buildPicker);

@@ -59,7 +59,10 @@
     background-position: center;
 }
 
-.hex:hover {
+.hex:hover,
+.hex.drag-hover,
+.bench-slot:hover,
+.bench-slot.drag-hover {
     background-color: #3a3a3a;
 }
 
@@ -111,9 +114,14 @@
     align-items: center;
 }
 
-/* ── Post-rolldown open button (above board, roundEnd only) ── */
-.postrd-open-btn {
+/* ── Buttons above board (roundEnd / freeroll) — out of flow so board doesn't shift ── */
+.postrd-open-btn,
+.freeroll-return-btn {
     display: none;
+    position: absolute;
+    top: var(--timer-h);
+    left: 50%;
+    transform: translateX(-50%);
     pointer-events: auto;
     background: transparent;
     border: 2px solid #675F4C;
@@ -126,13 +134,19 @@
     text-transform: uppercase;
     cursor: pointer;
     transition: border-color 0.15s, color 0.15s;
+    white-space: nowrap;
 }
 
-.postrd-open-btn:hover {
+.postrd-open-btn:hover,
+.freeroll-return-btn:hover {
     border-color: #C0A366;
     color: #F0E6D2;
 }
 
 body.rd-roundEnd .postrd-open-btn {
+    display: block;
+}
+
+body.rd-freeroll .freeroll-return-btn {
     display: block;
 }

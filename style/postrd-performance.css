@@ -126,6 +126,20 @@
     object-fit: contain;
 }
 
+.postrd-comp__star-indicator {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 2;
+    font-family: 'Beaufort', serif;
+    font-size: 16px;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+    text-shadow: 0 1px 3px #000, 0 -1px 3px #000;
+}
+
 .postrd-comp__unit-slot--1-cost { border-color: #3E505E; }
 .postrd-comp__unit-slot--2-cost { border-color: #0B7827; }
 .postrd-comp__unit-slot--3-cost { border-color: #2166A6; }
