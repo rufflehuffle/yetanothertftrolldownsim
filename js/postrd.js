@@ -45,7 +45,11 @@ const panels     = modal.querySelectorAll('.postrd__panel-content');
 // ============================================================
 // Open / Close
 // ============================================================
-function openModal()  { modal.classList.add('postrd--open'); }
+let pentaAnims = [];
+function openModal() {
+    modal.classList.add('postrd--open');
+    pentaAnims.forEach(a => a.beginElement());
+}
 function closeModal() { modal.classList.remove('postrd--open'); }
 
 closeBtn.addEventListener('click', closeModal);
@@ -125,6 +129,7 @@ function renderFinalBoard() {
 // Pentagon Chart
 // ============================================================
 function buildPentagonSvg(scores) {
+    pentaAnims = [];
     while (pentaSvg.firstChild) pentaSvg.removeChild(pentaSvg.firstChild);
 
     const outerPts = AXIS_ANGLES.map(a => axisPoint(a, 90));
@@ -182,23 +187,38 @@ function buildPentagonSvg(scores) {
     pentaSvg.appendChild(defs);
 
     // Score polygon
+    const centerPts = AXIS_ANGLES.map(() => `${CENTER.x},${CENTER.y}`).join(' ');
     const scorePts = scores.map((s, i) => {
         const pt = axisPoint(AXIS_ANGLES[i], (s / 100) * 90);
         return `${pt.x.toFixed(1)},${pt.y.toFixed(1)}`;
     }).join(' ');
-    pentaSvg.appendChild(mk('polygon', {
-        points: scorePts,
+    const scorePolygon = mk('polygon', {
+        points: centerPts,
         fill: 'rgba(42,130,156,0.22)',
         stroke: '#42829C', 'stroke-width': 1.5, 'stroke-linejoin': 'round',
         filter: 'url(#penta-glow)',
-    }));
+    });
+    const polyAnim = mk('animate', {
+        attributeName: 'points',
+        from: centerPts, to: scorePts,
+        dur: '0.55s', fill: 'freeze', begin: 'indefinite',
+        calcMode: 'spline', keyTimes: '0;1', keySplines: '0.15 0 0.2 1',
+    });
+    scorePolygon.appendChild(polyAnim);
+    pentaSvg.appendChild(scorePolygon);
+    pentaAnims.push(polyAnim);
 
     // Vertex dots
+    const animAttrs = { dur: '0.55s', fill: 'freeze', begin: 'indefinite', calcMode: 'spline', keyTimes: '0;1', keySplines: '0.15 0 0.2 1' };
     for (let i = 0; i < scores.length; i++) {
         const pt = axisPoint(AXIS_ANGLES[i], (scores[i] / 100) * 90);
-        pentaSvg.appendChild(mk('circle', {
-            cx: pt.x.toFixed(1), cy: pt.y.toFixed(1), r: 3, fill: '#42829C',
-        }));
+        const dot = mk('circle', { cx: CENTER.x, cy: CENTER.y, r: 3, fill: '#42829C' });
+        const cxAnim = mk('animate', { attributeName: 'cx', from: CENTER.x, to: pt.x.toFixed(1), ...animAttrs });
+        const cyAnim = mk('animate', { attributeName: 'cy', from: CENTER.y, to: pt.y.toFixed(1), ...animAttrs });
+        dot.appendChild(cxAnim);
+        dot.appendChild(cyAnim);
+        pentaSvg.appendChild(dot);
+        pentaAnims.push(cxAnim, cyAnim);
     }
 
     // Axis grade letters + metric names
