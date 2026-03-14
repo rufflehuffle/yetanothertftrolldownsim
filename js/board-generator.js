@@ -267,7 +267,7 @@ function placeBoardUnits(boardUnits) {
 // Main export
 //
 // Assumptions:
-//   • Lv.8, 80g available at 4-1 (represents total spending budget)
+//   • Lv.8, 80g available at 4-1 (represents total spending budget; level to 8 on 4-2)
 //   • Standard leveling curve (see SHOP_SEQUENCE above)
 //   • One natural shop per round — no rolling
 //   • Board effects (Tibbers / Ice Tower / Sand Soldiers) fire on
@@ -414,7 +414,7 @@ export function generate41Board(teamPlan) {
         const guaranteed    = [bestTank, bestCarry].filter(Boolean);
         const guaranteedSet = new Set(guaranteed);
         const remaining     = dedupHolding.filter(u => !guaranteedSet.has(u));
-        const boardUnits    = [...guaranteed, ...getBestBoard(remaining, 8 - guaranteed.length)];
+        const boardUnits    = [...guaranteed, ...getBestBoard(remaining, 7 - guaranteed.length)];
 
         // ── Score candidate board ─────────────────────────────
         // Per planner unit on board:  +(6 - cost)  [lower cost = more points]
