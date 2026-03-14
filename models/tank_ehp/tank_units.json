@@ -1,0 +1,530 @@
+{
+  "_schema": {
+    "health": "[1★, 2★, 3★]",
+    "resists.armor": "flat value (constant across stars)",
+    "resists.mr": "flat value (constant across stars)",
+    "atk_spd": "attacks per second (constant across stars)",
+    "starting_mana": "flat value",
+    "mana_cost": "flat value",
+    "ability.types": "array of: passive_healing | heal | shield | durability | resist_buff | stun | summon",
+    "ability.values.<type>.flat": "[1★, 2★, 3★] flat amount",
+    "ability.values.<type>.hp_pct": "[1★, 2★, 3★] fraction of max HP (e.g. 0.12 = 12%)",
+    "ability.values.<type>.duration": "[1★, 2★, 3★] seconds (stun/shield/durability duration)",
+    "ability.values.<type>.stacks": "[1★, 2★, 3★] max stacks (for stacking durability)",
+    "ability.values.<type>.per_second": "bool — flat is per second; multiply by duration for total",
+    "ability.values.<type>.hits": "int — flat is per hit; multiply by hits for total per cast"
+  },
+
+  "Illaoi": {
+    "cost": 1,
+    "health": [700, 1260, 2268],
+    "resists": { "armor": 40, "mr": 40 },
+    "atk_spd": 0.60,
+    "starting_mana": 40,
+    "mana_cost": 100,
+    "ability": {
+      "name": "Tentacle Smash",
+      "types": ["heal"],
+      "values": {
+        "heal": { "flat": [249, 328, 439] }
+      }
+    }
+  },
+
+  "Blitzcrank": {
+    "cost": 1,
+    "health": [700, 1260, 2268],
+    "resists": { "armor": 40, "mr": 40 },
+    "atk_spd": 0.55,
+    "starting_mana": 60,
+    "mana_cost": 105,
+    "ability": {
+      "name": "Static Field",
+      "types": ["shield"],
+      "values": {
+        "shield": { "flat": [400, 480, 600], "duration": [4, 4, 4] }
+      }
+    }
+  },
+
+  "Jarvan IV": {
+    "cost": 1,
+    "health": [700, 1260, 2268],
+    "resists": { "armor": 40, "mr": 40 },
+    "atk_spd": 0.60,
+    "starting_mana": 30,
+    "mana_cost": 100,
+    "ability": {
+      "name": "Demacian Standard",
+      "types": ["shield"],
+      "values": {
+        "shield": { "flat": [350, 425, 500], "duration": [4, 4, 4] }
+      }
+    }
+  },
+
+  "Rumble": {
+    "cost": 1,
+    "health": [700, 1260, 2268],
+    "resists": { "armor": 40, "mr": 40 },
+    "atk_spd": 0.60,
+    "starting_mana": 40,
+    "mana_cost": 110,
+    "ability": {
+      "name": "Junkyard Titan",
+      "types": ["shield"],
+      "values": {
+        "shield": { "flat": [350, 430, 550], "duration": [4, 4, 4] }
+      }
+    }
+  },
+
+  "Shen": {
+    "cost": 1,
+    "health": [700, 1260, 2268],
+    "resists": { "armor": 40, "mr": 40 },
+    "atk_spd": 0.65,
+    "starting_mana": 30,
+    "mana_cost": 90,
+    "ability": {
+      "name": "Stand United",
+      "types": ["shield"],
+      "values": {
+        "shield": { "flat": [250, 325, 425], "duration": [4, 4, 4] }
+      }
+    }
+  },
+
+  "Poppy": {
+    "cost": 2,
+    "health": [850, 1530, 2754],
+    "resists": { "armor": 45, "mr": 45 },
+    "atk_spd": 0.70,
+    "starting_mana": 40,
+    "mana_cost": 80,
+    "ability": {
+      "name": "Hammer Shock",
+      "types": ["shield"],
+      "values": {
+        "shield": { "flat": [330, 410, 500], "duration": [4, 4, 4] }
+      }
+    }
+  },
+
+  "Xin Zhao": {
+    "cost": 2,
+    "health": [850, 1530, 2754],
+    "resists": { "armor": 45, "mr": 45 },
+    "atk_spd": 0.65,
+    "starting_mana": 15,
+    "mana_cost": 70,
+    "ability": {
+      "name": "Three Talon Strike",
+      "types": ["heal", "stun"],
+      "values": {
+        "heal": { "flat": [105, 145, 200], "hits": 3 },
+        "stun": { "duration": [1.5, 1.5, 1.5] }
+      }
+    }
+  },
+
+  "Cho'Gath": {
+    "cost": 2,
+    "health": [850, 1530, 2754],
+    "resists": { "armor": 45, "mr": 45 },
+    "atk_spd": 0.60,
+    "starting_mana": 40,
+    "mana_cost": 100,
+    "ability": {
+      "name": "Rupture",
+      "types": ["heal", "stun"],
+      "values": {
+        "heal": { "flat": [200, 225, 400] },
+        "stun": { "duration": [1.5, 1.5, 1.5] }
+      }
+    }
+  },
+
+  "Neeko": {
+    "cost": 2,
+    "health": [850, 1530, 2754],
+    "resists": { "armor": 45, "mr": 45 },
+    "atk_spd": 0.60,
+    "starting_mana": 15,
+    "mana_cost": 65,
+    "ability": {
+      "name": "Pop Blossom",
+      "types": ["shield"],
+      "values": {
+        "shield": { "flat": [400, 475, 600], "duration": [4, 4, 4] }
+      }
+    }
+  },
+
+  "Sion": {
+    "cost": 2,
+    "health": [650, 1170, 2106],
+    "resists": { "armor": 40, "mr": 40 },
+    "atk_spd": 0.55,
+    "starting_mana": 0,
+    "mana_cost": 70,
+    "ability": {
+      "name": "Soul Furnace",
+      "types": ["durability", "shield"],
+      "values": {
+        "durability": { "flat": [18, 20, 50], "note": "permanent max HP per takedown — excluded from base EHP" },
+        "shield": { "flat": [226, 272, 334], "duration": [4, 4, 4] }
+      }
+    }
+  },
+
+  "Yorick": {
+    "cost": 2,
+    "health": [850, 1530, 2754],
+    "resists": { "armor": 45, "mr": 45 },
+    "atk_spd": 0.60,
+    "starting_mana": 15,
+    "mana_cost": 75,
+    "ability": {
+      "name": "Mourning Mist",
+      "types": ["heal"],
+      "values": {
+        "heal": { "flat": [250, 350, 500] }
+      }
+    }
+  },
+
+  "Darius": {
+    "cost": 3,
+    "health": [900, 1620, 2916],
+    "resists": { "armor": 50, "mr": 50 },
+    "atk_spd": 0.65,
+    "starting_mana": 20,
+    "mana_cost": 65,
+    "ability": {
+      "name": "Decimate",
+      "types": ["heal"],
+      "values": {
+        "heal": { "flat": [345, 523, 857] }
+      }
+    }
+  },
+
+  "Dr. Mundo": {
+    "cost": 3,
+    "health": [900, 1620, 2916],
+    "resists": { "armor": 50, "mr": 50 },
+    "atk_spd": 0.60,
+    "starting_mana": 0,
+    "mana_cost": 60,
+    "ability": {
+      "name": "Maximum Dosage",
+      "types": ["heal"],
+      "values": {
+        "heal": { "flat": [114, 192, 325], "per_second": true, "duration": [5, 5, 5] }
+      }
+    }
+  },
+
+  "Kennen": {
+    "cost": 3,
+    "health": [900, 1620, 2916],
+    "resists": { "armor": 50, "mr": 50 },
+    "atk_spd": 0.65,
+    "starting_mana": 70,
+    "mana_cost": 125,
+    "ability": {
+      "name": "Slicing Maelstrom",
+      "types": ["shield", "stun"],
+      "values": {
+        "shield": { "flat": [600, 700, 900] },
+        "stun": { "duration": [1.5, 1.5, 1.5] }
+      }
+    }
+  },
+
+  "Leona": {
+    "cost": 3,
+    "health": [1000, 1800, 3240],
+    "resists": { "armor": 60, "mr": 60 },
+    "atk_spd": 0.65,
+    "starting_mana": 70,
+    "mana_cost": 120,
+    "ability": {
+      "name": "Solar Flare",
+      "types": ["durability", "stun"],
+      "values": {
+        "durability": { "flat": [15, 30, 80], "note": "flat damage reduction per instance — excluded from base EHP" },
+        "stun": { "duration": [1, 1, 1] }
+      }
+    }
+  },
+
+  "Loris": {
+    "cost": 3,
+    "health": [950, 1710, 3078],
+    "resists": { "armor": 50, "mr": 50 },
+    "atk_spd": 0.60,
+    "starting_mana": 70,
+    "mana_cost": 140,
+    "ability": {
+      "name": "Piltover Tussle",
+      "types": ["shield", "stun"],
+      "values": {
+        "shield": { "flat": [700, 800, 1000], "duration": [4, 4, 4] },
+        "stun": { "duration": [1.25, 1.25, 1.25] }
+      }
+    }
+  },
+
+  "Nautilus": {
+    "cost": 3,
+    "health": [900, 1620, 2916],
+    "resists": { "armor": 50, "mr": 50 },
+    "atk_spd": 0.60,
+    "starting_mana": 60,
+    "mana_cost": 120,
+    "ability": {
+      "name": "Titan's Wrath",
+      "types": ["shield"],
+      "values": {
+        "shield": { "flat": [465, 562, 717], "duration": [4, 4, 4] }
+      }
+    }
+  },
+
+  "Sejuani": {
+    "cost": 3,
+    "health": [900, 1620, 2916],
+    "resists": { "armor": 50, "mr": 50 },
+    "atk_spd": 0.60,
+    "starting_mana": 40,
+    "mana_cost": 80,
+    "ability": {
+      "name": "Winter's Wrath",
+      "types": ["shield", "stun"],
+      "values": {
+        "shield": { "flat": [525, 575, 775], "duration": [4, 4, 4] },
+        "stun": { "duration": [1, 1, 1], "note": "conditional on target already being Chilled" }
+      }
+    }
+  },
+
+  "Kobuko": {
+    "cost": 3,
+    "health": [950, 1710, 3078],
+    "resists": { "armor": 50, "mr": 50 },
+    "atk_spd": 0.65,
+    "starting_mana": 30,
+    "mana_cost": 90,
+    "ability": {
+      "name": "You & Me!",
+      "types": ["passive_healing", "heal"],
+      "values": {
+        "passive_healing": { "flat": [140, 180, 240], "note": "Yuumi heals lowest-HP ally every 3s — heals ally, not Kobuko" },
+        "heal": { "flat": [294, 445, 669], "note": "over 3 seconds on cast" }
+      }
+    }
+  },
+
+  "Garen": {
+    "cost": 4,
+    "health": [1200, 2160, 3888],
+    "resists": { "armor": 60, "mr": 60 },
+    "atk_spd": 0.60,
+    "starting_mana": 50,
+    "mana_cost": 130,
+    "ability": {
+      "name": "Judgment",
+      "types": ["durability", "heal"],
+      "values": {
+        "durability": { "flat": [50, 50, 80], "duration": [3, 3, 3], "note": "% Durability for 3 seconds" },
+        "heal": { "flat": [370, 516, 1589], "note": "over 3 seconds" }
+      }
+    }
+  },
+
+  "Skarner": {
+    "cost": 4,
+    "health": [1400, 2520, 4536],
+    "resists": { "armor": 70, "mr": 70 },
+    "atk_spd": 0.65,
+    "starting_mana": 60,
+    "mana_cost": 120,
+    "ability": {
+      "name": "Impale",
+      "types": ["shield", "stun"],
+      "values": {
+        "shield": { "flat": [750, 950, 3000], "duration": [4, 4, 4] },
+        "stun": { "duration": [1.5, 1.75, 8] }
+      }
+    }
+  },
+
+  "Wukong": {
+    "cost": 4,
+    "health": [1050, 1890, 3402],
+    "resists": { "armor": 60, "mr": 60 },
+    "atk_spd": 0.65,
+    "starting_mana": 30,
+    "mana_cost": 60,
+    "ability": {
+      "name": "Diverting Trickster",
+      "types": ["resist_buff", "summon"],
+      "values": {
+        "resist_buff": { "flat": [100, 110, 400], "duration": [4, 4, 4], "note": "flat Armor + MR gained for 4 seconds" },
+        "summon": { "flat": [570, 956, 3361], "note": "Stone copy HP on death" }
+      }
+    }
+  },
+
+  "Braum": {
+    "cost": 4,
+    "health": [1200, 2160, 3888],
+    "resists": { "armor": 60, "mr": 60 },
+    "atk_spd": 0.60,
+    "starting_mana": 60,
+    "mana_cost": 105,
+    "ability": {
+      "name": "Unbreakable Frost",
+      "types": ["durability"],
+      "values": {
+        "durability": { "flat": [55, 55, 90], "duration": [4, 4, 4], "note": "% Durability for 4 seconds" }
+      }
+    }
+  },
+
+  "Nasus": {
+    "cost": 4,
+    "health": [1500, 2700, 4860],
+    "resists": { "armor": 70, "mr": 70 },
+    "atk_spd": 0.65,
+    "starting_mana": 10,
+    "mana_cost": 70,
+    "ability": {
+      "name": "Fury of the Sands",
+      "types": ["heal", "resist_buff"],
+      "values": {
+        "heal": { "flat": [500, 685, 3000], "note": "stolen HP split from nearest enemies" },
+        "resist_buff": { "flat": [30, 30, 30], "duration": [8, 8, 8], "note": "flat Armor + MR gained for 8 seconds" }
+      }
+    }
+  },
+
+  "Rift Herald": {
+    "cost": 4,
+    "health": [1100, 1980, 3564],
+    "resists": { "armor": 60, "mr": 60 },
+    "atk_spd": 0.60,
+    "starting_mana": 60,
+    "mana_cost": 125,
+    "ability": {
+      "name": "Warp Armor",
+      "types": ["heal", "durability"],
+      "values": {
+        "heal": { "flat": [300, 425, 2000], "note": "permanent max Health gain" },
+        "durability": { "flat": [25, 25, 80], "duration": [4, 4, 4], "note": "% Durability for 4 seconds (+1% per enemy targeting)" }
+      }
+    }
+  },
+
+  "Singed": {
+    "cost": 4,
+    "health": [1100, 1980, 3564],
+    "resists": { "armor": 60, "mr": 60 },
+    "atk_spd": 0.70,
+    "starting_mana": 0,
+    "mana_cost": 80,
+    "ability": {
+      "name": "Poison Trail",
+      "types": ["heal", "resist_buff"],
+      "values": {
+        "heal": { "flat": [15, 80, 500], "per_second": true, "duration": [4, 4, 4] },
+        "resist_buff": { "flat": [20, 60, 100], "duration": [4, 4, 4], "note": "flat Armor + MR gained for 4 seconds" }
+      }
+    }
+  },
+
+  "Swain": {
+    "cost": 4,
+    "health": [1200, 2160, 3888],
+    "resists": { "armor": 60, "mr": 60 },
+    "atk_spd": 0.65,
+    "starting_mana": 40,
+    "mana_cost": 155,
+    "ability": {
+      "name": "Nevermove",
+      "types": ["passive_healing", "stun"],
+      "values": {
+        "passive_healing": { "flat": [36, 52, 158], "per_second": true, "note": "heals Swain each second passively" },
+        "stun": { "duration": [1.5, 1.75, 8] }
+      }
+    }
+  },
+
+  "Taric": {
+    "cost": 4,
+    "health": [1300, 2340, 4212],
+    "resists": { "armor": 70, "mr": 70 },
+    "atk_spd": 0.65,
+    "starting_mana": 0,
+    "mana_cost": 80,
+    "ability": {
+      "name": "Starlight's Touch",
+      "types": ["heal", "shield"],
+      "values": {
+        "heal": { "flat": [300, 700, 2500], "note": "once per combat, triggered below 35% HP, over 2 seconds" },
+        "shield": { "flat": [600, 700, 2500], "duration": [4, 4, 4] }
+      }
+    }
+  },
+
+  "Galio": {
+    "cost": 5,
+    "health": [1100, 1980, 3564],
+    "resists": { "armor": 65, "mr": 65 },
+    "atk_spd": 0.90,
+    "starting_mana": 90,
+    "mana_cost": 140,
+    "ability": {
+      "name": "Inspirational Might",
+      "types": ["shield"],
+      "values": {
+        "shield": { "flat": [500, 600, 2000], "duration": [4, 4, 4] }
+      }
+    }
+  },
+
+  "Tahm Kench": {
+    "cost": 5,
+    "health": [1000, 1800, 3240],
+    "resists": { "armor": 60, "mr": 60 },
+    "atk_spd": 0.55,
+    "starting_mana": 10,
+    "mana_cost": 90,
+    "ability": {
+      "name": "Devour",
+      "types": ["durability", "stun"],
+      "values": {
+        "durability": { "flat": [30, 30, 30], "duration": [2.5, 2.5, 2.5], "note": "% Durability while target is devoured (2.5s)" },
+        "stun": { "duration": [null, null, null], "note": "brief stun on spit, duration unspecified" }
+      }
+    }
+  },
+
+  "Ornn": {
+    "cost": 5,
+    "health": [900, 1620, 2916],
+    "resists": { "armor": 55, "mr": 55 },
+    "atk_spd": 0.55,
+    "starting_mana": 50,
+    "mana_cost": 150,
+    "ability": {
+      "name": "Call of the Forge",
+      "types": ["summon"],
+      "values": {
+        "summon": { "note": "elemental projectile — no direct survivability mechanic" }
+      }
+    }
+  }
+}
