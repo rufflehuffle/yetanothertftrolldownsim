@@ -832,13 +832,13 @@ input:checked ~ .planner-picker__unlockable-switch-icon {
 }
 
 .unit-info__name {
-    font-family: 'Gill Sans', sans-serif;
+    font-family: 'Spiegel', sans-serif;
     font-weight: bold;
     color: #F0E6D2;
 }
 
 .unit-info__role {
-    font-family: 'Gill Sans', sans-serif;
+    font-family: 'Spiegel', sans-serif;
     color: #CDBE91;
 }
 
@@ -855,13 +855,13 @@ input:checked ~ .planner-picker__unlockable-switch-icon {
 }
 
 .unit-info__trait {
-    font-family: 'Gill Sans', sans-serif;
+    font-family: 'Spiegel', sans-serif;
     color: #A09B8C;
 }
 
 .unit-info__lock-hint {
     margin-top: 6px;
-    font-family: 'Gill Sans', sans-serif;
+    font-family: 'Spiegel', sans-serif;
     font-size: 11px;
     color: #9A8C78;
     font-style: italic;

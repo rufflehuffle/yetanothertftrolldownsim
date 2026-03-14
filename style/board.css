@@ -48,7 +48,7 @@
 .hex {
     width: var(--hex-w);
     height: var(--hex-h);
-    background-color: #2a2a2a;
+    background-color: hsl(210, 14%, 14%);
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     display: flex;
     align-items: center;
@@ -63,13 +63,13 @@
 .hex.drag-hover,
 .bench-slot:hover,
 .bench-slot.drag-hover {
-    background-color: #3a3a3a;
+    background-color: hsl(240, 4%, 25%);
 }
 
 .bench-slot {
     width: var(--hex-w);
     height: var(--hex-h);
-    background-color: #2a2a2a;
+    background-color: hsl(210, 14%, 14%);
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     cursor: pointer;
     transition: background-color 0.15s ease;
@@ -77,7 +77,7 @@
     background-position: center;
 }
 .bench-slot:hover {
-    background-color: #3a3a3a;
+    background-color: hsl(240, 4%, 25%);
 }
 
 .board-count {
