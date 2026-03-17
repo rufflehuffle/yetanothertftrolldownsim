@@ -3,8 +3,8 @@
    ============================================================ */
 .trait-panel {
     position: fixed;
-    /* sit just left of the board */
-    right: min(calc(50% + 400px), calc(100% - 210px));
+    /* always sit just left of the bench (bench = 9×hex-w + 8×hex-gap, centered) */
+    right: calc(50% + (9 * var(--hex-w) + 8 * var(--hex-gap)) / 2 + 10px);
     top: 20%;
     width: 200px;
     display: flex;
@@ -204,6 +204,13 @@
 }
 .trait-tooltip .tt-unit-inactive .tt-unit-name {
     color: #555;
+}
+
+/* Truncate to 6 traits on screens smaller than full HD */
+@media (max-width: 1919px) {
+    .trait-row:nth-child(n+7) {
+        display: none;
+    }
 }
 
 @media (max-width: 900px) {

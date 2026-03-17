@@ -91,7 +91,7 @@
 .rd-bench-slot {
     width: var(--rd-hex-w);
     height: var(--rd-hex-h);
-    background-color: #2a2a2a;
+    background-color: hsl(210, 14%, 14%);
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     background-size: cover;
     background-position: center;
