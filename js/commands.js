@@ -96,7 +96,10 @@ export class RollCommand {
         if (state.gold < 2) return false;
         this._snap = snapshotState();
         const ok = doRoll(true) !== false;
-        if (ok) record({ type: 'roll', goldBefore: this._snap.gold, goldAfter: state.gold, shopBefore: [...this._snap.shop], shopAfter: [...state.shop], bench: this._snap.bench, board: this._snap.board, teamPlan: [...state.teamPlan], level: this._snap.level });
+        if (ok) {
+            record({ type: 'roll', goldBefore: this._snap.gold, goldAfter: state.gold, shopBefore: [...this._snap.shop], shopAfter: [...state.shop], bench: this._snap.bench, board: this._snap.board, teamPlan: [...state.teamPlan], level: this._snap.level });
+            document.dispatchEvent(new CustomEvent('shoproll'));
+        }
         return ok;
     }
     undo() { if (this._snap) restoreState(this._snap); }
@@ -155,6 +158,17 @@ export class MoveUnitCommand {
         const ok = moveUnit(this._from, this._to);
         if (ok && unit) record({ type: 'move', champName: unit.name, stars: unit.stars, from: this._from, to: this._to });
         return ok;
+    }
+    undo() { if (this._snap) restoreState(this._snap); }
+}
+
+export class ResetBoardCommand {
+    execute() {
+        if (Object.values(state.board).every(v => v === null)) return false;
+        this._snap = snapshotState();
+        for (const key of Object.keys(state.board)) state.board[key] = null;
+        applyBoardEffects(); // re-validates summons and calls render()
+        return true;
     }
     undo() { if (this._snap) restoreState(this._snap); }
 }

@@ -496,6 +496,7 @@ function _deactivateTeam() {
 // Internal: apply team state without opening/closing panels
 // ============================================================
 function _applyTeam(team, emptyBoard = false) {
+    state.boardGenerated = false;
     if (team.teamPlan) {
         for (const name of _originallyLocked) {
             if (pool[name]) pool[name].unlocked = false;
@@ -553,6 +554,7 @@ export function loadPreset(team) {
                 board: result.board,
             };
             _applyTeam(generated);
+            state.boardGenerated = true;
             lastLoadedPreset = team; // keep original as the tracked preset
             return;
         }

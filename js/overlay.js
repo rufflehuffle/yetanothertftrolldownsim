@@ -1,7 +1,9 @@
 import { state } from './state.js';
+import { render } from './render.js';
+import { addXp } from './logic.js';
 import {
     getRdMode, setRdMode,
-    isPlanning, isRoundEnd, isFreeroll,
+    isPlanning, isRound, isRoundEnd, isFreeroll,
     startRound, returnToPlanning, enterFreeroll, exitFreeroll, finishRound
 } from './rolldown-state.js';
 import { timerControls } from './timer.js';
@@ -9,7 +11,7 @@ import { lastLoadedPreset, loadPreset, openPresets, openSavePreset } from './tea
 import { openTeamBuilder } from './team-builder.js';
 import { ghost } from './drag.js';
 import { triggerGenerate41Board } from './planner.js';
-import { history } from './commands.js';
+import { history, dispatch, ResetBoardCommand } from './commands.js';
 
 // ============================================================
 // Rolldown UI Overlays
@@ -25,6 +27,8 @@ const rdOverlayGenerateBtn          = document.querySelector('.rd-overlay-genera
 const rdPauseEndBtn                 = document.querySelector('.rd-pause-overlay__end-btn');
 const rdPauseResetBtn               = document.querySelector('.rd-pause-overlay__reset-btn');
 const rdPauseFreerollBtn            = document.querySelector('.rd-pause-overlay__freeroll-btn');
+const resetBoardBtn                 = document.querySelector('.reset-board-btn');
+const rdEndRoundBtn                 = document.querySelector('.rd-end-round-btn');
 
 export function updateOverlayContent() {
     const mode = getRdMode();
@@ -55,6 +59,14 @@ export function updateOverlayContent() {
         rdOverlayRoundendFreerollBtn.style.display = 'none';
         rdOverlayGenerateBtn.style.display = 'none';
     }
+    // Reset board button: only in planning, only when board has units
+    const boardHasUnits = Object.values(state.board).some(v => v !== null);
+    if (getRdMode() === 'planning' && boardHasUnits) {
+        resetBoardBtn.textContent = state.boardGenerated ? '↺  Regenerate Board' : 'Clear Board';
+        resetBoardBtn.style.display = 'block';
+    } else {
+        resetBoardBtn.style.display = 'none';
+    }
     if (rdPauseResetBtn) {
         rdPauseResetBtn.disabled = !lastLoadedPreset;
         rdPauseResetBtn.textContent = lastLoadedPreset ? `↺  ${lastLoadedPreset.name}` : 'Reset to Preset';
@@ -65,6 +77,8 @@ export function updateOverlayContent() {
 rdShopPrimaryBtn.addEventListener('click', () => {
     const mode = getRdMode();
     if (mode === 'planning') {
+        addXp(2); // +2 XP: round passive grant
+        render();
         timerControls.start();
         startRound();
     } else if (mode === 'roundEnd') {
@@ -112,7 +126,7 @@ rdPauseResetBtn.addEventListener('click', () => {
 rdPauseEndBtn.addEventListener('click', () => {
     timerControls.reset();
     finishRound();
-    returnToPlanning();
+    document.dispatchEvent(new CustomEvent('roundcomplete'));
     updateOverlayContent();
 });
 rdPauseFreerollBtn.addEventListener('click', () => {
@@ -123,6 +137,17 @@ rdPauseFreerollBtn.addEventListener('click', () => {
 // Freeroll return button
 document.querySelector('.freeroll-return-btn').addEventListener('click', () => {
     if (isFreeroll()) exitFreeroll();
+});
+
+// Reset board button (planning only)
+resetBoardBtn.addEventListener('click', () => {
+    if (!isPlanning()) return;
+    if (state.boardGenerated) {
+        triggerGenerate41Board();
+        updateOverlayContent();
+    } else {
+        dispatch(new ResetBoardCommand());
+    }
 });
 
 // postrd retry event
@@ -138,6 +163,61 @@ document.addEventListener('postrd-retry', () => {
 document.addEventListener('rdmodechange', () => updateOverlayContent());
 history.addListener(updateOverlayContent);
 document.addEventListener('teamplanchange', updateOverlayContent);
+
+// ============================================================
+// End Round button (3 s since last roll, or low gold during round)
+// ============================================================
+let _noRollElapsed = false;
+let _noRollTimer = null;
+let _endRoundBtnEverShown = false;
+
+function _updateEndRoundBtn() {
+    if (isRound() && (state.gold < 5 || _noRollElapsed)) _endRoundBtnEverShown = true;
+    const visible = isRound() && _endRoundBtnEverShown;
+    rdEndRoundBtn.classList.toggle('rd-end-round-btn--visible', visible);
+    rdEndRoundBtn.classList.toggle('rd-end-round-btn--dim', isRound() && !visible);
+}
+
+function _startNoRollTimer() {
+    clearTimeout(_noRollTimer);
+    _noRollElapsed = false;
+    _noRollTimer = setTimeout(() => {
+        _noRollElapsed = true;
+        _updateEndRoundBtn();
+    }, 3000);
+}
+
+document.addEventListener('shoproll', () => { if (isRound()) _startNoRollTimer(); });
+
+document.addEventListener('rdmodechange', ({ detail: { from, to } }) => {
+    if (to === 'round' && from !== 'paused') {
+        _noRollElapsed = false;
+        _endRoundBtnEverShown = false;
+        _startNoRollTimer();
+        _updateEndRoundBtn();
+    } else if (to === 'round') {
+        // Resuming from pause — restart the idle timer, preserve _endRoundBtnEverShown
+        _startNoRollTimer();
+        _updateEndRoundBtn();
+    } else {
+        clearTimeout(_noRollTimer);
+        _noRollElapsed = false;
+        if (to !== 'paused') _endRoundBtnEverShown = false;
+        _updateEndRoundBtn();
+    }
+});
+
+history.addListener(() => _updateEndRoundBtn());
+
+function _endRoundEarly() {
+    clearTimeout(_noRollTimer);
+    timerControls.reset();
+    finishRound();
+    document.dispatchEvent(new CustomEvent('roundcomplete'));
+    updateOverlayContent();
+}
+
+rdEndRoundBtn.addEventListener('click', _endRoundEarly);
 
 // Init
 updateOverlayContent();

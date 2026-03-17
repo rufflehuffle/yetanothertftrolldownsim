@@ -1,4 +1,5 @@
 import { pool, traits as traitTable } from './tables.js';
+import { addXp } from './logic.js';
 import { state, saveTeamPlan, saveUnlockedOverrides, isOriginallyLocked, setPlannedAsGenerateTarget, syncTeamPlanSlots } from './state.js';
 import { render, computeTraits, getSortedTraitEntries, activeBreakpoint, nextBreakpoint, showTraitTooltip, positionTooltip } from './render.js';
 import { generate41Board } from './board-generator.js';
@@ -703,9 +704,11 @@ export function triggerGenerate41Board() {
     if (!result) return false;
     state.gold  = result.gold;
     state.level = result.level;
-    state.xp    = 0;
+    state.xp    = result.xp;
+    addXp(2); // +2 XP: odd-interval pre-round grant
     state.bench = result.bench;
     state.board = result.board;
+    state.boardGenerated = true;
     closeTeamPlanner();
     render();
     document.dispatchEvent(new CustomEvent('teamplanchange'));

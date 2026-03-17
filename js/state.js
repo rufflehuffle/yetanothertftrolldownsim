@@ -16,6 +16,7 @@ export let state = {
         C1: null, C2: null, C3: null, C4: null, C5: null, C6: null, C7: null,
         D1: null, D2: null, D3: null, D4: null, D5: null, D6: null, D7: null,
     },
+    boardGenerated: false,  // true when board was populated by triggerGenerate41Board
     teamPlan: new Set(),
     teamPlanSlots: Array(10).fill(null), // positional slots for the planner grid
     targetTeam: null,

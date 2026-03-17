@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="style/base.css">
     <link rel="stylesheet" href="style/board.css">
     <link rel="stylesheet" href="style/shop.css">
+    <link rel="stylesheet" href="style/ghost.css">
     <link rel="stylesheet" href="style/hud.css">
     <link rel="stylesheet" href="style/buttons.css">
     <link rel="stylesheet" href="style/team-builder.css">
@@ -318,9 +319,13 @@
     </div>
 
     <div class="board-area">
-    <button class="postrd-open-btn" id="postrd-open-btn">View Results</button>
-    <button class="freeroll-return-btn">Exit Free Roll</button>
-    <div class="board-count">0/8</div>
+    <div class="board-above-count">
+        <button class="above-board-btn postrd-open-btn" id="postrd-open-btn">View Results</button>
+        <button class="above-board-btn freeroll-return-btn">Exit Free Roll</button>
+        <button class="above-board-btn reset-board-btn">Reset Board</button>
+        <button class="above-board-btn rd-end-round-btn">End Round</button>
+        <div class="board-count">0/8</div>
+    </div>
     <div class="board">
         <div class="no-comp-popup" style="display:none;">
             <div class="no-comp-popup--empty">
