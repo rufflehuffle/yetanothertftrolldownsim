@@ -4,6 +4,8 @@ import { applyBoardEffects } from './effects.js';
 import { openTeamBuilder, closeTeamBuilder } from './team-builder.js';
 import { openSavePreset } from './teams.js';
 import { ghost } from './drag.js';
+import { dispatch, BuyXpCommand } from './commands.js';
+import { isRoundEnd } from './rolldown-state.js';
 
 // ============================================================
 // Level dropdown
@@ -63,5 +65,7 @@ import { ghost } from './drag.js';
 // ============================================================
 // Team Builder & Presets sidebar buttons
 // ============================================================
+document.querySelector('.buy-xp-button').addEventListener('click', () => { if (!isRoundEnd()) dispatch(new BuyXpCommand()); });
+
 document.querySelector('.builder-btn').addEventListener('click', () => openTeamBuilder(ghost, openSavePreset));
 document.querySelector('.rolldown-btn').addEventListener('click', closeTeamBuilder);

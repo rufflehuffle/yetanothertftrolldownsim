@@ -74,7 +74,7 @@ document.addEventListener('keydown', (e) => {
             }
         }
     }
-    if (e.key === 'f' || e.key === 'F') { if (!e.repeat && !isPlanning() && !isRoundEnd()) dispatch(new BuyXpCommand()); }
+    if (e.key === 'f' || e.key === 'F') { if (!e.repeat && !isRoundEnd()) dispatch(new BuyXpCommand()); }
     if (e.key === 'w' || e.key === 'W') {
         if (isPlanning()) { playSound('board_full.mp3'); return; }
         dispatch(new MoveHoveredCommand());

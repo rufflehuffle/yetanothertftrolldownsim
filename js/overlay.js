@@ -7,9 +7,7 @@ import {
     startRound, returnToPlanning, enterFreeroll, exitFreeroll, finishRound
 } from './rolldown-state.js';
 import { timerControls } from './timer.js';
-import { lastLoadedPreset, loadPreset, openPresets, openSavePreset } from './teams.js';
-import { openTeamBuilder } from './team-builder.js';
-import { ghost } from './drag.js';
+import { lastLoadedPreset, loadPreset } from './teams.js';
 import { triggerGenerate41Board } from './planner.js';
 import { history, dispatch, ResetBoardCommand } from './commands.js';
 
@@ -19,8 +17,6 @@ import { history, dispatch, ResetBoardCommand } from './commands.js';
 const rdShopOverlayHint             = document.querySelector('.rd-shop-overlay__hint');
 const rdShopOverlayPresetName       = document.querySelector('.rd-shop-overlay__preset-name');
 export const rdShopPrimaryBtn       = document.querySelector('.rd-shop-overlay__primary-btn');
-const rdOverlayTbBtn                = document.querySelector('.rd-overlay-tb-btn');
-const rdOverlayPresetsBtn           = document.querySelector('.rd-overlay-presets-btn');
 const rdOverlayFreerollBtn          = document.querySelector('.rd-overlay-freeroll-btn');
 const rdOverlayRoundendFreerollBtn  = document.querySelector('.rd-overlay-roundend-freeroll-btn');
 const rdOverlayGenerateBtn          = document.querySelector('.rd-overlay-generate-btn');
@@ -39,8 +35,6 @@ export function updateOverlayContent() {
         rdShopPrimaryBtn.textContent = '▶  Start Round';
         rdShopPrimaryBtn.style.display = '';
         rdShopPrimaryBtn.disabled = !canStart;
-        rdOverlayTbBtn.style.display = '';
-        rdOverlayPresetsBtn.style.display = '';
         rdOverlayFreerollBtn.style.display = '';
         rdOverlayRoundendFreerollBtn.style.display = 'none';
         rdOverlayGenerateBtn.style.display = 'none';
@@ -50,8 +44,6 @@ export function updateOverlayContent() {
         rdShopPrimaryBtn.textContent = lastLoadedPreset ? '↺  Reset to Preset' : '↺  Reset Timer';
         rdShopPrimaryBtn.style.display = '';
         rdShopPrimaryBtn.disabled = false;
-        rdOverlayTbBtn.style.display = 'none';
-        rdOverlayPresetsBtn.style.display = 'none';
         rdOverlayFreerollBtn.style.display = 'none';
         rdOverlayRoundendFreerollBtn.style.display = '';
         rdOverlayGenerateBtn.style.display = '';
@@ -89,12 +81,6 @@ rdShopPrimaryBtn.addEventListener('click', () => {
 });
 
 // Secondary overlay buttons
-rdOverlayTbBtn.addEventListener('click', () => {
-    if (isPlanning()) openTeamBuilder(ghost, openSavePreset);
-});
-rdOverlayPresetsBtn.addEventListener('click', () => {
-    if (isPlanning()) openPresets();
-});
 rdOverlayFreerollBtn.addEventListener('click', () => {
     if (isPlanning()) enterFreeroll();
 });

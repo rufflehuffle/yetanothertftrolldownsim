@@ -21,8 +21,8 @@
 | `planner-filter.js` | Trait filter modal for planner picker |
 | `team-builder.js` | Freeform unit placement side panel |
 | `teams.js` | Saved presets: save/load/rename/delete, auto-naming |
-| `board-generator.js` | Simulate 2-1→4-1 curve, generate realistic board |
-| `board-strength.js` | EHP×DPS board scoring used by board-generator |
+| `board-generator.js` | Re-export shim → `board-generation/generator.js`; see [`board-generation/CLAUDE.md`](board-generation/CLAUDE.md) |
+| `board-strength.js` | EHP×DPS board scoring used by board-generation |
 | `postrd.js` | Post-RD modal: pentagon chart + score history |
 | `postrd-analysis.js` | Post-RD analysis tab: board snapshots per roll |
 | `grading-*.js` | Five grading modules (see Grading section below) |
