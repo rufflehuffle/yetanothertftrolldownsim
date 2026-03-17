@@ -1,5 +1,15 @@
 import { pool, traits } from './tables.js';
 
+// ─── Load trait strength data ─────────────────────────────────────────────────
+let TRAIT_STRENGTH = {};
+try {
+    TRAIT_STRENGTH = await fetch(
+        new URL('../models/traits/trait_strength.json', import.meta.url)
+    ).then(r => r.json());
+} catch (e) {
+    console.warn('board-strength: failed to load trait_strength.json', e);
+}
+
 // ─── Normalised EHP by cost: [_, 1★, 2★, 3★]  (baseline: avg 1-cost 1★ = 1.0) ─
 export const AVG_EHP = {
     1: [0,  1.0,  1.67,  2.9],
@@ -35,10 +45,14 @@ function getBaseDPS(name, stars) {
 }
 
 /**
- * Returns a map of trait → breakpoint multiplier for the active breakpoints
- * reached by the given unit list.
+ * Returns all active trait effects for the given unit list.
+ * Each effect: { metric, value, scope, trait }
+ * - metric: 'tank_ehp_pct' | 'dps_pct'
+ * - value:  fractional multiplier (applied as 1 + value)
+ * - scope:  'splash' | 'selfish' | 'strongest_tank' | 'strongest_carry' | 'second_strongest_carry'
+ * - trait:  trait name (used for selfish scoping)
  */
-function computeTraitMultipliers(unitList) {
+function getActiveEffects(unitList) {
     const counts = {};
     for (const { name } of unitList) {
         for (const trait of (pool[name]?.synergies ?? [])) {
@@ -46,25 +60,27 @@ function computeTraitMultipliers(unitList) {
         }
     }
 
-    const mults = {};
+    const effects = [];
     for (const [trait, count] of Object.entries(counts)) {
         const bps = traits[trait]?.breakpoints ?? [];
-        let bpLevel = 0;
+        let bpLevel = 0, activeBp = null;
         for (const bp of bps) {
-            if (count >= bp) bpLevel++;
+            if (count >= bp) { bpLevel++; activeBp = bp; }
         }
-        if (bpLevel > 0) mults[trait] = 1 + 0.25 * bpLevel;
-    }
-    return mults;
-}
+        if (bpLevel === 0) continue;
 
-/** Product of all active-trait multipliers for a single unit. */
-function unitTraitMult(name, traitMults) {
-    let mult = 1;
-    for (const trait of (pool[name]?.synergies ?? [])) {
-        if (traitMults[trait]) mult *= traitMults[trait];
+        const td = TRAIT_STRENGTH[trait];
+        if (!td) continue;
+
+        // "unique" key → single-breakpoint traits; numbered keys → use highest active breakpoint
+        const traitEffects = 'unique' in td ? td.unique : (td[String(activeBp)] ?? []);
+        for (const eff of traitEffects) {
+            if (eff.metric && eff.value != null) {
+                effects.push({ metric: eff.metric, value: eff.value, scope: eff.scope, trait });
+            }
+        }
     }
-    return mult;
+    return effects;
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────
@@ -78,17 +94,54 @@ function unitTraitMult(name, traitMults) {
 export function calcBoardStrength(units) {
     if (!units.length) return 0;
 
-    const traitMults = computeTraitMultipliers(units);
+    const activeEffects = getActiveEffects(units);
 
+    // Build per-unit state with multiplicative EHP/DPS multipliers
+    const unitData = units.map(({ name, stars }) => ({
+        name,
+        synergies: pool[name]?.synergies ?? [],
+        isT: isTank(name),
+        baseEHP: getBaseEHP(name, stars),
+        baseDPS: getBaseDPS(name, stars),
+        ehpMult: 1,
+        dpsMult: 1,
+    }));
+
+    // Apply splash (all units) and selfish (trait members only) effects
+    for (const eff of activeEffects) {
+        if (eff.scope === 'splash') {
+            for (const u of unitData) {
+                if (eff.metric === 'tank_ehp_pct') u.ehpMult *= (1 + eff.value);
+                else if (eff.metric === 'dps_pct')  u.dpsMult *= (1 + eff.value);
+            }
+        } else if (eff.scope === 'selfish') {
+            for (const u of unitData) {
+                if (!u.synergies.includes(eff.trait)) continue;
+                if (eff.metric === 'tank_ehp_pct') u.ehpMult *= (1 + eff.value);
+                else if (eff.metric === 'dps_pct')  u.dpsMult *= (1 + eff.value);
+            }
+        }
+    }
+
+    // Split into EHP (tanks) and DPS (carries) lists with effective values
     const ehpEntries = [];
     const dpsEntries = [];
+    for (const u of unitData) {
+        if (u.isT) ehpEntries.push({ val: u.baseEHP * u.ehpMult });
+        else        dpsEntries.push({ val: u.baseDPS * u.dpsMult });
+    }
 
-    for (const { name, stars } of units) {
-        const tMult = unitTraitMult(name, traitMults);
-        if (isTank(name)) {
-            ehpEntries.push({ name, val: getBaseEHP(name, stars) * tMult });
-        } else {
-            dpsEntries.push({ name, val: getBaseDPS(name, stars) * tMult });
+    ehpEntries.sort((a, b) => b.val - a.val);
+    dpsEntries.sort((a, b) => b.val - a.val);
+
+    // Apply targeted effects after initial sort
+    for (const eff of activeEffects) {
+        if (eff.scope === 'strongest_tank' && ehpEntries.length > 0) {
+            if (eff.metric === 'tank_ehp_pct') ehpEntries[0].val *= (1 + eff.value);
+        } else if (eff.scope === 'strongest_carry' && dpsEntries.length > 0) {
+            if (eff.metric === 'dps_pct') dpsEntries[0].val *= (1 + eff.value);
+        } else if (eff.scope === 'second_strongest_carry' && dpsEntries.length > 1) {
+            if (eff.metric === 'dps_pct') dpsEntries[1].val *= (1 + eff.value);
         }
     }
 
@@ -105,9 +158,7 @@ export function calcBoardStrength(units) {
     const totalEHP = ehpEntries.reduce((s, e) => s + e.val, 0);
     const totalDPS = dpsEntries.reduce((s, e) => s + e.val, 0);
 
-    // Edge cases: if there are no tanks or no carries, one side is 0 and
-    // the product collapses. Return whichever sum is non-zero as a fallback
-    // so boards with only tanks or only carries still rank against each other.
+    // Edge cases: pure-tank or pure-carry boards still rank against each other
     if (totalEHP === 0) return totalDPS;
     if (totalDPS === 0) return totalEHP;
     return totalEHP * totalDPS;

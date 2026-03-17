@@ -1,6 +1,6 @@
 ## Board Strength Model
 
-`Σ Tank EHP × Σ DPS`. Strongest tank and carry each get a 5× item multiplier. Trait bonus: ×1.25 per active breakpoint, multiplicative across traits. Full methodology in `models/boardStrengthModel.md`.
+`Σ Tank EHP × Σ DPS`. Strongest tank and carry each get a 5× item multiplier. Trait bonuses loaded from `models/traits/trait_strength.json`: each trait's highest active breakpoint emits one or more `{metric, value, scope}` effects pre-converted to `tank_ehp_pct` or `dps_pct`, applied multiplicatively per scope (`splash` → all units, `selfish` → trait members, `strongest_tank/carry/second_strongest_carry` → targeted). Full methodology in `models/boardStrengthModel.md`.
 
 ### Normalized averages (1-cost 1★ = 1.0)
 

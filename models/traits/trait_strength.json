@@ -1,0 +1,822 @@
+{
+  "_schema": {
+    "structure": "{ TraitName: { breakpoint_or_unique: [ {metric, value, scope, notes?}, ... ] } }",
+    "metric": "'tank_ehp_pct' | 'dps_pct'",
+    "value": "fractional multiplier — applied as (1 + value) to the unit's base metric. E.g. 0.25 = +25%.",
+    "scope": "'selfish' (trait members only) | 'splash' (all board units) | 'strongest_tank' | 'strongest_carry' | 'second_strongest_carry'",
+    "notes": "optional — derivation, approximation method, or caveats",
+    "empty_array": "breakpoint exists in-game but effect is unquantifiable or negligible in the board model"
+  },
+
+  "_conversion_factors": {
+    "source": "tank_ehp/trait_ehp_multipliers.py + dps/trait_dps_multipliers.py  (2-star baseline)",
+    "flat_hp_to_ehp_pct":         0.00044389,
+    "flat_armor_mr_to_ehp_pct":   0.00556048,
+    "health_regen_to_ehp_pct_per_s": 0.01109722,
+    "as_pct_to_dps_pct":          0.00591229,
+    "ap_pct_to_dps_pct":          0.00585748,
+    "ad_pct_to_dps_pct":          0.00393726,
+    "avg_auto_phys_frac":         0.2936,
+    "direct_conversions": {
+      "health_pct":      "tank_ehp_pct = value / 100  (1:1)",
+      "damage_amp_pct":  "dps_pct = value / 100  (1:1)",
+      "shield_pct_max_hp": "tank_ehp_pct = value / 100  (shield adds proportionally to HP before res_mult)",
+      "durability_pct":  "tank_ehp_pct = 1/(1 - x) - 1  where x = DR fraction"
+    },
+    "crit_formula": "dps_pct = avg_auto_phys_frac × crit_chance/100 × (0.4 + crit_dmg_bonus/100)",
+    "omnivamp_formula": "tank_ehp_pct ≈ omnivamp_pct × unit_dps × 25 × res_mult / base_ehp  (unit-specific; rough average used)"
+  },
+
+  "Ascendant":   { "unique": [] },
+  "Assimilator": { "unique": [] },
+
+  "Bilgewater": {
+    "3":  [],
+    "5":  [],
+    "7":  [],
+    "10": []
+  },
+
+  "Blacksmith": {
+    "unique": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.80,
+        "scope":  "selfish",
+        "notes":  "Ornn 2★ with 3 items: +600 HP/item × 3 = 1800 HP × 0.00044 = 0.80. Per star: 1★ 0.47, 3★ 2.66."
+      }
+    ]
+  },
+
+  "Caretaker":   { "unique": [] },
+  "Chainbreaker": { "unique": [] },
+
+  "Chronokeeper": {
+    "unique": [
+      { "metric": "dps_pct", "value": 0.15, "scope": "selfish" }
+    ]
+  },
+
+  "Dark Child": { "unique": [] },
+
+  "Darkin": {
+    "1": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.08,
+        "scope":  "selfish",
+        "notes":  "15% omnivamp. EHP_pct = 0.15 × avg_fighter_dps(56) × 25 × res_mult(1.45) / avg_ehp(3732) ≈ 0.08."
+      }
+    ],
+    "2": [
+      { "metric": "tank_ehp_pct", "value": 0.08, "scope": "selfish" }
+    ],
+    "3": [
+      { "metric": "tank_ehp_pct", "value": 0.08, "scope": "selfish" },
+      {
+        "metric": "dps_pct",
+        "value":  0.20,
+        "scope":  "selfish",
+        "notes":  "Triggered 333 magic damage to nearby enemies on cast. Approx 3 casts × 333 × 0.5 (MR) / 25s ÷ 56 base DPS ≈ 0.20. Rough estimate."
+      }
+    ]
+  },
+
+  "Demacia": {
+    "3": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.07,
+        "scope":  "selfish",
+        "notes":  "+12 AR/MR: 12 × 0.00556 = 0.067 ≈ 0.07."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.07,
+        "scope":  "selfish",
+        "notes":  "10% mana cost reduction per rally ≈ 10% more ability casts × ability_frac(0.71) = 7%."
+      }
+    ],
+    "5": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.19,
+        "scope":  "selfish",
+        "notes":  "+35 AR/MR: 35 × 0.00556 = 0.195 ≈ 0.19."
+      },
+      { "metric": "dps_pct", "value": 0.07, "scope": "selfish" }
+    ],
+    "7": [
+      { "metric": "tank_ehp_pct", "value": 0.19, "scope": "selfish" },
+      { "metric": "dps_pct",      "value": 0.07, "scope": "selfish" }
+    ],
+    "11": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.83,
+        "scope":  "selfish",
+        "notes":  "+150 AR/MR: 150 × 0.00556 = 0.834 ≈ 0.83."
+      },
+      { "metric": "dps_pct", "value": 0.07, "scope": "selfish" }
+    ]
+  },
+
+  "Dragonborn": {
+    "unique": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.04,
+        "scope":  "splash",
+        "notes":  "8% ability damage reduction. Assuming ~50% of incoming damage is ability-based: eff DR ≈ 4%. EHP_pct = 1/(1−0.04)−1 ≈ 0.04."
+      }
+    ]
+  },
+
+  "Emperor": { "unique": [] },
+  "Eternal":  { "unique": [] },
+
+  "Freljord": {
+    "3": [
+      { "metric": "tank_ehp_pct", "value": 0.08, "scope": "splash" },
+      { "metric": "dps_pct",      "value": 0.10, "scope": "splash" }
+    ],
+    "5": [
+      { "metric": "tank_ehp_pct", "value": 0.12, "scope": "splash" },
+      { "metric": "dps_pct",      "value": 0.16, "scope": "splash" }
+    ],
+    "7": [
+      { "metric": "tank_ehp_pct", "value": 0.16, "scope": "splash" },
+      { "metric": "dps_pct",      "value": 0.22, "scope": "splash" }
+    ]
+  },
+
+  "Glutton": { "unique": [] },
+
+  "Harvester": {
+    "unique": [
+      {
+        "metric": "dps_pct",
+        "value":  0.15,
+        "scope":  "splash",
+        "notes":  "+10% enemy AR/MR shred: damage factor improves 50%→55.6% (+11.1% damage). Mana on kill adds ~5% DPS for casters. Combined ≈ 15% avg splash DPS."
+      }
+    ]
+  },
+
+  "Heroic": {
+    "unique": [
+      {
+        "metric": "dps_pct",
+        "value":  0.05,
+        "scope":  "splash",
+        "notes":  "Galio shockwave 10% of his HP as magic damage to nearby enemies on cast. Rough splash DPS contribution ≈ 5%."
+      }
+    ]
+  },
+
+  "HexMech": { "unique": [] },
+
+  "Huntress": {
+    "unique": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  1.00,
+        "scope":  "selfish",
+        "notes":  "50% passive Durability: EHP_pct = 1/(1−0.5)−1 = 1.0 = +100%."
+      }
+    ]
+  },
+
+  "Immortal": {
+    "unique": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.60,
+        "scope":  "selfish",
+        "notes":  "Revives at 60% HP — equivalent to +60% effective HP (second life at 60% of max HP)."
+      }
+    ]
+  },
+
+  "Ionia": {
+    "3": [
+      { "metric": "tank_ehp_pct", "value": 0.25, "scope": "selfish" },
+      { "metric": "dps_pct",      "value": 0.15, "scope": "selfish" }
+    ],
+    "5": [
+      { "metric": "tank_ehp_pct", "value": 0.30, "scope": "selfish" },
+      { "metric": "dps_pct",      "value": 0.20, "scope": "selfish" }
+    ],
+    "7": [
+      { "metric": "tank_ehp_pct", "value": 0.35, "scope": "selfish" },
+      { "metric": "dps_pct",      "value": 0.25, "scope": "selfish" }
+    ]
+  },
+
+  "Invoker": {
+    "2": [
+      {
+        "metric": "dps_pct",
+        "value":  0.03,
+        "scope":  "splash",
+        "notes":  "+1 mana/s to all: +25 mana in 25s ÷ 80 avg mana cost ≈ 0.3 extra casts out of ~4. DPS% = 0.3/4 × ability_frac(0.71) ≈ 5.3% for casters. Splash halved (~50% casters): ≈ 3%."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.18,
+        "scope":  "selfish",
+        "notes":  "+25% mana gain amplification: 25% faster casts × ability_frac(0.71) = 17.8%."
+      }
+    ],
+    "4": [
+      { "metric": "dps_pct", "value": 0.03, "scope": "splash" },
+      {
+        "metric": "dps_pct",
+        "value":  0.28,
+        "scope":  "selfish",
+        "notes":  "+40% mana gain: 40% × ability_frac(0.71) = 28.4%."
+      }
+    ]
+  },
+
+  "Ixtal": { "3": [], "5": [], "7": [] },
+
+  "Juggernaut": {
+    "2": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.27,
+        "scope":  "selfish",
+        "notes":  "DR 25% above / 18% below 50% HP. Blended damage factor: 0.5×(1−0.25)+0.5×(1−0.18)=0.785. EHP_pct = 1/0.785−1 ≈ 0.27."
+      }
+    ],
+    "4": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.33,
+        "scope":  "selfish",
+        "notes":  "DR 30% / 20%. Blended: 0.5×0.70+0.5×0.80=0.75. EHP_pct = 1/0.75−1 ≈ 0.33."
+      }
+    ],
+    "6": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.45,
+        "scope":  "selfish",
+        "notes":  "DR 36% / 26%. Blended: 0.5×0.64+0.5×0.74=0.69. EHP_pct = 1/0.69−1 ≈ 0.45."
+      }
+    ]
+  },
+
+  "Longshot": {
+    "2": [ { "metric": "dps_pct", "value": 0.18, "scope": "selfish" } ],
+    "3": [ { "metric": "dps_pct", "value": 0.24, "scope": "selfish" } ],
+    "4": [ { "metric": "dps_pct", "value": 0.28, "scope": "selfish" } ],
+    "5": [ { "metric": "dps_pct", "value": 0.32, "scope": "selfish" } ]
+  },
+
+  "Noxus": { "3": [], "5": [], "7": [], "10": [] },
+
+  "Piltover": {
+    "2": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.18,
+        "scope":  "splash",
+        "notes":  "18% max HP shield granted to all units."
+      }
+    ],
+    "4": [
+      { "metric": "tank_ehp_pct", "value": 0.18, "scope": "splash" },
+      { "metric": "dps_pct",      "value": 0.20, "scope": "selfish" }
+    ],
+    "6": [
+      { "metric": "tank_ehp_pct", "value": 0.18, "scope": "splash" },
+      {
+        "metric": "dps_pct",
+        "value":  0.60,
+        "scope":  "selfish",
+        "notes":  "+20% base + additional +40% damage amp to Piltover carry. Combined +60%."
+      }
+    ]
+  },
+
+  "Riftscourge": {
+    "unique": [
+      { "metric": "dps_pct", "value": 0.30, "scope": "selfish" },
+      {
+        "metric": "dps_pct",
+        "value":  0.10,
+        "scope":  "splash",
+        "notes":  "Plasma bolt: 5% enemy max HP magic damage on cast. Assumed 4 procs × 5% × ~5000 HP × 0.5 MR ÷ 25s ÷ avg_team_dps ≈ 10% splash DPS contribution. Rough estimate."
+      }
+    ]
+  },
+
+  "Rune Mage": { "unique": [] },
+
+  "Shadow Isles": {
+    "2": [
+      {
+        "metric": "dps_pct",
+        "value":  0.18,
+        "scope":  "selfish",
+        "notes":  "+18% AD and +18% AP. Since AD+AP together cover 100% of DPS (auto_frac + ability_frac = 1), +18% to both = +18% total DPS."
+      }
+    ],
+    "3": [ { "metric": "dps_pct", "value": 0.20, "scope": "selfish" } ],
+    "4": [ { "metric": "dps_pct", "value": 0.25, "scope": "selfish" } ],
+    "5": [ { "metric": "dps_pct", "value": 0.33, "scope": "selfish" } ]
+  },
+
+  "Shurima": {
+    "2": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.42,
+        "scope":  "selfish",
+        "notes":  "+20% HP (0.20) + 20 HP/s regen × 25s: 20 × 0.01110 = 0.22. Combined ≈ 0.42."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.15,
+        "scope":  "selfish",
+        "notes":  "+2% AS/s accumulating. Avg AS bonus over 25s ≈ 25%. 25 × 0.00591 = 0.148 ≈ 0.15."
+      }
+    ],
+    "3": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.50,
+        "scope":  "selfish",
+        "notes":  "20 HP/s regen (0.22) + 50 AR/MR: 50 × 0.00556 = 0.278. Combined ≈ 0.50."
+      },
+      { "metric": "dps_pct", "value": 0.15, "scope": "selfish" }
+    ],
+    "4": [
+      { "metric": "tank_ehp_pct", "value": 0.50, "scope": "selfish" },
+      { "metric": "dps_pct",      "value": 0.15, "scope": "selfish" }
+    ]
+  },
+
+  "Soulbound": {
+    "unique": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.075,
+        "scope":  "splash",
+        "notes":  "7% DR to all: 1/(1−0.07)−1 = 0.0753."
+      },
+      { "metric": "dps_pct", "value": 0.07, "scope": "splash" }
+    ]
+  },
+
+  "Star Forger": {
+    "unique": [
+      {
+        "metric": "dps_pct",
+        "value":  0.30,
+        "scope":  "selfish",
+        "notes":  "Stardust amp 25/30/100% for 1/2/3+ unique Targonians. Using 2-Targonian midpoint (30%). Highly variable."
+      }
+    ]
+  },
+
+  "Targon": { "unique": [] },
+
+  "The Boss": {
+    "unique": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.10,
+        "scope":  "selfish",
+        "notes":  "15% HP gained per sit-up. Assuming one activation per fight on average."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  1.00,
+        "scope":  "selfish",
+        "notes":  "True damage conversion: all damage bypasses AR/MR. Against 100 AR/MR dummy, damage factor doubles from 0.5 to 1.0. DPS roughly doubles (+100%). Conservative estimate vs lower-resist enemies."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.35,
+        "scope":  "selfish",
+        "notes":  "+60% AS: 60 × 0.00591 = 0.355 ≈ 0.35."
+      }
+    ]
+  },
+
+  "Void": {
+    "2": [
+      { "metric": "dps_pct", "value": 0.20, "scope": "strongest_carry" }
+    ],
+    "4": [
+      { "metric": "dps_pct",      "value": 0.20, "scope": "strongest_carry" },
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.09,
+        "scope":  "strongest_tank",
+        "notes":  "+200 HP: 200 × 0.00044 = 0.089 ≈ 0.09."
+      },
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.56,
+        "scope":  "strongest_tank",
+        "notes":  "+100 AR/MR: 100 × 0.00556 = 0.556 ≈ 0.56."
+      }
+    ],
+    "6": [
+      { "metric": "dps_pct",      "value": 0.20, "scope": "strongest_carry" },
+      {
+        "metric": "dps_pct",
+        "value":  0.20,
+        "scope":  "second_strongest_carry",
+        "notes":  "Second strongest Void carry also receives +20% damage amp at 6."
+      },
+      { "metric": "tank_ehp_pct", "value": 0.09, "scope": "strongest_tank" },
+      { "metric": "tank_ehp_pct", "value": 0.56, "scope": "strongest_tank" }
+    ]
+  },
+
+  "World Ender": {
+    "unique": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  1.25,
+        "scope":  "selfish",
+        "notes":  "Revives at full HP (+100% EHP = second full life). Post-revive 20% DR adds 25% to second life: total ≈ 1 + 1×1.25 = 2.25× base EHP. EHP_pct = 1.25."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.30,
+        "scope":  "selfish",
+        "notes":  "Attack damage from omnivamp (200% of omnivamp healing as bonus AD). Rough estimate: ~30% DPS boost from accumulated AD during first life."
+      }
+    ]
+  },
+
+  "Yordle": {
+    "2": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.04,
+        "scope":  "selfish",
+        "notes":  "2 unique Yordles: +80 HP. 80 × 0.00044 = 0.035 ≈ 0.04."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.06,
+        "scope":  "selfish",
+        "notes":  "2 unique Yordles: +10% AS. 10 × 0.00591 = 0.059 ≈ 0.06."
+      }
+    ],
+    "4": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.07,
+        "scope":  "selfish",
+        "notes":  "4 unique Yordles: +160 HP. 160 × 0.00044 = 0.071 ≈ 0.07."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.12,
+        "scope":  "selfish",
+        "notes":  "4 unique Yordles: +20% AS. 20 × 0.00591 = 0.118 ≈ 0.12."
+      }
+    ],
+    "6": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.11,
+        "scope":  "selfish",
+        "notes":  "6 unique Yordles: +240 HP. 240 × 0.00044 = 0.107 ≈ 0.11."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.18,
+        "scope":  "selfish",
+        "notes":  "6 unique Yordles: +30% AS. 30 × 0.00591 = 0.177 ≈ 0.18."
+      }
+    ],
+    "8": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.14,
+        "scope":  "selfish",
+        "notes":  "8 unique Yordles: +320 HP. 320 × 0.00044 = 0.142 ≈ 0.14."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.24,
+        "scope":  "selfish",
+        "notes":  "8 unique Yordles: +40% AS. 40 × 0.00591 = 0.237 ≈ 0.24."
+      }
+    ]
+  },
+
+  "Zaun": {
+    "3": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.18,
+        "scope":  "selfish",
+        "notes":  "15% passive DR: 1/(1−0.15)−1 = 0.176 ≈ 0.18."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.27,
+        "scope":  "selfish",
+        "notes":  "90% burst AS at ~50% effective uptime = 45% effective AS. 45 × 0.00591 = 0.266 ≈ 0.27."
+      }
+    ],
+    "5": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.48,
+        "scope":  "selfish",
+        "notes":  "15% DR (0.18) + emergency 30% HP heal at 60% HP (0.30). Combined ≈ 0.48."
+      },
+      { "metric": "dps_pct", "value": 0.27, "scope": "selfish" }
+    ],
+    "7": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.59,
+        "scope":  "selfish",
+        "notes":  "22.5% DR: 1/(1−0.225)−1=0.29. Plus emergency 30% HP heal (0.30). Combined ≈ 0.59."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.40,
+        "scope":  "selfish",
+        "notes":  "135% burst AS at 50% uptime = 67.5% effective. 67.5 × 0.00591 = 0.399 ≈ 0.40."
+      }
+    ]
+  },
+
+  "Arcanist": {
+    "2": [
+      {
+        "metric": "dps_pct",
+        "value":  0.09,
+        "scope":  "splash",
+        "notes":  "+15% AP to all: 15 × 0.00586 = 0.088 ≈ 0.09."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.15,
+        "scope":  "selfish",
+        "notes":  "+25% AP to Arcanist members: 25 × 0.00586 = 0.146 ≈ 0.15."
+      }
+    ],
+    "4": [
+      {
+        "metric": "dps_pct",
+        "value":  0.12,
+        "scope":  "splash",
+        "notes":  "+20% AP: 20 × 0.00586 = 0.117 ≈ 0.12."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.29,
+        "scope":  "selfish",
+        "notes":  "+50% AP: 50 × 0.00586 = 0.293 ≈ 0.29."
+      }
+    ],
+    "6": [
+      {
+        "metric": "dps_pct",
+        "value":  0.20,
+        "scope":  "splash",
+        "notes":  "+35% AP: 35 × 0.00586 = 0.205 ≈ 0.20."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.41,
+        "scope":  "selfish",
+        "notes":  "+70% AP: 70 × 0.00586 = 0.410 ≈ 0.41."
+      }
+    ]
+  },
+
+  "Bruiser": {
+    "2": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.07,
+        "scope":  "splash",
+        "notes":  "+150 flat HP to all: 150 × 0.00044 = 0.067 ≈ 0.07."
+      },
+      { "metric": "tank_ehp_pct", "value": 0.25, "scope": "selfish" }
+    ],
+    "4": [
+      { "metric": "tank_ehp_pct", "value": 0.07, "scope": "splash" },
+      { "metric": "tank_ehp_pct", "value": 0.40, "scope": "selfish" }
+    ],
+    "6": [
+      { "metric": "tank_ehp_pct", "value": 0.07, "scope": "splash" },
+      { "metric": "tank_ehp_pct", "value": 0.60, "scope": "selfish" }
+    ]
+  },
+
+  "Defender": {
+    "2": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.07,
+        "scope":  "splash",
+        "notes":  "+12 AR/MR to all: 12 × 0.00556 = 0.067 ≈ 0.07."
+      },
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.17,
+        "scope":  "selfish",
+        "notes":  "+30 AR/MR: 30 × 0.00556 = 0.167 ≈ 0.17."
+      }
+    ],
+    "4": [
+      { "metric": "tank_ehp_pct", "value": 0.07, "scope": "splash" },
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.31,
+        "scope":  "selfish",
+        "notes":  "+55 AR/MR: 55 × 0.00556 = 0.306 ≈ 0.31."
+      }
+    ],
+    "6": [
+      { "metric": "tank_ehp_pct", "value": 0.07, "scope": "splash" },
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.44,
+        "scope":  "selfish",
+        "notes":  "+80 AR/MR: 80 × 0.00556 = 0.445 ≈ 0.44."
+      }
+    ]
+  },
+
+  "Disruptor": {
+    "2": [
+      {
+        "metric": "dps_pct",
+        "value":  0.18,
+        "scope":  "selfish",
+        "notes":  "+18% damage to Dazzled targets. Assumes enemies are reliably Dazzled by Disruptor units."
+      }
+    ],
+    "4": [
+      { "metric": "dps_pct", "value": 0.40, "scope": "selfish" }
+    ]
+  },
+
+  "Gunslinger": {
+    "2": [
+      {
+        "metric": "dps_pct",
+        "value":  0.09,
+        "scope":  "selfish",
+        "notes":  "+22% AD: 22 × 0.00394 = 0.087 ≈ 0.09."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.16,
+        "scope":  "selfish",
+        "notes":  "+100 flat physical damage every 4th auto vs 100 AR: 50 post-mit × ~4.5 procs in 25s = 225 damage ÷ 25s = 9 DPS. ÷ 56 avg base DPS ≈ 0.16."
+      }
+    ],
+    "4": [
+      {
+        "metric": "dps_pct",
+        "value":  0.16,
+        "scope":  "selfish",
+        "notes":  "+40% AD: 40 × 0.00394 = 0.158 ≈ 0.16."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.32,
+        "scope":  "selfish",
+        "notes":  "+200 flat physical every 4th auto: 100 post-mit × 4.5 procs = 450 damage ÷ 25s = 18 DPS. ÷ 56 avg base DPS ≈ 0.32."
+      }
+    ]
+  },
+
+  "Quickstriker": {
+    "2": [
+      {
+        "metric": "dps_pct",
+        "value":  0.09,
+        "scope":  "splash",
+        "notes":  "+15% AS to all: 15 × 0.00591 = 0.089 ≈ 0.09."
+      },
+      {
+        "metric": "dps_pct",
+        "value":  0.12,
+        "scope":  "selfish",
+        "notes":  "Scaling AS min 10% / max 30%; mid-value 20%: 20 × 0.00591 = 0.118 ≈ 0.12."
+      }
+    ],
+    "3": [
+      { "metric": "dps_pct", "value": 0.09, "scope": "splash" },
+      {
+        "metric": "dps_pct",
+        "value":  0.19,
+        "scope":  "selfish",
+        "notes":  "Scaling AS 20–45%; mid 32.5%: 32.5 × 0.00591 = 0.192 ≈ 0.19."
+      }
+    ],
+    "4": [
+      { "metric": "dps_pct", "value": 0.09, "scope": "splash" },
+      {
+        "metric": "dps_pct",
+        "value":  0.27,
+        "scope":  "selfish",
+        "notes":  "Scaling AS 30–60%; mid 45%: 45 × 0.00591 = 0.266 ≈ 0.27."
+      }
+    ],
+    "5": [
+      { "metric": "dps_pct", "value": 0.09, "scope": "splash" },
+      {
+        "metric": "dps_pct",
+        "value":  0.36,
+        "scope":  "selfish",
+        "notes":  "Scaling AS 40–80%; mid 60%: 60 × 0.00591 = 0.355 ≈ 0.36."
+      }
+    ]
+  },
+
+  "Slayer": {
+    "2": [
+      {
+        "metric": "dps_pct",
+        "value":  0.08,
+        "scope":  "selfish",
+        "notes":  "+20% AD base (bonus scales to +30% at 0 enemy HP; using conservative base value): 20 × 0.00394 = 0.079 ≈ 0.08."
+      }
+    ],
+    "4": [
+      {
+        "metric": "dps_pct",
+        "value":  0.12,
+        "scope":  "selfish",
+        "notes":  "+30% AD base: 30 × 0.00394 = 0.118 ≈ 0.12."
+      }
+    ],
+    "6": [
+      {
+        "metric": "dps_pct",
+        "value":  0.16,
+        "scope":  "selfish",
+        "notes":  "+40% AD base: 40 × 0.00394 = 0.158 ≈ 0.16."
+      }
+    ]
+  },
+
+  "Vanquisher": {
+    "2": [
+      {
+        "metric": "dps_pct",
+        "value":  0.02,
+        "scope":  "selfish",
+        "notes":  "15% crit + 15% crit dmg bonus. Formula: auto_phys_frac(0.294) × 0.15 × (0.4 + 0.15) = 0.024 ≈ 0.02."
+      }
+    ],
+    "3": [
+      {
+        "metric": "dps_pct",
+        "value":  0.04,
+        "scope":  "selfish",
+        "notes":  "20% crit + 20%: 0.294 × 0.20 × 0.60 = 0.035 ≈ 0.04."
+      }
+    ],
+    "4": [
+      {
+        "metric": "dps_pct",
+        "value":  0.05,
+        "scope":  "selfish",
+        "notes":  "25% crit + 25%: 0.294 × 0.25 × 0.65 = 0.048 ≈ 0.05."
+      }
+    ],
+    "5": [
+      {
+        "metric": "dps_pct",
+        "value":  0.06,
+        "scope":  "selfish",
+        "notes":  "30% crit + 30%: 0.294 × 0.30 × 0.70 = 0.062 ≈ 0.06."
+      }
+    ]
+  },
+
+  "Warden": {
+    "2": [
+      {
+        "metric": "tank_ehp_pct",
+        "value":  0.32,
+        "scope":  "selfish",
+        "notes":  "Two shields at 75% and 25% HP, each 16% max HP. Total shield EHP = 2 × 16% = 32%."
+      }
+    ],
+    "3": [ { "metric": "tank_ehp_pct", "value": 0.40, "scope": "selfish", "notes": "2 × 20% = 40%." } ],
+    "4": [ { "metric": "tank_ehp_pct", "value": 0.52, "scope": "selfish", "notes": "2 × 26% = 52%." } ],
+    "5": [ { "metric": "tank_ehp_pct", "value": 0.66, "scope": "selfish", "notes": "2 × 33% = 66%." } ]
+  }
+}

@@ -329,7 +329,61 @@ Normalized to the lowest 1-cost 1★ DPS: Kog'Maw 1★ = 22.
 > **Kindred 1★/2★ underestimate:** The zone lasts only 2.5 s at 1★/2★, yielding ~5 secondary arrows. At 3★ the 99 s zone covers the full combat window, so 3★ DPS is a reasonable upper bound while 1★/2★ values significantly understate reality.
 
 ## Items
-Model simply as a 1.5x multiplier for each item on a unit. Currently, items are not implemented so naively assume that the strongest tank (highest EHP) and strongest carry (highest DPS) has their contribution multiplied by a factor of 5 (simulating holding 3 items).
+
+Items are not individually modelled. Instead, the strongest tank (highest EHP) and strongest carry (highest DPS) each receive a 5× multiplier on their contribution, simulating three full items on each.
 
 ## Traits
-Assume every trait active on a unit multiplies its own strength (tank EHP for tanks and DPS for dps units) by 1.25 (+0.25 for each breakpoint) (1.25 for 1st breakpoint, 1.5 for second, and so on), stacking multiplicatively with other traits.
+
+Trait bonuses are loaded from `models/traits/trait_strength.json`. Each trait's active breakpoint contributes one or more effects, each pre-converted to either `tank_ehp_pct` or `dps_pct`.
+
+### Active breakpoint
+
+The highest breakpoint threshold that the unit count satisfies is used. Effects do not accumulate across lower breakpoints — only the single highest active breakpoint applies.
+
+Unique traits (one unit = active) use a `"unique"` key instead of a numeric breakpoint.
+
+### Effect schema
+
+```
+{ metric, value, scope }
+```
+
+| Field    | Values |
+|----------|--------|
+| `metric` | `"tank_ehp_pct"` \| `"dps_pct"` |
+| `value`  | Fractional multiplier — applied as `(1 + value)` |
+| `scope`  | `"splash"` \| `"selfish"` \| `"strongest_tank"` \| `"strongest_carry"` \| `"second_strongest_carry"` |
+
+### Scope application order
+
+1. **`splash`** — `(1 + value)` applied to `ehpMult` or `dpsMult` of every unit on the board.
+2. **`selfish`** — same, but only for units whose synergy list includes this trait.
+3. Units are split into `ehpEntries` (tanks) and `dpsEntries` (carries) and sorted descending by effective value.
+4. **`strongest_tank`** — multiplies the top `ehpEntry` by `(1 + value)`.
+5. **`strongest_carry`** — multiplies the top `dpsEntry` by `(1 + value)`.
+6. **`second_strongest_carry`** — multiplies the second `dpsEntry` by `(1 + value)`.
+7. Lists are re-sorted; item 5× multiplier is then applied to the top entries.
+
+### Stacking
+
+Multiple effects on the same unit stack multiplicatively:
+
+```
+ehpMult = (1 + effect_A) × (1 + effect_B) × …
+```
+
+### Conversion factors
+
+Indirect stats (flat HP, flat Armor/MR, AS%, AP%, AD%) are pre-converted in `trait_strength.json` using the factors below, derived from perturbation simulations at 2★ across all modelled units.
+
+| Stat | Conversion | Source |
+|------|-----------|--------|
+| +1 flat HP | `× 0.00044389 → tank_ehp_pct` | `tank_ehp/trait_ehp_multipliers.py` |
+| +1 Armor or MR | `× 0.00556048 → tank_ehp_pct` | same |
+| +1 HP/s regen | `× 0.01109722 → tank_ehp_pct` (= flat_hp × 25 s) | same |
+| +1% AS | `× 0.00591229 → dps_pct` | `dps/trait_dps_multipliers.py` |
+| +1% AP | `× 0.00585748 → dps_pct` | same |
+| +1% AD | `× 0.00393726 → dps_pct` | same |
+| `health_pct` / `damage_amp_pct` / `shield_pct_max_hp` | 1 : 1 | direct |
+| `durability_pct` (DR fraction `x`) | `1/(1−x) − 1` | exact |
+| crit | `avg_auto_phys_frac(0.2936) × C/100 × (0.4 + D/100)` | formula |
