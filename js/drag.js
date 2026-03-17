@@ -38,6 +38,8 @@ function isOverHud(x, y) {
 
 export let dragging = null;
 let dragStartX = 0, dragStartY = 0, dragMoved = false;
+let dragSourceEl = null;
+let shopDragActivated = false;
 
 export function handleDragStart(e, location) {
     const champName = getChampAt(location);
@@ -51,19 +53,21 @@ export function handleDragStart(e, location) {
         const slotEl = document.querySelectorAll('.shop-slot')[location.index];
         shopGhostSlotEl = slotEl;
         shopGhostSlotIndex = location.index;
-        shopGhostEl = slotEl.cloneNode(true);
-        shopGhostEl.classList.add('shop-slot-ghost');
-        shopGhostEl.style.left = `${e.clientX}px`;
-        shopGhostEl.style.top = `${e.clientY}px`;
-        document.body.appendChild(shopGhostEl);
-        renderShopSlot(slotEl, null);
-        ghost.style.display = 'none';
+        shopDragActivated = false;
+        // Ghost creation deferred until mouse leaves the slot rect
     } else {
+        document.body.classList.add('is-dragging');
         ghost.src = pool[champName].icon;
         ghost.classList.remove('shop-ghost');
         ghost.style.left = `${e.clientX}px`;
         ghost.style.top = `${e.clientY}px`;
         ghost.style.display = 'block';
+        if (location.type === 'bench') {
+            dragSourceEl = document.querySelectorAll('.bench-slot')[location.index];
+        } else if (location.type === 'board') {
+            dragSourceEl = document.querySelector('.' + location.key);
+        }
+        if (dragSourceEl) dragSourceEl.classList.add('drag-source');
     }
     if (!isShop) {
         const unit = getUnitAt(location);
@@ -131,16 +135,31 @@ function handleShopDragEnd(e) {
     endDrag();
 }
 
+function activateShopDrag(e) {
+    shopDragActivated = true;
+    document.body.classList.add('is-dragging');
+    shopGhostEl = shopGhostSlotEl.cloneNode(true);
+    shopGhostEl.classList.add('shop-slot-ghost');
+    shopGhostEl.style.left = `${e.clientX}px`;
+    shopGhostEl.style.top = `${e.clientY}px`;
+    document.body.appendChild(shopGhostEl);
+    renderShopSlot(shopGhostSlotEl, null);
+    ghost.style.display = 'none';
+}
+
 export function endDrag() {
     dragging = null;
+    shopDragActivated = false;
+    document.body.classList.remove('is-dragging');
     if (shopGhostEl) {
         shopGhostEl.remove();
         shopGhostEl = null;
         renderShopSlot(shopGhostSlotEl, state.shop[shopGhostSlotIndex]);
-        shopGhostSlotEl = null;
-        shopGhostSlotIndex = -1;
     }
+    shopGhostSlotEl = null;
+    shopGhostSlotIndex = -1;
     ghost.style.display = 'none';
+    if (dragSourceEl) { dragSourceEl.classList.remove('drag-source'); dragSourceEl = null; }
     document.querySelectorAll('.hex.drag-hover, .bench-slot.drag-hover').forEach(h => h.classList.remove('drag-hover'));
     sellZone.style.display = 'none';
     sellZone.classList.remove('active');
@@ -172,11 +191,12 @@ document.querySelectorAll('.shop-slot').forEach((slot, i) => {
     slot.addEventListener('mousedown', (e) => handleDragStart(e, location));
     slot.addEventListener('mouseup', () => {
         if (!dragging || dragging.type !== 'shop') return;
-        if (!dragMoved) {
+        if (!shopDragActivated) {
             const champName = getChampAt(dragging);
             if (champName) dispatch(new BuyCommand(champName, dragging.index));
             endDrag();
         }
+        // If drag was activated, global mouseup handles it via handleShopDragEnd
     });
 });
 
@@ -214,6 +234,11 @@ document.addEventListener('mousemove', (e) => {
     if (!dragMoved) {
         const dx = e.clientX - dragStartX, dy = e.clientY - dragStartY;
         if (Math.hypot(dx, dy) > 4) dragMoved = true;
+    }
+    if (dragging.type === 'shop' && !shopDragActivated && shopGhostSlotEl) {
+        if (!isInSlotCenter(e.clientX, e.clientY, shopGhostSlotEl)) {
+            activateShopDrag(e);
+        }
     }
     const activeGhost = shopGhostEl || ghost;
     activeGhost.style.left = `${e.clientX}px`;
@@ -276,7 +301,7 @@ document.addEventListener('mouseup', (e) => {
         history.clear();
         return;
     }
-    if (dragging?.type === 'shop' && dragMoved) handleShopDragEnd(e);
+    if (dragging?.type === 'shop' && shopDragActivated) handleShopDragEnd(e);
     else if (dragging && dragging.type !== 'shop' && isOverHud(e.clientX, e.clientY)) {
         if (!isPlanning() && !isRoundEnd() || (isPlanning() && dragging.type === 'bench')) {
             const unit = getUnitAt(dragging);

@@ -1,0 +1,37 @@
+.drag-ghost {
+    position: fixed;
+    width: calc(var(--hex-w) * 0.75);
+    height: calc(var(--hex-h) * 0.75);
+    object-fit: cover;
+    pointer-events: none;
+    opacity: 0.8;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    z-index: 1000;
+    user-select: none;
+    transform: translate(-50%, -50%);
+}
+
+.drag-source {
+    opacity: 0.25;
+}
+
+.shop-slot-ghost {
+    position: fixed !important;
+    pointer-events: none;
+    opacity: 0.8;
+    z-index: 1000;
+    transform: translate(-50%, -50%);
+    cursor: default;
+}
+
+@media (min-width: 2560px) {
+    .shop-slot-ghost {
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+}
+
+@media (min-width: 3840px) {
+    .shop-slot-ghost {
+        transform: translate(-50%, -50%) scale(2);
+    }
+}

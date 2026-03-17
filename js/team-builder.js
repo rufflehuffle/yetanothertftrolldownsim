@@ -114,9 +114,6 @@ export function buildTbPicker() {
                 tbDragMoved = false;
                 tbDragging = champ.name;
                 _ghost.src = champ.icon;
-                _ghost.style.width = '80px';
-                _ghost.style.height = '92px';
-                _ghost.style.clipPath = 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)';
                 _ghost.style.left = `${e.clientX}px`;
                 _ghost.style.top = `${e.clientY}px`;
                 _ghost.style.display = 'block';

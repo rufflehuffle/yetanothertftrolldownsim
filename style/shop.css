@@ -15,6 +15,10 @@
     cursor: pointer;
 }
 
+body.is-dragging .shop-slot {
+    cursor: grabbing;
+}
+
 .shop-slot-clip {
     position: absolute;
     inset: 0;
@@ -227,24 +231,3 @@
     z-index: 2;
 }
 
-.drag-ghost {
-    position: fixed;
-    width: 80px;
-    height: 92px;
-    object-fit: cover;
-    pointer-events: none;
-    opacity: 0.8;
-    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    z-index: 1000;
-    user-select: none;
-    transform: translate(-50%, -50%);
-}
-
-.shop-slot-ghost {
-    position: fixed !important;
-    pointer-events: none;
-    opacity: 0.8;
-    z-index: 1000;
-    transform: translate(-50%, -50%);
-    cursor: default;
-}
