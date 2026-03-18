@@ -70,7 +70,7 @@ C1  C2  C3  C4  C5  C6  C7
 
 - **Backline carry** → random D1 or D7; remaining backline cluster on the same side (D3/D2/D4… or D5/D6/D4…).
 - **Melee carry** → random A1 or A7 (mirrors backline carry's side when present); frontline fills inward with alternating tank/melee.
-- **Frontline (ranged or 2-range main carry)** → tank anchors A2/A6 on carry's side; others fill inward from same side.
+- **Frontline (ranged or 2-range main carry)** → melee carries fill A1/A3/A5/A7 (or A7/A5/A3/A1) on carry's side (stronger → weaker); tanks fill A2/A4/A6 (or A6/A4/A2).
 - **No carry reference** → frontline spread evenly via `buildSpread`; tank placed at centre (odd count → A4) or nearest centre spread slot (even count).
 - **2-range units** (Graves, Gwen, Fiddlesticks, Bel'Veth) → always B1 or B7; excluded from A-row:
   - They **are** the main carry → same side as the D-row carry (or random if no backline carry).

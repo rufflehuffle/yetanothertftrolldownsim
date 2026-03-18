@@ -40,12 +40,9 @@ export function buildSpread(n, row) {
 //   • Others → evenly spread across remaining D-row positions
 //
 // Frontline (Tank / Fighter / Assassin, excluding 2-range):
-//   • All units spread evenly across A-row via buildSpread
-//   • Main tank (TANK_CLASS, highest cost/stars):
-//       odd frontline count  → A4 (centre)
-//       even frontline count → second-closest spread slot to carry's
-//                              column (or closest if only 2 frontliners)
-//   • Other frontline → remaining spread positions
+//   • Melee carry case: fills inward from carry's corner with alternating tank/melee.
+//   • Ranged/2-range carry case: melee carries fill A1/A3/A5/A7 (or A7/A5/A3/A1)
+//     on the carry's side; tanks fill A2/A4/A6 (or A6/A4/A2).
 //
 // Overflow / unknown roles → middle rows (B/C), then anywhere free.
 // ============================================================
@@ -133,9 +130,6 @@ export function placeBoardUnits(boardUnits, carryUnit = null) {
                 ? (carryCol <= 3 ? 'left' : 'right')
                 : (Math.random() < 0.5 ? 'left' : 'right');
             meleeSide = side;
-            const aSlots = side === 'left'
-                ? ['A1','A2','A3','A4','A5','A6','A7']
-                : ['A7','A6','A5','A4','A3','A2','A1'];
 
             const mainMeleeUnit = frontline.find(u => u.name === carryUnit.name) ?? frontline[0];
             const otherMelee    = frontline.filter(u => u !== mainMeleeUnit && !TANK_CLASS.has(pool[u.name].role));
@@ -158,25 +152,34 @@ export function placeBoardUnits(boardUnits, carryUnit = null) {
                 }
             }
 
+            const aSlots = side === 'left'
+                ? ['A1','A2','A3','A4','A5','A6','A7']
+                : ['A7','A6','A5','A4','A3','A2','A1'];
             for (let i = 0; i < sequence.length && i < aSlots.length; i++) {
                 assign(aSlots[i], sequence[i]);
             }
         } else {
             if (frontlineCarryCol !== null) {
-                // Backline or 2-range main carry: cluster ALL frontline toward the carry's
-                // side. Tank anchors at A2/A6; remaining fill inward from the same side so
-                // no unit is ever stranded on the opposite flank.
+                // Backline or 2-range main carry: melee carries fill corner-skipping slots
+                // (A1/A3 or A7/A5) so they flank the carry; tanks fill the gaps (A2/A4/A6).
                 const side = frontlineCarryCol <= 3 ? 'left' : 'right';
 
-                assign(side === 'left' ? 'A2' : 'A6', mainFrontlineTank);
+                const meleeCarries = frontline.filter(u => !TANK_CLASS.has(pool[u.name].role));
+                const tanks        = frontline.filter(u =>  TANK_CLASS.has(pool[u.name].role));
 
-                const orderedSlots   = side === 'left'
-                    ? ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7']
-                    : ['A7', 'A6', 'A5', 'A4', 'A3', 'A2', 'A1'];
-                const remainingFront = frontline.filter(u => !placed.has(u));
-                const availableSlots = orderedSlots.filter(k => !usedKeys.has(k));
-                for (let i = 0; i < remainingFront.length && i < availableSlots.length; i++) {
-                    assign(availableSlots[i], remainingFront[i]);
+                const meleeSlots = side === 'left'
+                    ? ['A1', 'A3', 'A5', 'A7']
+                    : ['A7', 'A5', 'A3', 'A1'];
+
+                for (let i = 0; i < meleeCarries.length && i < meleeSlots.length; i++) {
+                    assign(meleeSlots[i], meleeCarries[i]);
+                }
+                const inwardSlots = side === 'left'
+                    ? ['A1','A2','A3','A4','A5','A6','A7']
+                    : ['A7','A6','A5','A4','A3','A2','A1'];
+                const remainingTankSlots = inwardSlots.filter(k => !usedKeys.has(k));
+                for (let i = 0; i < tanks.length && i < remainingTankSlots.length; i++) {
+                    assign(remainingTankSlots[i], tanks[i]);
                 }
             } else {
                 // No carry reference at all: even spread, tank toward centre.
