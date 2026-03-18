@@ -4,7 +4,7 @@ import { pool, traits } from './tables.js';
 let TRAIT_STRENGTH = {};
 try {
     TRAIT_STRENGTH = await fetch(
-        new URL('../models/traits/trait_strength.json', import.meta.url)
+        new URL('../models/boardStrength/traits/trait_strength.json', import.meta.url)
     ).then(r => r.json());
 } catch (e) {
     console.warn('board-strength: failed to load trait_strength.json', e);

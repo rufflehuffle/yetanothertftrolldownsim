@@ -334,7 +334,7 @@ Items are not individually modelled. Instead, the strongest tank (highest EHP) a
 
 ## Traits
 
-Trait bonuses are loaded from `models/traits/trait_strength.json`. Each trait's active breakpoint contributes one or more effects, each pre-converted to either `tank_ehp_pct` or `dps_pct`.
+Trait bonuses are loaded from `traits/trait_strength.json`. Each trait's active breakpoint contributes one or more effects, each pre-converted to either `tank_ehp_pct` or `dps_pct`.
 
 ### Active breakpoint
 
