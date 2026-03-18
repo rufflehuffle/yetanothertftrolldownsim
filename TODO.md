@@ -12,9 +12,13 @@
 ---
 
 ## Grading
-- Go through each scoring metric / rule.
+1. Go through each scoring metric / rule.
   - Figure out which weights are too small / large
   - Figure out which measures are missing
+2. Add any missing helpers
+3. Redistribute weights
+
+4. Add feedback to post rolldown screen
 
 ## Bugs
 
@@ -87,6 +91,5 @@
 ## Before Release
 - Update for new set
 - Fast 9 / 1–3 cost RR support (see above)
-- Tune board auto generation
 - Expand viewport support beyond current display
 - Make UX as polished as possible

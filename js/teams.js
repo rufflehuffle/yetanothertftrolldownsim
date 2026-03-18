@@ -1,6 +1,6 @@
 import { pool, traits as traitTable } from './tables.js';
 import { state, _originallyLocked, isOriginallyLocked, saveTeamPlan, saveUnlockedOverrides, syncTeamPlanSlots } from './state.js';
-import { generate41Board, buildTraitCounts } from './board-generator.js';
+import { generate41Board, buildTraitCounts } from './board-generation/generator.js';
 import { render } from './render.js';
 import { doRoll } from './logic.js';
 import { teamBuilderActive, buildTbPicker } from './team-builder.js';

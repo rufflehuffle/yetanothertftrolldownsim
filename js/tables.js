@@ -1224,7 +1224,7 @@ export const pool = {
         name: "Tibbers",
         copies_in_pool: 0,
         synergies: ["Arcanist"],
-        tile: "https://ddragon.leagueoflegends.com/cdn/16.4.1/img/tft-champion/TFT16_Tibbers_splash_centered_0.TFT_Set16.png",
+        tile: null,
         icon: "https://cdn.metatft.com/file/metatft/champions/tft16_annietibbers.png"
     },
 };

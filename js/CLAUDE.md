@@ -21,11 +21,11 @@
 | `planner-filter.js` | Trait filter modal for planner picker |
 | `team-builder.js` | Freeform unit placement side panel |
 | `teams.js` | Saved presets: save/load/rename/delete, auto-naming |
-| `board-generator.js` | Re-export shim → `board-generation/generator.js`; see [`board-generation/CLAUDE.md`](board-generation/CLAUDE.md) |
+| `board-generation/` | Board generator; see [`board-generation/CLAUDE.md`](board-generation/CLAUDE.md) |
 | `board-strength.js` | EHP×DPS board scoring used by board-generation |
 | `postrd.js` | Post-RD modal: pentagon chart + score history |
 | `postrd-analysis.js` | Post-RD analysis tab: board snapshots per roll |
-| `grading-*.js` | Five grading modules (see Grading section below) |
+| `grading/` | Five grading modules; see [`grading/CLAUDE.md`](grading/CLAUDE.md) |
 
 **Dependency rules:**
 - `state.js` and `tables.js` are leaf nodes — no imports from other app modules
@@ -94,15 +94,7 @@ Event: `rdmodechange` `{ detail: { from, to } }`
 
 ## Grading
 
-All `calcXxx(events)` → 0–100. Input: `round.getEvents()`.
-
-| Module | Penalty |
-|--------|---------|
-| `grading-speed.js` | Low APM (+ roll-count bonus) |
-| `grading-accuracy.js` | −5 per missed buyable shop unit |
-| `grading-discipline.js` | −5 per gold/strength-point above 1.0 |
-| `grading-positioning.js` | 6 layout checks (melee front, carry back, adjacency) |
-| `grading-flexibility.js` | −15 per missed synergy-tank upgrade |
+See [`grading/CLAUDE.md`](grading/CLAUDE.md) for full grading module documentation.
 
 ---
 
