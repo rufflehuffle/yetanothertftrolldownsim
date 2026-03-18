@@ -1,8 +1,22 @@
 // ============================================================
-// grading-discipline.js — Discipline Scoring Helpers
+// discipline.js — Discipline Scoring Helpers
 // ============================================================
 
-import { pool, shop_odds } from './tables.js';
+import { pool, shop_odds } from '../tables.js';
+import { _countOwnedCopies, _totalRemainingByCost, avgShopsForCopies, plannerCarryName, plannerTankName } from './helper.js';
+
+/** Returns true if a 2★ copy of `unitName` exists on board or bench. */
+function _has2Star(unitName, board, bench) {
+    for (const unit of Object.values(board)) {
+        if (unit?.name === unitName && unit.stars === 2) return true;
+    }
+    for (const unit of bench) {
+        if (unit?.name === unitName && unit.stars === 2) return true;
+    }
+    return false;
+}
+
+export { avgShopsForCopies };
 
 // ── Board-strength weights ─────────────────────────────────────
 // The primary tank absorbs ~75% of incoming damage; the primary carry
@@ -14,7 +28,7 @@ const isCarryRole  = role => role !== 'Tank';
 
 // ── Helpers ───────────────────────────────────────────────────
 
-/** Strength score for a unit at a given star level (mirrors grading-flexibility.js). */
+/** Strength score for a unit at a given star level (mirrors flexibility.js).  */
 function _unitStrength(name, stars) {
     const cost = pool[name]?.cost ?? 1;
     if      (stars === 2 && cost >= 7)                                return 12;
@@ -30,87 +44,7 @@ function _unitStrength(name, stars) {
     else                                                              return  1;
 }
 
-/**
- * Count how many physical copies of a unit the player owns across board and bench.
- * A 1★ unit = 1 copy; a 2★ unit = 3 copies.
- *
- * @param {string}                       unitName
- * @param {Object.<string,{name,stars}>} board
- * @param {({name,stars}|null)[]}        bench
- * @returns {number}
- */
-function _countOwnedCopies(unitName, board, bench) {
-    let count = 0;
-    for (const unit of Object.values(board)) {
-        if (unit?.name === unitName) count += unit.stars === 2 ? 3 : 1;
-    }
-    for (const unit of bench) {
-        if (unit?.name === unitName) count += unit.stars === 2 ? 3 : 1;
-    }
-    return count;
-}
-
-/**
- * Count total remaining copies in the pool for a given cost tier,
- * accounting for all units already owned on board and bench.
- *
- * @param {number}                       costTier
- * @param {Object.<string,{name,stars}>} board
- * @param {({name,stars}|null)[]}        bench
- * @returns {number}
- */
-function _totalRemainingByCost(costTier, board, bench) {
-    let total = 0;
-    for (const [name, data] of Object.entries(pool)) {
-        if (data.cost !== costTier) continue;
-        total += Math.max(0, data.copies_in_pool - _countOwnedCopies(name, board, bench));
-    }
-    return total;
-}
-
 // ── Function 1 ────────────────────────────────────────────────
-
-/**
- * Average number of shops needed to see `copiesNeeded` more copies of `unitName`
- * in the shop, given that the current board and bench deplete the shared pool.
- *
- * Uses the standard TFT probability model:
- *   p(slot = unit) = shop_odds[level][cost] × (remaining_unit / remaining_cost_tier)
- *   expected shops = copiesNeeded / (5 × p)
- *
- * @param {string}                       unitName
- * @param {number}                       copiesNeeded  - Additional copies to see in shop
- * @param {Object.<string,{name,stars}>} board
- * @param {({name,stars}|null)[]}        bench
- * @param {number}                       level         - Current player level (2–10)
- * @returns {number} Expected shops (Infinity if the copies cannot appear in pool)
- */
-export function avgShopsForCopies(unitName, copiesNeeded, board, bench, level) {
-    if (copiesNeeded <= 0) return 0;
-
-    const data = pool[unitName];
-    if (!data) return Infinity;
-
-    const owned           = _countOwnedCopies(unitName, board, bench);
-    const remainingUnit   = Math.max(0, data.copies_in_pool - owned);
-    if (remainingUnit < copiesNeeded) return Infinity;
-
-    const odds      = shop_odds[Math.min(Math.max(level, 2), 10)];
-    const tierOdds  = odds[data.cost] ?? 0;
-    if (tierOdds === 0) return Infinity;
-
-    const totalRemaining = _totalRemainingByCost(data.cost, board, bench);
-    if (totalRemaining === 0) return Infinity;
-
-    // P(a single shop slot shows this unit)
-    const p = tierOdds * (remainingUnit / totalRemaining);
-    if (p === 0) return Infinity;
-
-    // Each shop has 5 independent slots; expected copies per shop = 5p
-    return copiesNeeded / (5 * p);
-}
-
-// ── Function 2 ────────────────────────────────────────────────
 
 /**
  * Maximum possible board strength achievable by optimally choosing which units
@@ -287,21 +221,163 @@ export function calcDiscipline(events) {
     const rollEvents = events.filter(e => e.type === 'roll');
     let penalty = 0;
     for (const roll of rollEvents) {
-        const gpsp = avgGoldPerStrengthPoint(roll.board, roll.bench, roll.level, roll.teamPlan);
-        if (isFinite(gpsp) && gpsp > 1) penalty += gpsp - 1;
+        const { board, bench, level, teamPlan } = roll;
+
+        const gpsp = avgGoldPerStrengthPoint(board, bench, level, teamPlan);
+        if (!isFinite(gpsp) || gpsp <= 1) continue;
+        const basePenalty = gpsp - 1;
+
+        const carryName = plannerCarryName(teamPlan, board);
+        const tankName  = plannerTankName(teamPlan, board);
+
+        const has2StarCarry = carryName ? _has2Star(carryName, board, bench) : false;
+        const has2StarTank  = tankName  ? _has2Star(tankName,  board, bench) : false;
+
+        // No penalty until the player has at least one 2★ key unit
+        if (!has2StarCarry && !has2StarTank) continue;
+
+        // 5× only when both carry and tank are 2★; 1× when only one is
+        const multiplier = (has2StarCarry && has2StarTank) ? 5 : 1;
+
+        penalty += basePenalty * multiplier;
     }
     return Math.max(0, 100 - 5 * penalty);
 }
 
+// plannerCarryName and plannerTankName live in helper.js (shared across grading modules)
+
+// ── 1★ missing detection ──────────────────────────────────────
+
+/**
+ * Returns true if the player has zero physical copies of `unitName`
+ * (i.e. no 1★ or 2★ version exists on board or bench).
+ *
+ * @param {string}                       unitName
+ * @param {Object.<string,{name,stars}>} board
+ * @param {({name,stars}|null)[]}        bench
+ * @returns {boolean}
+ */
+export function isMissingOneStar(unitName, board, bench) {
+    return _countOwnedCopies(unitName, board, bench) === 0;
+}
+
+/**
+ * Returns true if the player is rolling while they have no copy of their
+ * main carry (strongest non-Tank in the team planner).
+ *
+ * @param {Object.<string,{name,stars}>} board
+ * @param {({name,stars}|null)[]}        bench
+ * @param {string[]}                     teamPlan
+ * @returns {boolean}
+ */
+export function isRollingWhileMissingMainCarry(board, bench, teamPlan) {
+    const carry = plannerCarryName(teamPlan, board);
+    return carry ? isMissingOneStar(carry, board, bench) : false;
+}
+
+/**
+ * Returns true if the player is rolling while they have no copy of their
+ * main tank (strongest Tank in the team planner).
+ *
+ * @param {Object.<string,{name,stars}>} board
+ * @param {({name,stars}|null)[]}        bench
+ * @param {string[]}                     teamPlan
+ * @returns {boolean}
+ */
+export function isRollingWhileMissingMainTank(board, bench, teamPlan) {
+    const tank = plannerTankName(teamPlan, board);
+    return tank ? isMissingOneStar(tank, board, bench) : false;
+}
+
+// ── Average gold to 2★ helpers ────────────────────────────────
+
+/**
+ * Average total gold needed to obtain enough copies of `unitName` to 2★ it.
+ *
+ * Cost = (expected rolls to see `copiesNeeded` copies × 2 gold/roll)
+ *      + (copies still needed × unit cost)
+ *
+ * Returns 0 if the player already owns ≥3 copies (can 2★ now).
+ * Returns Infinity if copies are unavailable at the current level.
+ *
+ * @param {string}                       unitName
+ * @param {Object.<string,{name,stars}>} board
+ * @param {({name,stars}|null)[]}        bench
+ * @param {number}                       level
+ * @returns {number}
+ */
+export function avgGoldToTwoStar(unitName, board, bench, level) {
+    const data = pool[unitName];
+    if (!data) return Infinity;
+
+    const owned        = _countOwnedCopies(unitName, board, bench);
+    const copiesNeeded = Math.max(0, 3 - owned);
+    if (copiesNeeded === 0) return 0;
+
+    const shops = avgShopsForCopies(unitName, copiesNeeded, board, bench, level);
+    if (!isFinite(shops)) return Infinity;
+
+    return shops * 2 + copiesNeeded * data.cost;
+}
+
+/**
+ * Average gold to 2★ the main carry (strongest non-Tank in the team planner).
+ *
+ * @param {Object.<string,{name,stars}>} board
+ * @param {({name,stars}|null)[]}        bench
+ * @param {number}                       level
+ * @param {string[]}                     teamPlan
+ * @returns {number}
+ */
+export function avgGoldToTwoStarMainCarry(board, bench, level, teamPlan) {
+    const carry = plannerCarryName(teamPlan, board);
+    return carry ? avgGoldToTwoStar(carry, board, bench, level) : Infinity;
+}
+
+/**
+ * Average gold to 2★ the main tank (strongest Tank in the team planner).
+ *
+ * @param {Object.<string,{name,stars}>} board
+ * @param {({name,stars}|null)[]}        bench
+ * @param {number}                       level
+ * @param {string[]}                     teamPlan
+ * @returns {number}
+ */
+export function avgGoldToTwoStarMainTank(board, bench, level, teamPlan) {
+    const tank = plannerTankName(teamPlan, board);
+    return tank ? avgGoldToTwoStar(tank, board, bench, level) : Infinity;
+}
+
+/**
+ * Minimum average gold to 2★ any Tank-role unit at the given cost tier.
+ *
+ * Returns the lowest `avgGoldToTwoStar` across all tanks at this cost,
+ * representing the cheapest available 2★ tank option right now.
+ *
+ * @param {number}                       cost
+ * @param {Object.<string,{name,stars}>} board
+ * @param {({name,stars}|null)[]}        bench
+ * @param {number}                       level
+ * @returns {number}
+ */
+export function avgGoldToTwoStarAnyTankAtCost(cost, board, bench, level) {
+    let min = Infinity;
+    for (const [name, data] of Object.entries(pool)) {
+        if (data.role !== 'Tank' || data.cost !== cost) continue;
+        const g = avgGoldToTwoStar(name, board, bench, level);
+        if (g < min) min = g;
+    }
+    return min;
+}
+
 // ── Temporary debug hook ──────────────────────────────────────
 
-import { getEvents } from './round.js';
+import { getEvents } from '../round.js';
 
 document.addEventListener('roundcomplete', () => {
     const rolls = getEvents().filter(e => e.type === 'roll');
-    console.log('[grading-discipline] Roll event log:', rolls);
-    rolls.forEach((roll, i) => {
-        const gpsp = avgGoldPerStrengthPoint(roll.board, roll.bench, roll.level, roll.teamPlan);
-        console.log(`[grading-discipline] Roll ${i + 1} avgGoldPerStrengthPoint: ${Math.round(gpsp * 100) / 100}`);
-    });
+    console.log('[grading/discipline]', rolls.map((roll, i) => ({
+        roll: i + 1,
+        gpsp: Math.round(avgGoldPerStrengthPoint(roll.board, roll.bench, roll.level, roll.teamPlan) * 100) / 100,
+    })));
 });

@@ -1,8 +1,8 @@
 // ============================================================
-// grading-flexibility.js — Flexibility Scoring
+// flexibility.js — Flexibility Scoring
 // ============================================================
 
-import { pool, traits } from './tables.js';
+import { pool, traits } from '../tables.js';
 
 const TANK_ROLE           = 'Tank';
 const TANK_SYNERGY_TRAITS = new Set(['Defender', 'Bruiser', 'Juggernaut', 'Warden']);
@@ -11,7 +11,7 @@ const TANK_SYNERGY_TRAITS = new Set(['Defender', 'Bruiser', 'Juggernaut', 'Warde
 
 /**
  * Strength score for a unit at a given star level.
- * Mirrors the heuristic in grading-positioning.js / board-generator.js.
+ * Mirrors the heuristic in positioning.js / board-generation/generator.js.
  */
 function _unitStrength(name, stars) {
     const cost = pool[name]?.cost ?? 1;
@@ -246,11 +246,10 @@ export function calcFlexibility(events) {
 
 // ── Temporary debug hook ──────────────────────────────────────
 
-import { state } from './state.js';
-import { getEvents } from './round.js';
+import { state } from '../state.js';
+import { getEvents } from '../round.js';
 
 document.addEventListener('roundcomplete', () => {
     const events = getEvents();
-    console.log('[grading-flexibility] Missed alt tanks:', findMissedAlternateTanks(events));
-    console.log(`[grading-flexibility] Flexibility: ${calcFlexibility(events)}`);
+    console.log(`[grading/flexibility] Flexibility: ${calcFlexibility(events)} | Missed alt tanks:`, findMissedAlternateTanks(events));
 });

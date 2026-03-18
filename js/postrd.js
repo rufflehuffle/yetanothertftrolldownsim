@@ -2,11 +2,11 @@ import { pool } from './tables.js';
 import { state } from './state.js';
 import { getEvents } from './round.js';
 import { initAnalysis } from './postrd-analysis.js';
-import { calcSpeed } from './grading-speed.js';
-import { calcAccuracy } from './grading-accuracy.js';
-import { calcPositioning } from './grading-positioning.js';
-import { calcFlexibility } from './grading-flexibility.js';
-import { calcDiscipline } from './grading-discipline.js';
+import { calcSpeed } from './grading/speed.js';
+import { calcAccuracy } from './grading/accuracy.js';
+import { calcPositioning } from './grading/positioning.js';
+import { calcFlexibility } from './grading/flexibility.js';
+import { calcDiscipline } from './grading/discipline.js';
 
 // ============================================================
 // Pentagon geometry constants

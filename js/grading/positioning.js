@@ -1,5 +1,5 @@
 // ============================================================
-// grading-positioning.js — Positioning Scoring
+// positioning.js — Positioning Scoring
 // ============================================================
 //
 // Board layout (A = front row / top, D = back row / bottom):
@@ -15,7 +15,7 @@
 //   • Offset rows (B, D):     adjacent cols in non-offset row are [col, col+1]
 // ──────────────────────────────────────────────────────────────
 
-import { pool } from './tables.js';
+import { pool } from '../tables.js';
 
 const RANGED_ROLES      = new Set(['Marksman', 'Caster', 'Specialist']);
 const MELEE_CARRY_ROLES = new Set(['Fighter', 'Assassin']);
@@ -63,7 +63,7 @@ function _adjacentHexes(key) {
 
 /**
  * Strength score for a board unit (cost × stars tier, no tiebreakers).
- * Mirrors the heuristic in board-generator.js unitStrengthScore.
+ * Mirrors the heuristic in board-generation/generator.js unitStrengthScore.
  */
 function _unitStrength(unit) {
     const cost  = pool[unit.name]?.cost ?? 1;
@@ -245,14 +245,9 @@ export function calcPositioning(board) {
 
 // ── Temporary debug hook ──────────────────────────────────────
 
-import { state } from './state.js';
+import { state } from '../state.js';
 
 document.addEventListener('roundcomplete', () => {
     const board = state.board;
-    console.log('[grading-positioning] Melee in back row:', meleeInBackRow(board));
-    console.log('[grading-positioning] Ranged not in back row:', rangedNotInBackRow(board));
-    console.log(`[grading-positioning] Main carry in corner: ${mainCarryInCorner(board)}`);
-    console.log('[grading-positioning] Melee carries not next to tank:', meleeCarriesNotNextToTank(board));
-    console.log(`[grading-positioning] Strongest melee carry next to strongest tank: ${strongestMeleeCarryNextToStrongestTank(board)}`);
-    console.log(`[grading-positioning] Main tank in front of corner carry: ${mainTankInFrontOfCornerCarry(board)}`);
+    console.log(`[grading/positioning] corner=${mainCarryInCorner(board)} adjTank=${strongestMeleeCarryNextToStrongestTank(board)} tankFront=${mainTankInFrontOfCornerCarry(board)} | meleeBack:`, meleeInBackRow(board), '| rangedFront:', rangedNotInBackRow(board), '| meleeCarryNoTank:', meleeCarriesNotNextToTank(board));
 });

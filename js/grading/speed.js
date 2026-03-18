@@ -1,5 +1,5 @@
 // ============================================================
-// grading-speed.js — Speed Scoring
+// speed.js — Speed Scoring
 // ============================================================
 
 // ── Helpers ───────────────────────────────────────────────────
@@ -53,10 +53,45 @@ function _calcApm(events) {
     return { apm, ...counts };
 }
 
-// ── Speed ─────────────────────────────────────────────────────
+// ── Rolldown Speed ────────────────────────────────────────────
 
 /**
- * Scores player speed from APM plus a roll-volume bonus.
+ * Measures rolldown speed: rolls per second during the roll sequence.
+ *
+ * Numerator:   number of roll actions in the rolldown.
+ * Denominator: elapsed time from the first roll to the last roll (seconds).
+ *
+ * Returns 0 if there are fewer than 2 roll events (duration would be zero).
+ *
+ * @param {object[]} events - Array returned by round.getEvents()
+ * @returns {{ rollsPerSecond: number, rolls: number, durationMs: number }}
+ *   rollsPerSecond rounded to two decimal places.
+ */
+export function calcRolldownSpeed(events) {
+    const rollEvents = events.filter(e => e.type === 'roll');
+    const rolls = rollEvents.length;
+
+    if (rolls < 2) return { rollsPerSecond: 0, rolls, durationMs: 0 };
+
+    const durationMs = rollEvents[rolls - 1].t - rollEvents[0].t;
+    const rollsPerSecond = durationMs > 0
+        ? Math.round((rolls / (durationMs / 1_000)) * 100) / 100
+        : 0;
+
+    return { rollsPerSecond, rolls, durationMs };
+}
+
+// ── Speed ─────────────────────────────────────────────────────
+
+const TARGET_ROLLS_PER_SECOND = 1 / 1.5;
+const ROLL_WEIGHT = 70;
+const TARGET_APM = 80;
+const APM_WEIGHT = 30;
+
+/**
+ * Scores player speed from rolldown speed, APM, and a roll-volume bonus.
+ *
+ * Formula: (rollsPerSecond / targetRollsPerSecond × rollWeight) + (APM / targetAPM × APMWeight) + rollBonus
  *
  * Roll bonus: +5 for ≥10 rolls, +10 for ≥15, +20 for ≥20.
  * These thresholds are exclusive — only the highest matching
@@ -67,22 +102,28 @@ function _calcApm(events) {
  */
 export function calcSpeed(events) {
     const { apm, rolls } = _calcApm(events);
+    const { rollsPerSecond } = calcRolldownSpeed(events);
 
     let rollBonus = 0;
     if      (rolls >= 20) rollBonus = 20;
     else if (rolls >= 15) rollBonus = 10;
     else if (rolls >= 10) rollBonus =  5;
 
-    return Math.min(100, apm + rollBonus);
+    return Math.min(100,
+        (rollsPerSecond / TARGET_ROLLS_PER_SECOND * ROLL_WEIGHT) +
+        (apm / TARGET_APM * APM_WEIGHT) +
+        rollBonus
+    );
 }
 
 // ── Temporary debug hook ──────────────────────────────────────
 
-import { getEvents } from './round.js';
+import { getEvents } from '../round.js';
 
 document.addEventListener('roundcomplete', () => {
     const events = getEvents();
     const { apm, buys, sells, moves, rolls } = _calcApm(events);
     const speed = calcSpeed(events);
-    console.log(`[grading-speed] APM: ${apm} (buys: ${buys}, sells: ${sells}, moves: ${moves}, rolls: ${rolls}) | Speed: ${speed}`);
+    const { rollsPerSecond, durationMs } = calcRolldownSpeed(events);
+    console.log(`[grading/speed] APM: ${apm} (buys: ${buys}, sells: ${sells}, moves: ${moves}, rolls: ${rolls}) | Speed: ${speed} | Rolldown: ${rollsPerSecond} r/s over ${durationMs}ms`);
 });
