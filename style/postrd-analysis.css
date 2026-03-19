@@ -242,7 +242,6 @@
     border: 2px solid #444;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
 }
 
 .rd-shop-img--bought {
@@ -324,6 +323,453 @@
     color: #A09B8C;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+}
+
+/* ── Speed stats (left panel, below traits) ── */
+.postrd-rd__speed-stats {
+    display: flex;
+    flex-direction: column;
+    gap: calc(3px * var(--rd-ui-scale, 1));
+    padding-top: calc(12px * var(--rd-ui-scale, 1));
+    padding-left: calc(20px * var(--rd-ui-scale, 1));
+    flex-shrink: 0;
+}
+
+.rd-speed-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: calc(8px * var(--rd-ui-scale, 1));
+}
+
+.rd-speed-stat-label {
+    font-family: 'Beaufort', serif;
+    font-size: calc(10px * var(--rd-ui-scale, 1));
+    font-weight: 700;
+    color: #675F4C;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.rd-speed-stat-value {
+    font-family: 'Beaufort', serif;
+    font-size: calc(12px * var(--rd-ui-scale, 1));
+    font-weight: 700;
+    color: #A09B8C;
+    white-space: nowrap;
+}
+
+/* ── Right panel (Rolldown Review) ── */
+.postrd-rd__right {
+    position: absolute;
+    right: 0;
+    top: 14px;
+    bottom: 10px;
+    width: 175px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* ── Review header (always visible, outside both screens) ── */
+.rd-review__header {
+    display: flex;
+    align-items: center;
+    gap: calc(6px * var(--rd-ui-scale, 1));
+    padding-bottom: calc(6px * var(--rd-ui-scale, 1));
+    border-bottom: 1px solid #111c21;
+    margin-bottom: calc(8px * var(--rd-ui-scale, 1));
+    flex-shrink: 0;
+}
+
+.rd-review__header-label {
+    font-family: 'Beaufort', serif;
+    font-size: calc(10px * var(--rd-ui-scale, 1));
+    font-weight: 700;
+    color: #675F4C;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+/* ── Review screens ── */
+.rd-review__overview,
+.rd-review__log {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.rd-review__overview[hidden],
+.rd-review__log[hidden] {
+    display: none;
+}
+
+/* ── Overview: overall grade ── */
+.rd-review__overall {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: calc(6px * var(--rd-ui-scale, 1)) 0 calc(8px * var(--rd-ui-scale, 1));
+    flex-shrink: 0;
+}
+
+.rd-review__overall-grade {
+    font-family: 'Beaufort', serif;
+    font-size: calc(34px * var(--rd-ui-scale, 1));
+    font-weight: 900;
+    color: #C8AA6E;
+    line-height: 1;
+}
+
+.rd-review__overall-score {
+    font-family: 'Beaufort', serif;
+    font-size: calc(14px * var(--rd-ui-scale, 1));
+    font-weight: 700;
+    color: #A09B8C;
+    line-height: 1;
+    margin-top: calc(2px * var(--rd-ui-scale, 1));
+}
+
+.rd-review__overall-label {
+    font-family: 'Beaufort', serif;
+    font-size: calc(10px * var(--rd-ui-scale, 1));
+    font-weight: 700;
+    color: #675F4C;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-top: calc(2px * var(--rd-ui-scale, 1));
+}
+
+/* ── Overview: metric rows ── */
+.rd-review__metrics {
+    display: flex;
+    flex-direction: column;
+    gap: calc(3px * var(--rd-ui-scale, 1));
+    padding: calc(8px * var(--rd-ui-scale, 1)) 0;
+    border-top: 1px solid #111c21;
+    border-bottom: 1px solid #111c21;
+    flex-shrink: 0;
+}
+
+.rd-review__metric-row {
+    display: flex;
+    align-items: center;
+    gap: calc(4px * var(--rd-ui-scale, 1));
+}
+
+.rd-review__metric-name {
+    font-family: 'Beaufort', serif;
+    font-size: calc(11px * var(--rd-ui-scale, 1));
+    font-weight: 700;
+    color: #A09B8C;
+    flex: 1;
+    white-space: nowrap;
+}
+
+.rd-review__metric-grade {
+    font-family: 'Beaufort', serif;
+    font-size: calc(12px * var(--rd-ui-scale, 1));
+    font-weight: 700;
+    color: #C8AA6E;
+    min-width: calc(42px * var(--rd-ui-scale, 1));
+    text-align: right;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.rd-review__metric-count {
+    font-family: 'Beaufort', serif;
+    font-size: calc(10px * var(--rd-ui-scale, 1));
+    font-weight: 700;
+    color: #3d5560;
+    background: #0a0f14;
+    border-radius: 2px;
+    padding: 0 calc(4px * var(--rd-ui-scale, 1));
+    min-width: calc(18px * var(--rd-ui-scale, 1));
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.rd-review__metric-count--bad {
+    color: #C8AA6E;
+    background: #1a1208;
+}
+
+/* ── Overview: start button ── */
+.rd-review__start-btn {
+    font-family: 'Beaufort', serif;
+    font-size: calc(11px * var(--rd-ui-scale, 1));
+    font-weight: 700;
+    color: #C8AA6E;
+    background: #0d1117;
+    border: 1px solid #675F4C;
+    padding: calc(6px * var(--rd-ui-scale, 1)) calc(10px * var(--rd-ui-scale, 1));
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: calc(10px * var(--rd-ui-scale, 1));
+    transition: border-color 0.15s, color 0.15s;
+    align-self: stretch;
+    flex-shrink: 0;
+}
+
+.rd-review__start-btn:hover {
+    color: #EAE0CD;
+    border-color: #C8AA6E;
+}
+
+/* ── Log screen ── */
+.rd-review__log-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: calc(6px * var(--rd-ui-scale, 1));
+    border-top: 1px solid #111c21;
+    margin-top: calc(6px * var(--rd-ui-scale, 1));
+    flex-shrink: 0;
+}
+
+.rd-review__back-btn,
+.rd-review__prev-btn,
+.rd-review__next-btn {
+    font-family: 'Beaufort', serif;
+    font-size: calc(10px * var(--rd-ui-scale, 1));
+    font-weight: 700;
+    color: #675F4C;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.4px;
+    padding: 0;
+    text-transform: uppercase;
+    transition: color 0.15s;
+}
+
+.rd-review__back-btn:hover,
+.rd-review__prev-btn:hover:not(:disabled),
+.rd-review__next-btn:hover:not(:disabled) {
+    color: #C8AA6E;
+}
+
+.rd-review__prev-btn:disabled,
+.rd-review__next-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.rd-review__log-list {
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    --sb-track-color: #000b13;
+    --sb-thumb-color: #795b29;
+    --sb-size: 7px;
+}
+
+.rd-review__log-list::-webkit-scrollbar {
+    width: var(--sb-size);
+}
+
+.rd-review__log-list::-webkit-scrollbar-track {
+    background: var(--sb-track-color);
+    border-radius: 4px;
+}
+
+.rd-review__log-list::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb-color);
+    border-radius: 4px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+    .rd-review__log-list {
+        scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+    }
+}
+
+.rd-review__group {
+    margin-bottom: calc(8px * var(--rd-ui-scale, 1));
+    flex-shrink: 0;
+}
+
+.rd-review__group-label {
+    font-family: 'Beaufort', serif;
+    font-size: calc(11px * var(--rd-ui-scale, 1));
+    font-weight: 700;
+    color: #675F4C;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding-bottom: calc(3px * var(--rd-ui-scale, 1));
+    border-bottom: 1px solid #111c21;
+    margin-bottom: calc(3px * var(--rd-ui-scale, 1));
+}
+
+.rd-review__group-label--link {
+    cursor: pointer;
+}
+
+.rd-review__group-label--link:hover {
+    color: #C8AA6E;
+}
+
+.rd-review__no-mistakes {
+    font-family: 'Spiegel', sans-serif;
+    font-size: calc(11px * var(--rd-ui-scale, 1));
+    color: #2a4a37;
+    display: block;
+    padding: calc(1px * var(--rd-ui-scale, 1)) 0;
+}
+
+.rd-review__mistake-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.rd-review__mistake-item {
+    font-family: 'Spiegel', sans-serif;
+    font-size: calc(12px * var(--rd-ui-scale, 1));
+    color: #A09B8C;
+    padding: calc(2px * var(--rd-ui-scale, 1)) 0;
+    line-height: 1.3;
+}
+
+.rd-review__mistake-item--link {
+    cursor: pointer;
+    color: #C8AA6E;
+}
+
+.rd-review__mistake-item--link:hover {
+    color: #EAE0CD;
+    text-decoration: underline;
+}
+
+.rd-review__mistake-item--bonus {
+    color: #2a9d5c;
+}
+
+.rd-review__mistake-item--info {
+    color: #3d5560;
+}
+
+.rd-review__mistake-item--active {
+    background: rgba(192, 163, 102, 0.07);
+    color: #EAE0CD;
+    padding-left: calc(4px * var(--rd-ui-scale, 1));
+    border-left: 2px solid #C8AA6E;
+}
+
+/* ── Shop slot mistake overlay (missed unit — Accuracy / Flexibility) ── */
+.rd-shop-mistake-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(200, 40, 40, 0.38);
+    pointer-events: none;
+    z-index: 3;
+}
+
+.rd-shop-slot:has(.rd-shop-mistake-overlay) .rd-shop-img {
+    filter: grayscale(1);
+}
+
+/* ── Board mistake overlay ── */
+/* ── Mistake badge (× circle, top-right of hex or shop slot) ── */
+.rd-mistake-badge {
+    position: absolute;
+    top: calc(1px * var(--rd-ui-scale, 1));
+    right: calc(1px * var(--rd-ui-scale, 1));
+    width: calc(16px * var(--rd-ui-scale, 1));
+    height: calc(16px * var(--rd-ui-scale, 1));
+    background: #e03030;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Beaufort', serif;
+    font-size: calc(11px * var(--rd-ui-scale, 1));
+    font-weight: 900;
+    color: #fff;
+    pointer-events: none;
+    z-index: 4;
+    line-height: 1;
+    box-shadow: 0 0 3px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.6);
+}
+
+/* Hex badge: centered on top-right vertex (100%, 25% of hex height) */
+.rd-mistake-badge--hex {
+    top: calc(var(--rd-hex-h) * 0.25 - 8px * var(--rd-ui-scale, 1));
+    right: calc(-8px * var(--rd-ui-scale, 1));
+}
+
+/* Shop badge: centered on top-right corner of the slot */
+.rd-mistake-badge--shop {
+    top: calc(-8px * var(--rd-ui-scale, 1));
+    right: calc(-8px * var(--rd-ui-scale, 1));
+}
+
+.rd-hex-wrap:has(.rd-hex-mistake-overlay) .rd-hex {
+    filter: grayscale(1);
+}
+
+.rd-hex-mistake-overlay {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: var(--rd-hex-w);
+    height: var(--rd-hex-h);
+    background-color: rgba(200, 40, 40, 0.38);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* ── Board discipline overlay (yellow — draws attention to a unit on board) ── */
+.rd-hex-discipline-overlay {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: var(--rd-hex-w);
+    height: var(--rd-hex-h);
+    background-color: rgba(220, 175, 20, 0.38);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* ── Discipline badge (yellow triangle with !, top-right hex vertex) ── */
+/* Wrapper carries the position and drop-shadow; inner div has clip-path. */
+/* drop-shadow must be on the parent — clip-path clips its own filter output. */
+.rd-discipline-badge-wrap {
+    position: absolute;
+    pointer-events: none;
+    z-index: 4;
+    filter: drop-shadow(0 0 1.5px #000) drop-shadow(0 2px 3px rgba(0,0,0,0.7));
+}
+
+.rd-discipline-badge-wrap--hex {
+    top: calc(var(--rd-hex-h) * 0.25 - 8px * var(--rd-ui-scale, 1));
+    right: calc(-9px * var(--rd-ui-scale, 1));
+}
+
+.rd-discipline-badge {
+    width: calc(18px * var(--rd-ui-scale, 1));
+    height: calc(16px * var(--rd-ui-scale, 1));
+    background: #e8c020;
+    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    font-family: 'Beaufort', serif;
+    font-size: calc(10px * var(--rd-ui-scale, 1));
+    font-weight: 900;
+    color: #1a1000;
+    line-height: 1;
+    padding-bottom: calc(1px * var(--rd-ui-scale, 1));
 }
 
 /* ── Stats ── */

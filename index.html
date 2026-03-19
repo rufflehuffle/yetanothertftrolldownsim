@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="style/postrd.css">
     <link rel="stylesheet" href="style/postrd-performance.css">
     <link rel="stylesheet" href="style/postrd-analysis.css">
+    <link rel="stylesheet" href="style/postrd-overview.css">
 </head>
 <body>
     <!-- Top Round Timer Bar -->
@@ -38,7 +39,7 @@
                 <input class="timer-input" type="number" value="30" min="1" max="999" title="Set duration (seconds)">
                 <span class="timer-value" style="display:none;">30</span>
             </div>
-            <button class="timer-pause-btn" title="Pause / Resume (Space)" style="display:none;">‖</button>
+            <button class="timer-pause-btn" title="Pause / Resume (Space)" style="display:none;">❚❚</button>
         </div>
     </div>
 
@@ -465,12 +466,15 @@
 
                             <div class="postrd-rd__left">
                                 <div class="postrd-rd__traits" id="rd-traits"></div>
+                                <div class="postrd-rd__speed-stats" id="rd-speed-stats"></div>
                             </div>
 
                             <div class="postrd-rd__board-area">
                                 <div class="postrd-rd__board" id="rd-board"></div>
                                 <div class="postrd-rd__bench" id="rd-bench"></div>
                             </div>
+
+                            <div class="postrd-rd__right" id="rd-mistakes"></div>
 
                         </div>
 
@@ -498,6 +502,7 @@
 
                 </div>
 
+
             </div>
 
         </div>
@@ -507,5 +512,6 @@
     <script type="module" src="js/preload.js"></script>
     <script type="module" src="js/main.js"></script>
     <script type="module" src="js/postrd.js"></script>
+    <script type="module" src="js/debug.js"></script>
 </body>
 </html>

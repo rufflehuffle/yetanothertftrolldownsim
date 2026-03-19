@@ -210,6 +210,36 @@ export function mainTankInFrontOfCornerCarry(board) {
     return frontHexes.has(mainTank.hex);
 }
 
+// ── Mistake hex set (for board highlighting) ──────────────────
+
+/**
+ * Returns a Set of hex keys for all units involved in positioning mistakes.
+ * Used by the post-RD review to overlay red highlights on the board.
+ */
+export function positioningMistakeHexes(board) {
+    const hexes = new Set();
+    const units = _boardUnits(board);
+
+    for (const u of meleeInBackRow(board))           hexes.add(u.hex);
+    for (const u of rangedNotInBackRow(board))        hexes.add(u.hex);
+    for (const u of meleeCarriesNotNextToTank(board)) hexes.add(u.hex);
+
+    if (!mainCarryInCorner(board)) {
+        const u = _strongest(units, r => RANGED_ROLES.has(r));
+        if (u) hexes.add(u.hex);
+    }
+    if (!strongestMeleeCarryNextToStrongestTank(board)) {
+        const u = _strongest(units, r => MELEE_CARRY_ROLES.has(r));
+        if (u) hexes.add(u.hex);
+    }
+    if (!mainTankInFrontOfCornerCarry(board)) {
+        const u = _strongest(units, r => TANK_ROLES_POS.has(r));
+        if (u) hexes.add(u.hex);
+    }
+
+    return hexes;
+}
+
 // ── Positioning Score ─────────────────────────────────────────
 
 /**

@@ -1,0 +1,116 @@
+/* ============================================================
+   Post-Rolldown Overview tab — 5-column mistake breakdown
+   ============================================================ */
+
+.postrd-overview.postrd__panel-content--active {
+    overflow-y: auto;
+}
+
+/* 5-column grid */
+.overview-cols {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    flex: 1;
+    min-height: 0;
+}
+
+/* ── Column ── */
+.overview-col {
+    display: flex;
+    flex-direction: column;
+    padding: 0 16px;
+    border-left: 1px solid #1a2e34;
+}
+
+.overview-col:first-child {
+    padding-left: 0;
+    border-left: none;
+}
+
+.overview-col:last-child {
+    padding-right: 0;
+}
+
+/* ── Column header ── */
+.overview-col__header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1a2e34;
+}
+
+.overview-col__grade {
+    font-family: 'Beaufort', serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: #C8AA6E;
+    line-height: 1;
+}
+
+.overview-col__score {
+    font-family: 'Beaufort', serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #A09B8C;
+    line-height: 1;
+    margin-right: 2px;
+}
+
+.overview-col__title {
+    font-family: 'Beaufort', serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #675F4C;
+    letter-spacing: 0.8px;
+}
+
+/* ── Mistake list ── */
+.overview-col__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.overview-col__item {
+    font-family: 'Spiegel', sans-serif;
+    font-size: 12px;
+    color: #A09B8C;
+    padding: 6px 0;
+    border-bottom: 1px solid #111c21;
+    line-height: 1.35;
+}
+
+.overview-col__item:last-child {
+    border-bottom: none;
+}
+
+.overview-col__item--perfect {
+    color: #3d5560;
+    font-style: italic;
+}
+
+.overview-col__item--link {
+    cursor: pointer;
+}
+
+.overview-col__item--link:hover {
+    color: #C8AA6E;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .overview-cols {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .overview-col:nth-child(4) {
+        border-left: none;
+        padding-left: 0;
+    }
+}

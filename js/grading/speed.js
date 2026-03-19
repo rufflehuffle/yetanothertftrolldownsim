@@ -29,7 +29,7 @@ function _roundDurationMs(events) {
  * @returns {{ apm: number, buys: number, sells: number, moves: number, rolls: number }}
  *   APM rounded to one decimal place (0 if no actions), plus per-type counts.
  */
-function _calcApm(events) {
+export function calcApm(events) {
     const counts = { buys: 0, sells: 0, moves: 0, rolls: 0 };
     let lastActionTs = 0;
 
@@ -101,7 +101,7 @@ const APM_WEIGHT = 30;
  * @returns {number} Speed score (0–100)
  */
 export function calcSpeed(events) {
-    const { apm, rolls } = _calcApm(events);
+    const { apm, rolls } = calcApm(events);
     const { rollsPerSecond } = calcRolldownSpeed(events);
 
     let rollBonus = 0;
@@ -122,7 +122,7 @@ import { getEvents } from '../round.js';
 
 document.addEventListener('roundcomplete', () => {
     const events = getEvents();
-    const { apm, buys, sells, moves, rolls } = _calcApm(events);
+    const { apm, buys, sells, moves, rolls } = calcApm(events);
     const speed = calcSpeed(events);
     const { rollsPerSecond, durationMs } = calcRolldownSpeed(events);
     console.log(`[grading/speed] APM: ${apm} (buys: ${buys}, sells: ${sells}, moves: ${moves}, rolls: ${rolls}) | Speed: ${speed} | Rolldown: ${rollsPerSecond} r/s over ${durationMs}ms`);

@@ -101,9 +101,9 @@ function mk(tag, attrs = {}) {
 // ============================================================
 // Final Board
 // ============================================================
-function renderFinalBoard() {
+function renderFinalBoard(board = state.board) {
     compUnits.innerHTML = '';
-    const units = Object.values(state.board).filter(Boolean);
+    const units = Object.values(board).filter(Boolean);
     for (const unit of units) {
         const champ = pool[unit.name];
         if (!champ) continue;
@@ -344,24 +344,32 @@ function renderScoreHistory() {
 // Main entry point
 // ============================================================
 function scoreToGrade(score) {
-    if (score >= 100) return 'S';
-    if (score >= 75)  return 'A';
-    if (score >= 50)  return 'B';
-    if (score >= 25)  return 'C';
-    return 'D';
+    if (score >= 94) return 'S+';
+    if (score >= 87) return 'S';
+    if (score >= 80) return 'S-';
+    if (score >= 73) return 'A+';
+    if (score >= 66) return 'A';
+    if (score >= 60) return 'A-';
+    if (score >= 53) return 'B+';
+    if (score >= 46) return 'B';
+    if (score >= 40) return 'B-';
+    if (score >= 33) return 'C+';
+    if (score >= 26) return 'C';
+    if (score >= 20) return 'C-';
+    if (score >= 13) return 'D+';
+    if (score >= 6)  return 'D';
+    return 'D-';
 }
 
-function openPostRd() {
+export function openPostRdWith(events, board = state.board) {
     // Numeric scores (0–100) per metric; real data replaces placeholders as metrics are implemented
     const scores = METRICS.map(() => Math.floor(Math.random() * 100));
-
-    const events = getEvents();
 
     // Speed (index 0), Discipline (index 1), Accuracy (index 2), Positioning (index 3), and Flexibility (index 4) are driven by real round data
     scores[0] = calcSpeed(events);
     scores[1] = calcDiscipline(events);
     scores[2] = calcAccuracy(events);
-    scores[3] = calcPositioning(state.board);
+    scores[3] = calcPositioning(board);
     scores[4] = calcFlexibility(events);
 
     // Overall grade and history score from average
@@ -381,12 +389,16 @@ function openPostRd() {
 
     // Populate sections
     gradeValue.textContent = grade;
-    renderFinalBoard();
+    renderFinalBoard(board);
     buildPentagonSvg(scores);
     renderScoreHistory();
-    initAnalysis(events);
+    initAnalysis(events, board, scores);
 
     openModal();
+}
+
+function openPostRd() {
+    openPostRdWith(getEvents(), state.board);
 }
 
 // Fires only when the timer naturally reaches 0 (not early-end)
