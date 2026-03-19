@@ -1,9 +1,8 @@
 # TODO
 
 ## 🔥 Active
-- Tune grading
-- Add QHD & 4K support (support more viewports)
 - Add feedback to round detail
+- Add QHD & 4K support (support more viewports)
 
 ## Fast 9 & 1/2/3-cost RR Support
 - Grading and auto board generation currently assume Fast 8 comps
@@ -11,14 +10,8 @@
 
 ---
 
-## Grading
-1. Go through each scoring metric / rule.
-  - Figure out which weights are too small / large
-  - Figure out which measures are missing
-2. Add any missing helpers
-3. Redistribute weights
-
-4. Add feedback to post rolldown screen
+## Post Rolldown Screen
+- Add feedback to post rolldown screen
 
 ## Bugs
 
@@ -46,10 +39,6 @@
 
 ## Polish
 
-### Team Generation
-- Sometimes produces too much junk on board, or units that don't make sense
-- Can be distracting from the rolldown itself
-
 ### Trait Indicators
 - Units in hover info panel should have colored border indicating rarity
 
@@ -63,12 +52,6 @@
 - Add tick SFX (every 1s while holding a unit; also when switching hovered hex)
 - Investigate how often champion SFX play
 
-### Specific Trait / Unit Interactions
-- Make Annie, Ice Tower, and Azir summons feel less janky
-- Add T-Hex eat positioning
-- Add Ice Tower highlighting
-- Add Piltover mod selection
-
 ### Settings
 - Change hotkeys
 - Add "regenerate planner on reset" setting
@@ -79,6 +62,9 @@
 ### Codebase
 - Split `pool` object in `tables.js` into `unit_info` and `pool`
 
+### Grading
+- Needs another pass to see if weights are distributed correctly and if any more metrics need to be added
+
 ---
 
 ## Ideas
@@ -88,8 +74,13 @@
 
 ---
 
-## Before Release
+## Before Release -> aiming for ~April 15th
 - Update for new set
 - Fast 9 / 1–3 cost RR support (see above)
 - Expand viewport support beyond current display
 - Make UX as polished as possible
+- Final pass over:
+  - Shop UI
+  - Team Builder
+  - Popup
+  - Unit shop tile animations (in planner / shop shine, star up)
