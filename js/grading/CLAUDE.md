@@ -40,6 +40,10 @@ Penalty schedule:
 - −10 per failed boolean check: `mainCarryInCorner`, `strongestMeleeCarryNextToStrongestTank`, `mainTankInFrontOfCornerCarry`
 - −5 per misplaced unit: `meleeInBackRow`, `rangedNotInBackRow`, `meleeCarriesNotNextToTank`
 
+`mainTankInFrontOfCornerCarry` valid tank zones by carry position:
+- D1 (ranged) → A1–A4; D7 (ranged) → A4–A7
+- B1 (2-range, e.g. Graves/Gwen) → A1 or A2; B7 (2-range) → A6 or A7
+
 ### flexibility.js
 
 `calcFlexibility(events)` → −15 per missed alternate tank.

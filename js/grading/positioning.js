@@ -16,6 +16,7 @@
 // ──────────────────────────────────────────────────────────────
 
 import { pool } from '../tables.js';
+import { TWO_RANGE_UNITS } from '../board-generation/constants.js';
 
 const RANGED_ROLES      = new Set(['Marksman', 'Caster', 'Specialist']);
 const MELEE_CARRY_ROLES = new Set(['Fighter', 'Assassin']);
@@ -156,10 +157,16 @@ export function meleeCarriesNotNextToTank(board) {
         units.filter(u => TANK_ROLES_POS.has(u.role)).map(u => u.hex)
     );
 
-    return units.filter(u =>
-        MELEE_CARRY_ROLES.has(u.role) &&
-        !_adjacentHexes(u.hex).some(h => tankHexes.has(h))
-    );
+    return units.filter(u => {
+        if (!MELEE_CARRY_ROLES.has(u.role)) return false;
+        // 2-range units at B-corners: extend valid tank hexes to include the
+        // diagonal A-row slot that is one step inward (B7→A6, B1→A2).
+        const extraHexes = TWO_RANGE_UNITS.has(u.name) && u.hex === 'B7' ? ['A6']
+                         : TWO_RANGE_UNITS.has(u.name) && u.hex === 'B1' ? ['A2']
+                         : [];
+        const neighbours = [..._adjacentHexes(u.hex), ...extraHexes];
+        return !neighbours.some(h => tankHexes.has(h));
+    });
 }
 
 // ── 4. Strongest melee carry adjacent to strongest tank ────────
@@ -177,37 +184,51 @@ export function strongestMeleeCarryNextToStrongestTank(board) {
     const bestMelee = _strongest(units, r => MELEE_CARRY_ROLES.has(r));
     const bestTank  = _strongest(units, r => TANK_ROLES_POS.has(r));
     if (!bestMelee || !bestTank) return true;
-    return _adjacentHexes(bestMelee.hex).includes(bestTank.hex);
+    const extraHexes = TWO_RANGE_UNITS.has(bestMelee.name) && bestMelee.hex === 'B7' ? ['A6']
+                     : TWO_RANGE_UNITS.has(bestMelee.name) && bestMelee.hex === 'B1' ? ['A2']
+                     : [];
+    return [..._adjacentHexes(bestMelee.hex), ...extraHexes].includes(bestTank.hex);
 }
 
 // ── 5. Main tank in front of corner ranged carry ───────────────
 
 /**
  * Checks whether the main tank (strongest Tank-role unit) is in the
- * A-row zone directly in front of the corner ranged carry.
+ * A-row zone directly in front of the corner carry.
  *
- * Expected A-row positions by carry corner:
- *   D1 → A1, A2, A3, A4
- *   D7 → A4, A5, A6, A7
+ * Rules by carry position:
+ *   D1 (ranged)  → tank must be in A1, A2, A3, A4
+ *   D7 (ranged)  → tank must be in A4, A5, A6, A7
+ *   B1 (2-range) → tank must be at A1 or A2
+ *   B7 (2-range) → tank must be at A6 or A7
  *
  * @param {object} board - Board state
  * @returns {boolean} true if the carry is not in a corner, or either role is
  *   absent, or the main tank IS in the expected front zone; false otherwise.
  */
 export function mainTankInFrontOfCornerCarry(board) {
-    const units     = _boardUnits(board);
-    const mainCarry = _strongest(units, r => RANGED_ROLES.has(r));
-    if (!mainCarry) return true;
-    if (mainCarry.hex !== 'D1' && mainCarry.hex !== 'D7') return true;
-
+    const units    = _boardUnits(board);
     const mainTank = _strongest(units, r => TANK_ROLES_POS.has(r));
-    if (!mainTank) return true;
 
-    const frontHexes = mainCarry.hex === 'D1'
-        ? new Set(['A1', 'A2', 'A3', 'A4'])
-        : new Set(['A4', 'A5', 'A6', 'A7']);
+    // D-row ranged carry: tank must be in the front zone on the carry's side
+    const mainCarry = _strongest(units, r => RANGED_ROLES.has(r));
+    if (mainCarry && (mainCarry.hex === 'D1' || mainCarry.hex === 'D7')) {
+        if (!mainTank) return true;
+        const frontHexes = mainCarry.hex === 'D1'
+            ? new Set(['A1', 'A2', 'A3', 'A4'])
+            : new Set(['A4', 'A5', 'A6', 'A7']);
+        if (!frontHexes.has(mainTank.hex)) return false;
+    }
 
-    return frontHexes.has(mainTank.hex);
+    // 2-range carry at B7: tank must be at A6 or A7
+    const b7Carry = units.find(u => TWO_RANGE_UNITS.has(u.name) && u.hex === 'B7');
+    if (b7Carry && mainTank && mainTank.hex !== 'A6' && mainTank.hex !== 'A7') return false;
+
+    // 2-range carry at B1: tank must be at A1 or A2
+    const b1Carry = units.find(u => TWO_RANGE_UNITS.has(u.name) && u.hex === 'B1');
+    if (b1Carry && mainTank && mainTank.hex !== 'A1' && mainTank.hex !== 'A2') return false;
+
+    return true;
 }
 
 // ── Mistake hex set (for board highlighting) ──────────────────
@@ -254,23 +275,49 @@ export function positioningMistakeHexes(board) {
  *                        mainTankInFrontOfCornerCarry
  *   Per-unit (−5 each): meleeInBackRow, rangedNotInBackRow, meleeCarriesNotNextToTank
  *
+ * Deduplication: a unit already penalised by a −10 check is excluded from −5
+ * checks. Within the −5 tier, each unit hex is counted at most once.
+ * Higher-value mistakes are always prioritised.
+ *
  * @param {object} board - { [hex]: { name, stars } | null }
  * @returns {number} Positioning score (0–100)
  */
 export function calcPositioning(board) {
-    const boolPenalty = [
-        mainCarryInCorner(board),
-        strongestMeleeCarryNextToStrongestTank(board),
-        mainTankInFrontOfCornerCarry(board),
-    ].filter(ok => !ok).length * 10;
+    const units = _boardUnits(board);
 
-    const unitPenalty = (
-        meleeInBackRow(board).length +
-        rangedNotInBackRow(board).length +
-        meleeCarriesNotNextToTank(board).length
-    ) * 5;
+    // ── Boolean (−10) checks — record which hex each failure owns ──
+    const boolPenaltyHexes = new Set();
+    let boolPenalty = 0;
 
-    return Math.max(0, 100 - boolPenalty - unitPenalty);
+    if (!mainCarryInCorner(board)) {
+        boolPenalty += 10;
+        const u = _strongest(units, r => RANGED_ROLES.has(r));
+        if (u) boolPenaltyHexes.add(u.hex);
+    }
+    if (!strongestMeleeCarryNextToStrongestTank(board)) {
+        boolPenalty += 10;
+        const u = _strongest(units, r => MELEE_CARRY_ROLES.has(r));
+        if (u) boolPenaltyHexes.add(u.hex);
+    }
+    if (!mainTankInFrontOfCornerCarry(board)) {
+        boolPenalty += 10;
+        const u = _strongest(units, r => TANK_ROLES_POS.has(r));
+        if (u) boolPenaltyHexes.add(u.hex);
+    }
+
+    // ── Per-unit (−5) checks — deduplicate by hex, skip −10 hexes ──
+    const seen = new Set();
+    const unitMistakes = [
+        ...meleeInBackRow(board),
+        ...rangedNotInBackRow(board),
+        ...meleeCarriesNotNextToTank(board),
+    ].filter(u => {
+        if (boolPenaltyHexes.has(u.hex) || seen.has(u.hex)) return false;
+        seen.add(u.hex);
+        return true;
+    });
+
+    return Math.max(0, 100 - boolPenalty - unitMistakes.length * 5);
 }
 
 // ── Temporary debug hook ──────────────────────────────────────
