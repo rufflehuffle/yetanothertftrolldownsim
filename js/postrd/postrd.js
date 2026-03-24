@@ -1,19 +1,20 @@
-import { pool } from './tables.js';
-import { state } from './state.js';
-import { getEvents } from './round.js';
-import { initAnalysis } from './postrd-analysis.js';
-import { calcSpeed } from './grading/speed.js';
-import { calcAccuracy } from './grading/accuracy.js';
-import { calcPositioning } from './grading/positioning.js';
-import { calcFlexibility } from './grading/flexibility.js';
-import { calcDiscipline } from './grading/discipline.js';
-
 // ============================================================
-// Pentagon geometry constants
+// postrd/postrd.js — Post-RD modal: pentagon chart + score history
 // ============================================================
-const METRICS = ['Speed', 'Discipline', 'Accuracy', 'Positioning', 'Flexibility'];
 
-// Degrees measured from positive x-axis (SVG coords), clockwise
+import { pool } from '../tables.js';
+import { state } from '../state.js';
+import { getEvents } from '../round.js';
+import { initAnalysis } from './analysis.js';
+import { scoreToGrade, METRIC_NAMES } from './helpers.js';
+import { calcSpeed } from '../grading/speed.js';
+import { calcAccuracy } from '../grading/accuracy.js';
+import { calcPositioning } from '../grading/positioning.js';
+import { calcFlexibility } from '../grading/flexibility.js';
+import { calcDiscipline } from '../grading/discipline.js';
+
+// ── Pentagon geometry constants ──────────────────────────────
+
 const AXIS_ANGLES = [-90, -18, 54, 126, 198];
 const CENTER = { x: 160, y: 145 };
 const NS = 'http://www.w3.org/2000/svg';
@@ -27,9 +28,8 @@ const AXIS_LABEL_POS = [
     [33,  105, 68,  120, 'end'   ],   // Flexibility
 ];
 
-// ============================================================
-// DOM refs
-// ============================================================
+// ── DOM refs ─────────────────────────────────────────────────
+
 const modal      = document.getElementById('postrd');
 const backdrop   = document.getElementById('postrd-backdrop');
 const closeBtn   = document.getElementById('postrd-close');
@@ -39,12 +39,12 @@ const compUnits  = document.getElementById('postrd-comp-units');
 const pentaSvg   = document.getElementById('postrd-pentagon-svg');
 const histSvg    = document.getElementById('score-history-svg');
 const retryBtn   = document.getElementById('postrd-retry-btn');
+const reviewBtn  = document.getElementById('postrd-review-btn');
 const tabs       = modal.querySelectorAll('.postrd__tab');
 const panels     = modal.querySelectorAll('.postrd__panel-content');
 
-// ============================================================
-// Open / Close
-// ============================================================
+// ── Open / Close ─────────────────────────────────────────────
+
 let pentaAnims = [];
 function openModal() {
     modal.classList.add('postrd--open');
@@ -60,14 +60,17 @@ retryBtn.addEventListener('click', () => {
     closeModal();
     document.dispatchEvent(new CustomEvent('postrd-retry'));
 });
+reviewBtn.addEventListener('click', () => {
+    const analysisTab = modal.querySelector('.postrd__tab[data-tab="analysis"]');
+    analysisTab.click();
+});
 backdrop.addEventListener('click', closeModal);
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && modal.classList.contains('postrd--open')) closeModal();
 });
 
-// ============================================================
-// Tab switching
-// ============================================================
+// ── Tab switching ────────────────────────────────────────────
+
 tabs.forEach(tab => {
     tab.addEventListener('click', () => {
         const target = tab.dataset.tab;
@@ -83,9 +86,8 @@ tabs.forEach(tab => {
     });
 });
 
-// ============================================================
-// Helpers
-// ============================================================
+// ── SVG helpers ──────────────────────────────────────────────
+
 function axisPoint(angleDeg, radius) {
     const rad = angleDeg * Math.PI / 180;
     return { x: CENTER.x + radius * Math.cos(rad), y: CENTER.y + radius * Math.sin(rad) };
@@ -97,10 +99,8 @@ function mk(tag, attrs = {}) {
     return el;
 }
 
+// ── Final Board ──────────────────────────────────────────────
 
-// ============================================================
-// Final Board
-// ============================================================
 function renderFinalBoard(board = state.board) {
     compUnits.innerHTML = '';
     const units = Object.values(board).filter(Boolean);
@@ -117,7 +117,7 @@ function renderFinalBoard(board = state.board) {
         if (unit.stars) {
             const starEl = document.createElement('span');
             starEl.className = 'postrd-comp__star-indicator';
-            starEl.textContent = '★'.repeat(unit.stars);
+            starEl.textContent = '\u2605'.repeat(unit.stars);
             starEl.style.color = unit.stars === 3 ? '#f0c040' : unit.stars === 2 ? '#a0c4ff' : '#d1d5db';
             slot.appendChild(starEl);
         }
@@ -125,9 +125,8 @@ function renderFinalBoard(board = state.board) {
     }
 }
 
-// ============================================================
-// Pentagon Chart
-// ============================================================
+// ── Pentagon Chart ───────────────────────────────────────────
+
 function buildPentagonSvg(scores) {
     pentaAnims = [];
     while (pentaSvg.firstChild) pentaSvg.removeChild(pentaSvg.firstChild);
@@ -148,7 +147,7 @@ function buildPentagonSvg(scores) {
         }));
     }
 
-    // Grade rings (C → S)
+    // Grade rings (C -> S)
     const rings = [
         { r: 22.5, stroke: '#1a2e34', width: 1   },
         { r: 45,   stroke: '#1a2e34', width: 1   },
@@ -186,7 +185,7 @@ function buildPentagonSvg(scores) {
     defs.appendChild(filter);
     pentaSvg.appendChild(defs);
 
-    // Score polygon
+    // Score polygon (animates from center outward)
     const centerPts = AXIS_ANGLES.map(() => `${CENTER.x},${CENTER.y}`).join(' ');
     const scorePts = scores.map((s, i) => {
         const pt = axisPoint(AXIS_ANGLES[i], (s / 100) * 90);
@@ -208,7 +207,7 @@ function buildPentagonSvg(scores) {
     pentaSvg.appendChild(scorePolygon);
     pentaAnims.push(polyAnim);
 
-    // Vertex dots
+    // Vertex dots (animate from center to score positions)
     const animAttrs = { dur: '0.55s', fill: 'freeze', begin: 'indefinite', calcMode: 'spline', keyTimes: '0;1', keySplines: '0.15 0 0.2 1' };
     for (let i = 0; i < scores.length; i++) {
         const pt = axisPoint(AXIS_ANGLES[i], (scores[i] / 100) * 90);
@@ -222,7 +221,7 @@ function buildPentagonSvg(scores) {
     }
 
     // Axis grade letters + metric names
-    for (let i = 0; i < METRICS.length; i++) {
+    for (let i = 0; i < METRIC_NAMES.length; i++) {
         const [gx, gy, lx, ly, anchor] = AXIS_LABEL_POS[i];
 
         const gradeT = mk('text', {
@@ -238,14 +237,13 @@ function buildPentagonSvg(scores) {
             fill: '#A09B8C', 'font-size': 11,
             'font-family': 'Beaufort,serif', 'font-weight': 700, 'letter-spacing': 0.6,
         });
-        labelT.textContent = METRICS[i].toUpperCase();
+        labelT.textContent = METRIC_NAMES[i].toUpperCase();
         pentaSvg.appendChild(labelT);
     }
 }
 
-// ============================================================
-// Score History Chart
-// ============================================================
+// ── Score History Chart ──────────────────────────────────────
+
 function renderScoreHistory() {
     while (histSvg.firstChild) histSvg.removeChild(histSvg.firstChild);
 
@@ -297,7 +295,7 @@ function renderScoreHistory() {
         return;
     }
 
-    // Catmull-Rom → cubic bezier smooth path
+    // Catmull-Rom -> cubic bezier smooth path
     function smoothPath(p) {
         let d = `M ${p[0].x},${p[0].y}`;
         const t = 0.4;
@@ -340,39 +338,17 @@ function renderScoreHistory() {
     });
 }
 
-// ============================================================
-// Main entry point
-// ============================================================
-function scoreToGrade(score) {
-    if (score >= 94) return 'S+';
-    if (score >= 87) return 'S';
-    if (score >= 80) return 'S-';
-    if (score >= 73) return 'A+';
-    if (score >= 66) return 'A';
-    if (score >= 60) return 'A-';
-    if (score >= 53) return 'B+';
-    if (score >= 46) return 'B';
-    if (score >= 40) return 'B-';
-    if (score >= 33) return 'C+';
-    if (score >= 26) return 'C';
-    if (score >= 20) return 'C-';
-    if (score >= 13) return 'D+';
-    if (score >= 6)  return 'D';
-    return 'D-';
-}
+// ── Main entry point ─────────────────────────────────────────
 
 export function openPostRdWith(events, board = state.board) {
-    // Numeric scores (0–100) per metric; real data replaces placeholders as metrics are implemented
-    const scores = METRICS.map(() => Math.floor(Math.random() * 100));
+    const scores = METRIC_NAMES.map(() => Math.floor(Math.random() * 100));
 
-    // Speed (index 0), Discipline (index 1), Accuracy (index 2), Positioning (index 3), and Flexibility (index 4) are driven by real round data
     scores[0] = calcSpeed(events);
     scores[1] = calcDiscipline(events);
     scores[2] = calcAccuracy(events);
     scores[3] = calcPositioning(board);
     scores[4] = calcFlexibility(events);
 
-    // Overall grade and history score from average
     const avg = scores.reduce((s, v) => s + v, 0) / scores.length;
     const grade = scoreToGrade(avg);
     state.rolldownHistory.push(Math.round(avg));
@@ -387,7 +363,6 @@ export function openPostRdWith(events, board = state.board) {
         p.hidden = i !== 0;
     });
 
-    // Populate sections
     gradeValue.textContent = grade;
     renderFinalBoard(board);
     buildPentagonSvg(scores);
@@ -401,5 +376,5 @@ function openPostRd() {
     openPostRdWith(getEvents(), state.board);
 }
 
-// Fires only when the timer naturally reaches 0 (not early-end)
+// Fires when the timer naturally reaches 0
 document.addEventListener('roundcomplete', openPostRd);

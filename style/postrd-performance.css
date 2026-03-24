@@ -56,10 +56,10 @@
     min-height: 80px;
 }
 
-/* Pentascore — center, spans rows 2–3 */
+/* Pentascore — center, row 2 only */
 .postrd-pentascore {
     grid-column: 2;
-    grid-row: 2 / 4;
+    grid-row: 2;
     background: #080c10;
     border: 1px solid #2a2318;
     padding: 14px 16px;
@@ -145,6 +145,27 @@
 .postrd-comp__unit-slot--3-cost { border-color: #2166A6; }
 .postrd-comp__unit-slot--4-cost { border-color: #B91C8C; }
 .postrd-comp__unit-slot--5-cost { border-color: #B88502; }
+
+/* Review button — grid row 3, pentascore column */
+.postrd-performance__review-btn {
+    grid-column: 2;
+    grid-row: 3;
+    background: transparent;
+    border: 2px solid #C0A366;
+    color: #F0E6D2;
+    padding: 14px 0;
+    font-family: 'Beaufort', serif;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    width: 100%;
+}
+
+.postrd-performance__review-btn:hover {
+    background: rgba(200, 170, 110, 0.12);
+}
 
 /* Retry button — grid row 3, score history column only */
 .postrd-performance__retry-btn {

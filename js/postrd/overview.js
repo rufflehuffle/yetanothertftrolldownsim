@@ -1,5 +1,5 @@
 // ============================================================
-// postrd-overview.js — Score Breakdown tab: mistakes per scoring section
+// postrd/overview.js — Score Breakdown tab: mistakes per scoring section
 // ============================================================
 
 import {
@@ -8,39 +8,17 @@ import {
     accuracyMistakes,
     positioningMistakes,
     flexibilityMistakes,
-} from './postrd-mistakes.js';
-import { goToSnapshot } from './postrd-analysis.js';
-
-const METRICS = ['Speed', 'Discipline', 'Accuracy', 'Positioning', 'Flexibility'];
-
-function scoreToGrade(score) {
-    if (score >= 94) return 'S+';
-    if (score >= 87) return 'S';
-    if (score >= 80) return 'S-';
-    if (score >= 73) return 'A+';
-    if (score >= 66) return 'A';
-    if (score >= 60) return 'A-';
-    if (score >= 53) return 'B+';
-    if (score >= 46) return 'B';
-    if (score >= 40) return 'B-';
-    if (score >= 33) return 'C+';
-    if (score >= 26) return 'C';
-    if (score >= 20) return 'C-';
-    if (score >= 13) return 'D+';
-    if (score >= 6)  return 'D';
-    return 'D-';
-}
-
-// ── Render ────────────────────────────────────────────────────
+} from './mistakes.js';
+import { goToSnapshot } from './analysis.js';
+import { scoreToGrade, METRIC_NAMES } from './helpers.js';
 
 /**
  * Populates the 5-column grid with per-section mistakes.
- * Clickable items (those with a snapshotLabel) switch to the Detail tab
- * and jump to the corresponding roll snapshot.
+ * Clickable items switch to the analysis tab and jump to the snapshot.
  *
  * @param {object[]} events - Array from round.getEvents()
  * @param {object}   board  - Final board state
- * @param {number[]} scores - [Speed, Discipline, Accuracy, Positioning, Flexibility] (0–100)
+ * @param {number[]} scores - [Speed, Discipline, Accuracy, Positioning, Flexibility] (0-100)
  */
 export function initOverview(events, board, scores) {
     const container = document.getElementById('postrd-overview-cols');
@@ -54,7 +32,7 @@ export function initOverview(events, board, scores) {
         () => flexibilityMistakes(events),
     ];
 
-    for (let i = 0; i < METRICS.length; i++) {
+    for (let i = 0; i < METRIC_NAMES.length; i++) {
         const col = document.createElement('div');
         col.className = 'overview-col';
 
@@ -72,7 +50,7 @@ export function initOverview(events, board, scores) {
 
         const title = document.createElement('span');
         title.className = 'overview-col__title';
-        title.textContent = METRICS[i].toUpperCase();
+        title.textContent = METRIC_NAMES[i].toUpperCase();
 
         header.appendChild(grade);
         header.appendChild(numeric);

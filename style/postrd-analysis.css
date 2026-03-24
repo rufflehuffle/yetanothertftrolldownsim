@@ -29,15 +29,14 @@
     display: flex;
     flex: 1;
     min-height: 0;
-    padding: 14px 20px 10px;
+    padding: 14px 0 10px 20px;
     border-bottom: 1px solid #1a2e34;
+    gap: 8px;
 }
 
 .postrd-rd__left {
-    position: absolute;
-    left: 20px;
-    top: 0;
-    bottom: 10px;
+    flex-shrink: 0;
+    width: calc(150px * var(--rd-ui-scale, 1));
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -50,8 +49,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    flex: 1;
-    min-width: 0;
+    flex: 0 0 auto;
     justify-content: center;
     align-items: center;
 }
@@ -362,15 +360,15 @@
 
 /* ── Right panel (Rolldown Review) ── */
 .postrd-rd__right {
-    position: absolute;
-    right: 0;
-    top: 14px;
-    bottom: 10px;
-    width: 175px;
+    flex: 1;
+    min-width: 140px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     z-index: 1;
+    background: #060b10;
+    border-left: 1px solid #1a2e34;
+    padding: 6px 12px 8px 10px;
 }
 
 /* ── Review header (always visible, outside both screens) ── */
@@ -456,7 +454,8 @@
 }
 
 .rd-review__metric-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr calc(50px * var(--rd-ui-scale, 1)) calc(22px * var(--rd-ui-scale, 1));
     align-items: center;
     gap: calc(4px * var(--rd-ui-scale, 1));
 }
@@ -466,8 +465,9 @@
     font-size: calc(11px * var(--rd-ui-scale, 1));
     font-weight: 700;
     color: #A09B8C;
-    flex: 1;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .rd-review__metric-grade {
@@ -475,9 +475,7 @@
     font-size: calc(12px * var(--rd-ui-scale, 1));
     font-weight: 700;
     color: #C8AA6E;
-    min-width: calc(42px * var(--rd-ui-scale, 1));
     text-align: right;
-    flex-shrink: 0;
     white-space: nowrap;
 }
 
@@ -488,10 +486,8 @@
     color: #3d5560;
     background: #0a0f14;
     border-radius: 2px;
-    padding: 0 calc(4px * var(--rd-ui-scale, 1));
-    min-width: calc(18px * var(--rd-ui-scale, 1));
+    padding: 0 calc(3px * var(--rd-ui-scale, 1));
     text-align: center;
-    flex-shrink: 0;
 }
 
 .rd-review__metric-count--bad {

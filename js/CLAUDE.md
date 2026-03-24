@@ -23,8 +23,7 @@
 | `teams.js` | Saved presets: save/load/rename/delete, auto-naming |
 | `board-generation/` | Board generator; see [`board-generation/CLAUDE.md`](board-generation/CLAUDE.md) |
 | `board-strength.js` | EHP×DPS board scoring used by board-generation |
-| `postrd.js` | Post-RD modal: pentagon chart + score history |
-| `postrd-analysis.js` | Post-RD analysis tab: board snapshots per roll |
+| `postrd/` | Post-RD modal and analysis; see [`postrd/CLAUDE.md`](postrd/CLAUDE.md) |
 | `grading/` | Five grading modules; see [`grading/CLAUDE.md`](grading/CLAUDE.md) |
 
 **Dependency rules:**

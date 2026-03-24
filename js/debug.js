@@ -1,6 +1,6 @@
 import { getEvents } from './round.js';
 import { state } from './state.js';
-import { openPostRdWith } from './postrd.js';
+import { openPostRdWith } from './postrd/postrd.js';
 
 // ============================================================
 // TFT Debug Utilities — exposed on window.__tft

@@ -1,11 +1,11 @@
 // ============================================================
-// postrd-mistakes.js — Shared mistake builders for post-RD tabs
+// postrd/mistakes.js — Shared mistake builders for post-RD tabs
 // ============================================================
 
-import { calcApm, calcRolldownSpeed } from './grading/speed.js';
-import { avgGoldPerStrengthPoint } from './grading/discipline.js';
-import { plannerCarryName, plannerTankName } from './grading/helper.js';
-import { findMissedUnits } from './grading/accuracy.js';
+import { calcApm, calcRolldownSpeed } from '../grading/speed.js';
+import { avgGoldPerStrengthPoint } from '../grading/discipline.js';
+import { plannerCarryName, plannerTankName } from '../grading/helper.js';
+import { findMissedUnits } from '../grading/accuracy.js';
 import {
     mainCarryInCorner,
     strongestMeleeCarryNextToStrongestTank,
@@ -13,14 +13,14 @@ import {
     meleeInBackRow,
     rangedNotInBackRow,
     meleeCarriesNotNextToTank,
-} from './grading/positioning.js';
-import { findMissedAlternateTanks } from './grading/flexibility.js';
+} from '../grading/positioning.js';
+import { findMissedAlternateTanks } from '../grading/flexibility.js';
 
 const TARGET_APM              = 80;
 const TARGET_ROLLS_PER_SECOND = 1 / 1.5;
 
 // Each builder returns { text, snapshotLabel } objects.
-// snapshotLabel is null for non-navigable items, or a snapshot label like "Roll 3" / "End".
+// snapshotLabel is null for non-navigable items, or a label like "Roll 3" / "End".
 
 export function speedMistakes(events) {
     const { apm, rolls }     = calcApm(events);
@@ -28,9 +28,9 @@ export function speedMistakes(events) {
     const items = [];
 
     if (apm < TARGET_APM)
-        items.push({ text: `[Speed] Only ${apm} APM — target is ${TARGET_APM}`, snapshotLabel: null, highlightType: 'speed' });
+        items.push({ text: `[Speed] Only ${apm} APM \u2014 target is ${TARGET_APM}`, snapshotLabel: null, highlightType: 'speed' });
     if (rollsPerSecond < TARGET_ROLLS_PER_SECOND)
-        items.push({ text: `[Speed] Rolling at ${rollsPerSecond} rolls/s — target is ${TARGET_ROLLS_PER_SECOND.toFixed(2)} rolls/s`, snapshotLabel: null, highlightType: 'speed' });
+        items.push({ text: `[Speed] Rolling at ${rollsPerSecond} rolls/s \u2014 target is ${TARGET_ROLLS_PER_SECOND.toFixed(2)} rolls/s`, snapshotLabel: null, highlightType: 'speed' });
 
     let rollBonus = 0;
     if      (rolls >= 20) rollBonus = 20;
@@ -42,7 +42,7 @@ export function speedMistakes(events) {
     return items;
 }
 
-function _has2Star(unitName, board, bench) {
+function has2Star(unitName, board, bench) {
     for (const unit of Object.values(board))
         if (unit?.name === unitName && unit.stars === 2) return true;
     for (const unit of bench)
@@ -61,13 +61,13 @@ export function disciplineMistakes(events) {
 
             const carryName = plannerCarryName(teamPlan, board);
             const tankName  = plannerTankName(teamPlan, board);
-            const has2StarCarry = carryName ? _has2Star(carryName, board, bench) : false;
-            const has2StarTank  = tankName  ? _has2Star(tankName,  board, bench) : false;
+            const has2StarCarry = carryName ? has2Star(carryName, board, bench) : false;
+            const has2StarTank  = tankName  ? has2Star(tankName,  board, bench) : false;
             if (!has2StarCarry && !has2StarTank) return null;
 
             const parts = [];
-            if (has2StarCarry && carryName) parts.push(`2★ ${carryName}`);
-            if (has2StarTank  && tankName)  parts.push(`2★ ${tankName}`);
+            if (has2StarCarry && carryName) parts.push(`2\u2605 ${carryName}`);
+            if (has2StarTank  && tankName)  parts.push(`2\u2605 ${tankName}`);
             const desc = parts.length
                 ? `Kept rolling with ${parts.join(' and ')} on board`
                 : 'Kept rolling after reaching strength target';
@@ -121,7 +121,7 @@ export function flexibilityMistakes(events) {
 }
 
 /**
- * Returns all mistakes across all categories as a flat array.
+ * All mistakes across all categories as a flat array.
  * @param {object[]} events - Array from round.getEvents()
  * @param {object}   board  - Final board state
  */
