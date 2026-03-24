@@ -8,8 +8,6 @@
 - Grading and auto board generation currently assume Fast 8 comps
 - Need rolldown support for Fast 9 and 1-cost, 2-cost, 3-cost
 
----
-
 ## Bugs
 
 ### Gameplay / Logic
@@ -81,3 +79,4 @@
   - Team Builder
   - Popup
   - Unit shop tile animations (in planner / shop shine, star up)
+- Change CDN from MetaTFT's CDN to my own / host images on github

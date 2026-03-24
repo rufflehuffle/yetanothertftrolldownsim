@@ -6,4 +6,5 @@
 See [`js/CLAUDE.md`](js/CLAUDE.md) for module map, state shape, key invariants, mode state machine, effects, and grading.
 See [`js/board-generation/CLAUDE.md`](js/board-generation/CLAUDE.md) for the board generator algorithm, scoring formula, and positioning rules.
 See [`models/CLAUDE.md`](models/CLAUDE.md) for the models index (board strength + grading).
+See [`docs/CLAUDE.md`](docs/CLAUDE.md) for design documents and game reference (champions, traits, shop odds, XP table, role usage).
 See [`style/CLAUDE.md`](style/CLAUDE.md) for typography, colour palette, CSS tokens, viewport breakpoints, z-index layers, and component patterns.

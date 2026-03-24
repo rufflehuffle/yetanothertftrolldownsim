@@ -19,3 +19,9 @@ Things I like:
 ![alt text](image-2.png)
 
 ## TODO
+- Animate moves between key moments
+
+## ISSUES
+- Board changes size between 1st keyframe to 2nd in round review?
+- Trait panel should not overflow on the left
+- Stats also move with trait panel
