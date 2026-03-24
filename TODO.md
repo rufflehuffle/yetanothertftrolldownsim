@@ -10,9 +10,6 @@
 
 ---
 
-## Post Rolldown Screen
-- Add feedback to post rolldown screen
-
 ## Bugs
 
 ### Gameplay / Logic

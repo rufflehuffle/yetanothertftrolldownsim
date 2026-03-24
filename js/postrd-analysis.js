@@ -365,7 +365,13 @@ function _activateMistake(idx) {
     }
     const snap = _snapshots.find(s => s.label === mistake.snapshotLabel);
     const { hexes, shopSlots } = _computeHighlightsForMistake(mistake, snap);
-    _reviewNavigate(mistake.snapshotLabel, hexes, shopSlots);
+    if (mistake.snapshotLabel === null) {
+        _highlightHexes     = null;
+        _highlightShopSlots = null;
+        renderSnap(_snapshots, _current);
+    } else {
+        _reviewNavigate(mistake.snapshotLabel, hexes, shopSlots);
+    }
 }
 
 // ── Left panel: speed + action stats ─────────────────────────
