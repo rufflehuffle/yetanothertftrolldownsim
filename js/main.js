@@ -1,5 +1,6 @@
 import { state } from './state.js';
-import { doRoll } from './logic.js';
+import { render } from './render.js';
+import { doRoll } from './shop.js';
 import { setStartGuard } from './rolldown-state.js';
 import { updateNoCompPopup } from './popup.js';
 import './drag.js';
@@ -15,5 +16,6 @@ setStartGuard(() => {
 });
 
 // Init
-doRoll(false);
+doRoll(state, false);
+render();
 updateNoCompPopup();

@@ -1,7 +1,7 @@
 import { pool, traits as traitTable, xp_to_level } from './tables.js';
 import { shop_odds } from './tables.js';
 import { state } from './state.js';
-import { boardCount, isChampAnywhere } from './logic.js';
+import { boardCount } from './board.js';
 
 // ============================================================
 // Display helpers
@@ -382,8 +382,8 @@ export function render() {
     renderOdds();
 
     const boardCountEl = document.querySelector('.board-count');
-    boardCountEl.textContent = `${boardCount()}/${state.level}`;
-    boardCountEl.style.color = boardCount() >= state.level ? '#4a4a4a' : '#60a5fa';
+    boardCountEl.textContent = `${boardCount(state)}/${state.level}`;
+    boardCountEl.style.color = boardCount(state) >= state.level ? '#4a4a4a' : '#60a5fa';
 
     document.querySelectorAll('.shop-slot').forEach((slot, i) => renderShopSlot(slot, state.shop[i]));
     document.querySelectorAll('.bench-slot').forEach((slot, i) => renderUnit(slot, state.bench[i]));

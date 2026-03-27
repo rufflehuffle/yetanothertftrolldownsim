@@ -1,6 +1,6 @@
 import { state } from './state.js';
 import { render } from './render.js';
-import { boardCount, findEmptyBoardHex } from './logic.js';
+import { boardCount, findEmptyBoardHex } from './board.js';
 import { applyBoardEffects } from './effects.js';
 import { finishRound, isRound, isPaused, pauseRound, resumeRound } from './rolldown-state.js';
 
@@ -53,15 +53,15 @@ function updateDisplay() {
 
 function fillBoardFromBench() {
     for (let i = 0; i < state.bench.length; i++) {
-        if (boardCount() >= state.level) break;
+        if (boardCount(state) >= state.level) break;
         const unit = state.bench[i];
         if (!unit) continue;
-        const targetKey = findEmptyBoardHex();
+        const targetKey = findEmptyBoardHex(state);
         if (!targetKey) break;
         state.board[targetKey] = unit;
         state.bench[i] = null;
     }
-    applyBoardEffects();
+    applyBoardEffects(state);
     render();
 }
 

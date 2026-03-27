@@ -1,6 +1,6 @@
 import { state } from './state.js';
 import { render } from './render.js';
-import { addXp } from './logic.js';
+import { addXp } from './shop.js';
 import {
     getRdMode, setRdMode,
     isPlanning, isRound, isRoundEnd, isFreeroll,
@@ -73,7 +73,7 @@ export function wasLastRoundGenerated() { return _lastRoundWasGenerated; }
 rdShopPrimaryBtn.addEventListener('click', () => {
     const mode = getRdMode();
     if (mode === 'planning') {
-        addXp(2); // +2 XP: round passive grant
+        addXp(state, 2); // +2 XP: round passive grant
         render();
         timerControls.start();
         startRound();

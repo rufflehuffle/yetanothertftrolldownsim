@@ -26,7 +26,7 @@ import { isRoundEnd } from './rolldown-state.js';
             if (chosen !== state.level) {
                 state.level = chosen;
                 state.xp = 0;
-                applyBoardEffects();
+                applyBoardEffects(state);
                 render();
             }
             levelDropdown.classList.remove('open');

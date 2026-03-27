@@ -1,10 +1,11 @@
 import { state } from './state.js';
+import { render } from './render.js';
+import { playSound } from './audio.js';
 import { applyBoardEffects } from './effects.js';
-import {
-    doRoll, buyXp, buyChamp, sellUnit, moveUnit,
-    getUnitAt, boardCount, findEmptyBoardHex,
-    hoveredSlot
-} from './logic.js';
+import { getUnitAt, boardCount, findEmptyBoardHex } from './board.js';
+import { doRoll, buyXp } from './shop.js';
+import { buyChamp, sellUnit } from './units.js';
+import { moveUnit, hoveredSlot } from './movement.js';
 import { pool } from './tables.js';
 import { record } from './round.js';
 
@@ -34,7 +35,8 @@ function restoreState(snap) {
         const u = snap.board[k];
         state.board[k] = u ? { ...u } : null;
     }
-    applyBoardEffects(); // re-validates summons and calls render()
+    applyBoardEffects(state);
+    render();
 }
 
 // ============================================================
@@ -95,8 +97,10 @@ export class RollCommand {
     execute() {
         if (state.gold < 2) return false;
         this._snap = snapshotState();
-        const ok = doRoll(true) !== false;
+        const ok = doRoll(state, true) !== false;
         if (ok) {
+            playSound('roll.mp3');
+            render();
             record({ type: 'roll', goldBefore: this._snap.gold, goldAfter: state.gold, shopBefore: [...this._snap.shop], shopAfter: [...state.shop], bench: this._snap.bench, board: this._snap.board, teamPlan: [...state.teamPlan], level: this._snap.level });
             document.dispatchEvent(new CustomEvent('shoproll'));
         }
@@ -109,8 +113,11 @@ export class BuyXpCommand {
     execute() {
         if (state.gold < 4 || state.level >= 10) return false;
         this._snap = snapshotState();
-        const ok = buyXp() !== false;
-        if (ok) record({ type: 'buyXp', goldBefore: this._snap.gold, goldAfter: state.gold, levelBefore: this._snap.level, xpBefore: this._snap.xp, levelAfter: state.level, xpAfter: state.xp });
+        const ok = buyXp(state) !== false;
+        if (ok) {
+            render();
+            record({ type: 'buyXp', goldBefore: this._snap.gold, goldAfter: state.gold, levelBefore: this._snap.level, xpBefore: this._snap.xp, levelAfter: state.level, xpAfter: state.xp });
+        }
         return ok;
     }
     undo() { if (this._snap) restoreState(this._snap); }
@@ -124,8 +131,12 @@ export class BuyCommand {
     execute() {
         if (!this._name || state.gold < pool[this._name].cost) return false;
         this._snap = snapshotState();
-        const ok = buyChamp(this._name, this._idx) !== false;
-        if (ok) record({ type: 'buy', champName: this._name, cost: pool[this._name].cost, shopIndex: this._idx, goldBefore: this._snap.gold, goldAfter: state.gold });
+        const ok = buyChamp(state, this._name, this._idx) !== false;
+        if (ok) {
+            playSound('buy.mp3');
+            render();
+            record({ type: 'buy', champName: this._name, cost: pool[this._name].cost, shopIndex: this._idx, goldBefore: this._snap.gold, goldAfter: state.gold });
+        }
         return ok;
     }
     undo() { if (this._snap) restoreState(this._snap); }
@@ -139,8 +150,10 @@ export class SellCommand {
     execute() {
         if (!this._unit || pool[this._unit.name].cost === 0) return false;
         this._snap = snapshotState();
-        sellUnit(this._unit, this._loc);
-        applyBoardEffects(); // calls render() internally
+        sellUnit(state, this._unit, this._loc);
+        applyBoardEffects(state);
+        playSound('sell.mp3');
+        render();
         record({ type: 'sell', champName: this._unit.name, stars: this._unit.stars, location: this._loc, goldGained: state.gold - this._snap.gold, goldBefore: this._snap.gold, goldAfter: state.gold });
         return true;
     }
@@ -154,9 +167,13 @@ export class MoveUnitCommand {
     }
     execute() {
         this._snap = snapshotState();
-        const unit = getUnitAt(this._from);
-        const ok = moveUnit(this._from, this._to);
-        if (ok && unit) record({ type: 'move', champName: unit.name, stars: unit.stars, from: this._from, to: this._to });
+        const unit = getUnitAt(state, this._from);
+        const ok = moveUnit(state, this._from, this._to);
+        if (ok) {
+            applyBoardEffects(state);
+            render();
+            if (unit) record({ type: 'move', champName: unit.name, stars: unit.stars, from: this._from, to: this._to });
+        }
         return ok;
     }
     undo() { if (this._snap) restoreState(this._snap); }
@@ -167,7 +184,8 @@ export class ResetBoardCommand {
         if (Object.values(state.board).every(v => v === null)) return false;
         this._snap = snapshotState();
         for (const key of Object.keys(state.board)) state.board[key] = null;
-        applyBoardEffects(); // re-validates summons and calls render()
+        applyBoardEffects(state);
+        render();
         return true;
     }
     undo() { if (this._snap) restoreState(this._snap); }
@@ -183,7 +201,7 @@ export class MoveHoveredCommand {
         if (this._slot.type === 'bench') {
             unit = state.bench[this._slot.index];
             if (!unit) return false;
-            const key = findEmptyBoardHex();
+            const key = findEmptyBoardHex(state);
             if (!key) return false;
             from = { type: 'bench', index: this._slot.index };
             to   = { type: 'board', key };
@@ -198,8 +216,12 @@ export class MoveHoveredCommand {
             return false;
         }
         this._snap = snapshotState();
-        const ok = moveUnit(from, to);
-        if (ok && unit) record({ type: 'move', champName: unit.name, stars: unit.stars, from, to });
+        const ok = moveUnit(state, from, to);
+        if (ok) {
+            applyBoardEffects(state);
+            render();
+            if (unit) record({ type: 'move', champName: unit.name, stars: unit.stars, from, to });
+        }
         return ok;
     }
     undo() { if (this._snap) restoreState(this._snap); }

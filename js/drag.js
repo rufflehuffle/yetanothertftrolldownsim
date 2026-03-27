@@ -1,10 +1,9 @@
 import { pool } from './tables.js';
 import { state } from './state.js';
 import { render, renderShopSlot } from './render.js';
-import {
-    getChampAt, getUnitAt, boardCount, findEmptyBoardHex,
-    hoveredSlot, setHoveredSlot, sellValue
-} from './logic.js';
+import { getChampAt, getUnitAt, boardCount, findEmptyBoardHex } from './board.js';
+import { sellValue } from './units.js';
+import { hoveredSlot, setHoveredSlot } from './movement.js';
 import { applyBoardEffects } from './effects.js';
 import {
     dispatch, history,
@@ -42,7 +41,7 @@ let dragSourceEl = null;
 let shopDragActivated = false;
 
 export function handleDragStart(e, location) {
-    const champName = getChampAt(location);
+    const champName = getChampAt(state, location);
     if (!champName) return;
     dragging = location;
     dragStartX = e.clientX;
@@ -73,7 +72,7 @@ export function handleDragStart(e, location) {
         if (dragSourceEl) dragSourceEl.classList.add('drag-source');
     }
     if (!isShop) {
-        const unit = getUnitAt(location);
+        const unit = getUnitAt(state, location);
         const gold = unit ? sellValue(unit) : 0;
         sellZone.textContent = gold > 0 ? `Sell for ${gold}g` : 'Sell';
     }
@@ -131,7 +130,7 @@ function isInSlotCenter(x, y, slotEl) {
 
 function handleShopDragEnd(e) {
     if (!dragging || dragging.type !== 'shop') return;
-    const champName = getChampAt(dragging);
+    const champName = getChampAt(state, dragging);
     if (champName && !isInSlotCenter(e.clientX, e.clientY, shopGhostSlotEl)) {
         dispatch(new BuyCommand(champName, dragging.index));
     }
@@ -183,7 +182,7 @@ sellZone.addEventListener('mouseleave', () => {
 sellZone.addEventListener('mouseup', () => {
     if (!dragging) return;
     if ((isPlanning() || isRoundEnd()) && dragging.type !== 'bench') { endDrag(); return; }
-    const unit = dragging.type === 'shop' ? null : getUnitAt(dragging);
+    const unit = dragging.type === 'shop' ? null : getUnitAt(state, dragging);
     if (unit) dispatch(new SellCommand(unit, dragging));
     endDrag();
 });
@@ -197,7 +196,7 @@ document.querySelectorAll('.shop-slot').forEach((slot, i) => {
     slot.addEventListener('mouseup', () => {
         if (!dragging || dragging.type !== 'shop') return;
         if (!shopDragActivated) {
-            const champName = getChampAt(dragging);
+            const champName = getChampAt(state, dragging);
             if (champName) dispatch(new BuyCommand(champName, dragging.index));
             endDrag();
         }
@@ -267,9 +266,9 @@ document.addEventListener('mouseup', (e) => {
     if (tbDragging) {
         if (hoveredSlot) {
             const champName = tbDragging;
-            const existing = getUnitAt(hoveredSlot);
+            const existing = getUnitAt(state, hoveredSlot);
             if (hoveredSlot.type === 'board') {
-                if (!existing && boardCount() >= state.level) {
+                if (!existing && boardCount(state) >= state.level) {
                     playSound('board_full.mp3');
                     const benchIdx = state.bench.findIndex(s => s === null);
                     if (benchIdx !== -1) state.bench[benchIdx] = { name: champName, stars: 1 };
@@ -288,17 +287,17 @@ document.addEventListener('mouseup', (e) => {
                     if (benchIdx !== -1) state.bench[benchIdx] = { name: champName, stars: 1 };
                 }
             }
-            applyBoardEffects();
+            applyBoardEffects(state);
             render();
         } else {
             const benchIdx = state.bench.findIndex(s => s === null);
             if (benchIdx !== -1) {
                 state.bench[benchIdx] = { name: tbDragging, stars: 1 };
-                applyBoardEffects();
+                applyBoardEffects(state);
                 render();
             } else {
-                const boardKey = findEmptyBoardHex();
-                if (boardKey) { state.board[boardKey] = { name: tbDragging, stars: 1 }; applyBoardEffects(); render(); }
+                const boardKey = findEmptyBoardHex(state);
+                if (boardKey) { state.board[boardKey] = { name: tbDragging, stars: 1 }; applyBoardEffects(state); render(); }
             }
         }
         setTbDragging(null);
@@ -309,7 +308,7 @@ document.addEventListener('mouseup', (e) => {
     if (dragging?.type === 'shop' && shopDragActivated) handleShopDragEnd(e);
     else if (dragging && dragging.type !== 'shop' && isOverHud(e.clientX, e.clientY)) {
         if (!isPlanning() && !isRoundEnd() || (isPlanning() && dragging.type === 'bench')) {
-            const unit = getUnitAt(dragging);
+            const unit = getUnitAt(state, dragging);
             if (unit) dispatch(new SellCommand(unit, dragging));
         }
         endDrag();

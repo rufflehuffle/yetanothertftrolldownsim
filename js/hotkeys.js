@@ -1,5 +1,6 @@
 import { dispatch, history, RollCommand, BuyXpCommand, SellCommand, MoveHoveredCommand } from './commands.js';
-import { hoveredSlot, getUnitAt } from './logic.js';
+import { getUnitAt } from './board.js';
+import { hoveredSlot } from './movement.js';
 import {
     isPlanning, isRound, isPaused, isRoundEnd, isFreeroll,
     startRound, pauseRound, resumeRound, returnToPlanning, exitFreeroll
@@ -12,7 +13,7 @@ import { rdShopPrimaryBtn, updateOverlayContent, wasLastRoundGenerated } from '.
 import { triggerGenerate41Board } from './planner.js';
 import { state } from './state.js';
 import { render } from './render.js';
-import { addXp } from './logic.js';
+import { addXp } from './shop.js';
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'F1') {
@@ -25,7 +26,7 @@ document.addEventListener('keydown', (e) => {
     if (e.key === ' ' && e.target.tagName !== 'INPUT') {
         e.preventDefault();
         if (isPlanning() && !rdShopPrimaryBtn.disabled) {
-            addXp(2); // +2 XP: round passive grant
+            addXp(state, 2); // +2 XP: round passive grant
             render();
             timerControls.start();
             startRound();
@@ -89,11 +90,11 @@ document.addEventListener('keydown', (e) => {
         const activeSlot = (dragging && dragging.type !== 'shop') ? dragging : hoveredSlot;
         if (isPlanning() && activeSlot?.type !== 'bench') return;
         if (dragging && dragging.type !== 'shop') {
-            const unit = getUnitAt(dragging);
+            const unit = getUnitAt(state, dragging);
             if (unit) dispatch(new SellCommand(unit, dragging));
             endDrag();
         } else if (!dragging && hoveredSlot) {
-            const unit = getUnitAt(hoveredSlot);
+            const unit = getUnitAt(state, hoveredSlot);
             if (unit) dispatch(new SellCommand(unit, hoveredSlot));
         }
     }

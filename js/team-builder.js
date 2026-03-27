@@ -1,7 +1,7 @@
 import { pool } from './tables.js';
 import { state, isOriginallyLocked } from './state.js';
 import { render } from './render.js';
-import { getUnitAt, findEmptyBoardHex } from './logic.js';
+import { getUnitAt, findEmptyBoardHex } from './board.js';
 import { COST_TIERS, COST_LABELS, COST_COLORS } from './planner.js';
 
 // ============================================================
@@ -52,7 +52,7 @@ document.querySelectorAll('.hex-wrapper').forEach(wrapper => {
         if (!teamBuilderActive) return;
         const loc = getLocationFromWrapper(wrapper);
         if (!loc) return;
-        const unit = getUnitAt(loc);
+        const unit = getUnitAt(state, loc);
         if (!unit) return;
         if (unit.stars > 1) { unit.stars--; render(); }
     });
@@ -62,7 +62,7 @@ document.querySelectorAll('.hex-wrapper').forEach(wrapper => {
         if (!teamBuilderActive) return;
         const loc = getLocationFromWrapper(wrapper);
         if (!loc) return;
-        const unit = getUnitAt(loc);
+        const unit = getUnitAt(state, loc);
         if (!unit) return;
         if (unit.stars < 3) { unit.stars++; render(); }
     });
@@ -131,7 +131,7 @@ export function buildTbPicker() {
                     if (benchIdx !== -1) {
                         state.bench[benchIdx] = { name: champ.name, stars: 1 };
                     } else {
-                        const boardKey = findEmptyBoardHex();
+                        const boardKey = findEmptyBoardHex(state);
                         if (boardKey) state.board[boardKey] = { name: champ.name, stars: 1 };
                     }
                     render();

@@ -3,7 +3,7 @@ import { state, _originallyLocked, isOriginallyLocked, saveTeamPlan, saveUnlocke
 import { generateBoard, buildTraitCounts } from './board-generation/generator.js';
 import { is2CostReroll, get2CostCarryAndTank } from './board-generation/detect-reroll.js';
 import { render } from './render.js';
-import { doRoll } from './logic.js';
+import { doRoll } from './shop.js';
 import { teamBuilderActive, buildTbPicker } from './team-builder.js';
 import { history } from './commands.js';
 import { openTeamPlanner, loadTeamCode } from './planner.js';
@@ -540,7 +540,7 @@ function _applyTeam(team, emptyBoard = false) {
     if (teamBuilderActive) {
         buildTbPicker();
     } else {
-        doRoll(false);
+        doRoll(state, false);
     }
 
     render();
