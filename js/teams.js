@@ -7,6 +7,7 @@ import { render } from './render.js';
 import { doRoll } from './shop.js';
 import { teamBuilderActive, buildTbPicker } from './team-builder.js';
 import { history } from './commands.js';
+import { isActiveRound } from './rolldown-state.js';
 import { openTeamPlanner, loadTeamCode } from './planner.js';
 
 // ============================================================
@@ -171,6 +172,7 @@ export let lastLoadedPreset = null;
 
 export function saveActiveTeam() {
     if (!lastLoadedPreset) {
+        if (!state.teamPlan.size) return;
         const existing = loadTeams();
         const team = {
             id: Date.now(),
@@ -228,7 +230,7 @@ document.querySelector('.teams__new-btn').addEventListener('click', () => {
     const teams = loadTeams();
     const team = {
         id: Date.now(),
-        name: uniqueTeamName(generateTeamName(state.teamPlan), teams),
+        name: uniqueTeamName(generateTeamName(new Set()), teams),
         nameIsAuto: true,
         level: state.level,
         gold: state.gold,
@@ -243,7 +245,7 @@ document.querySelector('.teams__new-btn').addEventListener('click', () => {
     teams.push(team);
     saveTeams(teams);
 
-    _applyTeam(team);
+    _applyTeamPlanOnly(team);
     closeTeams();
     openTeamPlanner();
 });
@@ -357,7 +359,14 @@ function renderTeamsList() {
         container.appendChild(unitsEl);
 
         container.addEventListener('click', () => {
-            loadPreset(loadTeams().find(t => t.id === team.id) ?? team);
+            const fresh = loadTeams().find(t => t.id === team.id) ?? team;
+            if (isActiveRound()) {
+                _applyTeamPlanOnly(fresh);
+                closeTeams();
+                openTeamPlanner();
+                return;
+            }
+            loadPreset(fresh);
             closeTeams();
             openTeamPlanner();
         });
@@ -379,7 +388,9 @@ function renderTeamsList() {
                 });
                 return;
             }
-            loadPreset(loadTeams().find(t => t.id === team.id) ?? team);
+            const fresh = loadTeams().find(t => t.id === team.id) ?? team;
+            if (isActiveRound()) { _applyTeamPlanOnly(fresh); return; }
+            loadPreset(fresh);
             // Update all other switches in the list
             teamsList.querySelectorAll('.team__active-switch input').forEach(other => {
                 other.checked = (other === cb);
@@ -494,6 +505,30 @@ function _deactivateTeam() {
     saveUnlockedOverrides();
     render();
     history.clear();
+}
+
+// ============================================================
+// Internal: apply only the team plan (plan/unlocks/target) — no board/bench/gold/level.
+// Used during active rolldown rounds where board state must not change.
+// ============================================================
+function _applyTeamPlanOnly(team) {
+    if (team.teamPlan) {
+        for (const name of _originallyLocked) {
+            if (pool[name]) pool[name].unlocked = false;
+        }
+        state.teamPlan = new Set(team.teamPlan);
+        syncTeamPlanSlots(team.teamPlan);
+        const unlockNames = team.unlocks ?? team.teamPlan.filter(n => isOriginallyLocked(n));
+        for (const name of unlockNames) {
+            if (pool[name]) pool[name].unlocked = true;
+        }
+        saveUnlockedOverrides();
+    }
+    state.targetTeam = team.targetTeam?.length ? new Set(team.targetTeam) : null;
+    lastLoadedPreset = team;
+    try { localStorage.setItem('tft-last-preset', team.id); } catch {}
+    if (team.teamPlan) saveTeamPlan(); // fires teamplanchange
+    render();
 }
 
 // ============================================================
