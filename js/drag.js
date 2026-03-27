@@ -273,11 +273,11 @@ document.addEventListener('mouseup', (e) => {
                     const benchIdx = state.bench.findIndex(s => s === null);
                     if (benchIdx !== -1) state.bench[benchIdx] = { name: champName, stars: 1 };
                 } else if (!existing) {
-                    state.board[hoveredSlot.key] = { name: champName, stars: 1 };
+                    state.board.set(hoveredSlot.key, { name: champName, stars: 1 });
                 } else {
                     const benchIdx = state.bench.findIndex(s => s === null);
                     if (benchIdx !== -1) state.bench[benchIdx] = existing;
-                    state.board[hoveredSlot.key] = { name: champName, stars: 1 };
+                    state.board.set(hoveredSlot.key, { name: champName, stars: 1 });
                 }
             } else if (hoveredSlot.type === 'bench') {
                 if (!existing) {
@@ -297,7 +297,7 @@ document.addEventListener('mouseup', (e) => {
                 render();
             } else {
                 const boardKey = findEmptyBoardHex(state);
-                if (boardKey) { state.board[boardKey] = { name: tbDragging, stars: 1 }; applyBoardEffects(state); render(); }
+                if (boardKey) { state.board.set(boardKey, { name: tbDragging, stars: 1 }); applyBoardEffects(state); render(); }
             }
         }
         setTbDragging(null);

@@ -1,5 +1,6 @@
 import { pool, traits as traitTable } from './tables.js';
 import { addXp, doRoll } from './shop.js';
+import { Board } from './board.js';
 import { state, saveTeamPlan, saveUnlockedOverrides, isOriginallyLocked, setPlannedAsGenerateTarget, syncTeamPlanSlots } from './state.js';
 import { render, computeTraits, getSortedTraitEntries, activeBreakpoint, nextBreakpoint, showTraitTooltip, positionTooltip } from './render.js';
 import { generateBoard } from './board-generation/generator.js';
@@ -707,7 +708,7 @@ export function triggerGenerate41Board() {
     state.xp    = result.xp;
     addXp(state, 2); // +2 XP: odd-interval pre-round grant
     state.bench = result.bench;
-    state.board = result.board;
+    state.board = Board.from(result.board);
     state.boardGenerated = true;
     doRoll(state, false);
     closeTeamPlanner();

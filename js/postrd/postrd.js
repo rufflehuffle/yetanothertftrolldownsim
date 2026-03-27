@@ -102,7 +102,7 @@ function mk(tag, attrs = {}) {
 
 // ── Final Board ──────────────────────────────────────────────
 
-function renderFinalBoard(board = state.board) {
+function renderFinalBoard(board) {
     compUnits.innerHTML = '';
     const units = Object.values(board).filter(Boolean);
     for (const unit of units) {
@@ -341,7 +341,7 @@ function renderScoreHistory() {
 
 // ── Main entry point ─────────────────────────────────────────
 
-export function openPostRdWith(events, board = state.board) {
+export function openPostRdWith(events, board) {
     const scores = METRIC_NAMES.map(() => Math.floor(Math.random() * 100));
 
     scores[0] = calcSpeed(events);
@@ -374,7 +374,7 @@ export function openPostRdWith(events, board = state.board) {
 }
 
 function openPostRd() {
-    openPostRdWith(getEvents(), state.board);
+    openPostRdWith(getEvents(), state.board.snapshot());
 }
 
 // Fires when the timer naturally reaches 0

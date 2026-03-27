@@ -1,5 +1,6 @@
 import { pool, traits as traitTable } from './tables.js';
 import { state, _originallyLocked, isOriginallyLocked, saveTeamPlan, saveUnlockedOverrides, syncTeamPlanSlots } from './state.js';
+import { Board } from './board.js';
 import { generateBoard, buildTraitCounts } from './board-generation/generator.js';
 import { is2CostReroll, get2CostCarryAndTank } from './board-generation/detect-reroll.js';
 import { render } from './render.js';
@@ -177,9 +178,7 @@ export function saveActiveTeam() {
             nameIsAuto: true,
             level: state.level,
             gold: state.gold,
-            board: Object.fromEntries(
-                Object.entries(state.board).map(([k, v]) => [k, v ? { name: v.name, stars: v.stars } : null])
-            ),
+            board: state.board.snapshot(),
             bench: state.bench.map(u => u ? { name: u.name, stars: u.stars } : null),
             teamPlan: [...state.teamPlan],
             targetTeam: [...(state.targetTeam ?? [])],
@@ -197,9 +196,7 @@ export function saveActiveTeam() {
     const t = all.find(t => t.id === lastLoadedPreset.id);
     if (!t) return;
 
-    t.board = Object.fromEntries(
-        Object.entries(state.board).map(([k, v]) => [k, v ? { name: v.name, stars: v.stars } : null])
-    );
+    t.board = state.board.snapshot();
     t.bench      = state.bench.map(u => u ? { name: u.name, stars: u.stars } : null);
     t.level      = state.level;
     t.gold       = state.gold;
@@ -235,7 +232,7 @@ document.querySelector('.teams__new-btn').addEventListener('click', () => {
         nameIsAuto: true,
         level: state.level,
         gold: state.gold,
-        board: Object.fromEntries(Object.keys(state.board).map(k => [k, null])),
+        board: new Board().snapshot(),
         bench: Array(9).fill(null),
         teamPlan: [],
         targetTeam: [],
@@ -271,7 +268,7 @@ teamsPasteBtnEl.addEventListener('click', async () => {
         nameIsAuto: true,
         level: state.level,
         gold: state.gold,
-        board: Object.fromEntries(Object.keys(state.board).map(k => [k, null])),
+        board: new Board().snapshot(),
         bench: Array(9).fill(null),
         teamPlan: [],
         targetTeam: [],
@@ -522,9 +519,10 @@ function _applyTeam(team, emptyBoard = false) {
     state.xp    = 0;
     state.gold  = team.gold;
 
-    for (const key of Object.keys(state.board)) {
-        const u = emptyBoard ? null : team.board?.[key];
-        state.board[key] = u ? { name: u.name, stars: u.stars } : null;
+    if (emptyBoard) {
+        state.board.clear();
+    } else {
+        state.board.restore(team.board ?? {});
     }
 
     const benchSrc = emptyBoard ? [] : (team.bench ?? []);

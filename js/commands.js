@@ -19,9 +19,7 @@ function snapshotState() {
         xp:    state.xp,
         shop:  [...state.shop],
         bench: state.bench.map(u => u ? { ...u } : null),
-        board: Object.fromEntries(
-            Object.entries(state.board).map(([k, v]) => [k, v ? { ...v } : null])
-        ),
+        board: state.board.snapshot(),
     };
 }
 
@@ -31,10 +29,7 @@ function restoreState(snap) {
     state.xp    = snap.xp;
     state.shop  = [...snap.shop];
     state.bench = snap.bench.map(u => u ? { ...u } : null);
-    for (const k of Object.keys(state.board)) {
-        const u = snap.board[k];
-        state.board[k] = u ? { ...u } : null;
-    }
+    state.board.restore(snap.board);
     applyBoardEffects(state);
     render();
 }
@@ -181,9 +176,9 @@ export class MoveUnitCommand {
 
 export class ResetBoardCommand {
     execute() {
-        if (Object.values(state.board).every(v => v === null)) return false;
+        if (state.board.values().every(v => v === null)) return false;
         this._snap = snapshotState();
-        for (const key of Object.keys(state.board)) state.board[key] = null;
+        state.board.clear();
         applyBoardEffects(state);
         render();
         return true;
@@ -206,7 +201,7 @@ export class MoveHoveredCommand {
             from = { type: 'bench', index: this._slot.index };
             to   = { type: 'board', key };
         } else if (this._slot.type === 'board') {
-            unit = state.board[this._slot.key];
+            unit = state.board.get(this._slot.key);
             if (!unit) return false;
             const i = state.bench.findIndex(s => s === null);
             if (i === -1) return false;

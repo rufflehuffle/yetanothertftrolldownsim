@@ -58,7 +58,7 @@ function fillBoardFromBench() {
         if (!unit) continue;
         const targetKey = findEmptyBoardHex(state);
         if (!targetKey) break;
-        state.board[targetKey] = unit;
+        state.board.set(targetKey, unit);
         state.bench[i] = null;
     }
     applyBoardEffects(state);

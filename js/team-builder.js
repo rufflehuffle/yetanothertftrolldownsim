@@ -132,7 +132,7 @@ export function buildTbPicker() {
                         state.bench[benchIdx] = { name: champ.name, stars: 1 };
                     } else {
                         const boardKey = findEmptyBoardHex(state);
-                        if (boardKey) state.board[boardKey] = { name: champ.name, stars: 1 };
+                        if (boardKey) state.board.set(boardKey, { name: champ.name, stars: 1 });
                     }
                     render();
                     e.stopPropagation();

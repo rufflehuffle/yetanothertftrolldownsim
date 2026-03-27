@@ -43,7 +43,7 @@ function traitBreakpointColors(tier) {
 // ============================================================
 export function computeTraits() {
     const boardChampNames = new Set(
-        Object.values(state.board).filter(u => u !== null).map(u => u.name)
+        state.board.values().filter(u => u !== null).map(u => u.name)
     );
     const traitCounts = {};
     const traitUnits  = {};
@@ -107,7 +107,7 @@ export function showTraitTooltip(e, traitName, activeBP) {
         .sort((a, b) => a.cost !== b.cost ? a.cost - b.cost : a.name.localeCompare(b.name));
 
     const onBoard = new Set(
-        Object.values(state.board).filter(u => u !== null).map(u => u.name)
+        state.board.values().filter(u => u !== null).map(u => u.name)
     );
 
     lines.push('<div class="tt-unit-grid">');
@@ -298,7 +298,7 @@ export function renderShopSlot(slot, champName) {
 
         const ownedUnits = [
             ...state.bench.filter(u => u?.name === champName),
-            ...Object.values(state.board).filter(u => u?.name === champName)
+            ...state.board.values().filter(u => u?.name === champName)
         ];
         slot.classList.toggle('owned', ownedUnits.length > 0);
 
@@ -308,7 +308,7 @@ export function renderShopSlot(slot, champName) {
 
         // Had to rewrite isChampAnywhere function bc it's broken for some reason?
         const isUnitOnBench = state.bench.filter(u => u?.name == champName).length >= 1;
-        const isUnitOnBoard = Object.values(state.board).filter(u => u?.name == champName).length >= 1;
+        const isUnitOnBoard = state.board.values().filter(u => u?.name == champName).length >= 1;
         const isUnitAnywhere = isUnitOnBench || isUnitOnBoard;
         const copiesInShop = state.shop.filter(u => u == champName).length;
 
@@ -387,7 +387,7 @@ export function render() {
 
     document.querySelectorAll('.shop-slot').forEach((slot, i) => renderShopSlot(slot, state.shop[i]));
     document.querySelectorAll('.bench-slot').forEach((slot, i) => renderUnit(slot, state.bench[i]));
-    document.querySelectorAll('.hex').forEach(hex => renderUnit(hex, state.board[[...hex.classList].find(c => c !== 'hex')]));
+    document.querySelectorAll('.hex').forEach(hex => renderUnit(hex, state.board.get([...hex.classList].find(c => c !== 'hex'))));
 
     renderTraits();
 }

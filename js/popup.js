@@ -12,7 +12,7 @@ const openBtn       = document.querySelector('.no-comp-popup__open-btn');
 const generateBtn   = document.querySelector('.no-comp-popup__generate-btn');
 
 function isBoardEmpty() {
-    return Object.values(state.board).every(v => v === null);
+    return state.board.values().every(v => v === null);
 }
 
 function isPlannerEmpty() {

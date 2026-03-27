@@ -13,24 +13,21 @@ export function weightedRandom(weights) {
     }
 }
 
-export function rollShop(state) {
-    const taken = {};
-    for (const unit of [...state.bench, ...Object.values(state.board)]) {
-        if (!unit) continue;
-        const copies = unit.stars === 2 ? 3 : unit.stars === 3 ? 9 : 1;
-        taken[unit.name] = (taken[unit.name] ?? 0) + copies;
-    }
-
+export function rollShop(state, threeStarred, copiesOwned) {
     const shop = [];
     for (let i = 0; i < 5; i++) {
-        const costRolled = weightedRandom(shop_odds[state.level]);
-        const champsOfCost = Object.values(pool).filter(x => x.cost == costRolled && x.unlocked);
-        const champWeights = champsOfCost.reduce((acc, x) => {
-            const remaining = x.copies_in_pool - (taken[x.name] ?? 0);
-            if (remaining > 0) acc[x.name] = remaining;
-            return acc;
+        const rolledCost = weightedRandom(shop_odds[state.level]);
+        // Exclude 3-starred champions from the candidate pool
+        const eligibleChampions = Object.values(pool).filter(
+            champ => champ.cost == rolledCost && champ.unlocked && !threeStarred.has(champ.name)
+        );
+        // Weight each eligible champion by remaining copies in the shared pool
+        const remainingWeights = eligibleChampions.reduce((weights, champ) => {
+            const remainingCopies = champ.copies_in_pool - (copiesOwned[champ.name] ?? 0);
+            if (remainingCopies > 0) weights[champ.name] = remainingCopies;
+            return weights;
         }, {});
-        if (Object.keys(champWeights).length > 0) shop.push(weightedRandom(champWeights));
+        if (Object.keys(remainingWeights).length > 0) shop.push(weightedRandom(remainingWeights));
         else shop.push(null);
     }
     return shop;
@@ -38,7 +35,7 @@ export function rollShop(state) {
 
 export function doRoll(state, subtractGold=true) {
     if (subtractGold && state.gold < 2) return false;
-    state.shop = rollShop(state);
+    state.shop = rollShop(state, state.board.getThreeStarredChampions(state.bench), state.board.countOwnedCopies(state.bench));
     if (subtractGold) state.gold -= 2;
     return true;
 }

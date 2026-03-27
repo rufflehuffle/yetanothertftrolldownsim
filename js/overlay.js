@@ -29,7 +29,7 @@ const rdEndRoundBtn                 = document.querySelector('.rd-end-round-btn'
 export function updateOverlayContent() {
     const mode = getRdMode();
     if (mode === 'planning') {
-        const canStart = !(Object.values(state.board).every(v => v === null) && state.teamPlan.size === 0);
+        const canStart = !(state.board.values().every(v => v === null) && state.teamPlan.size === 0);
         rdShopOverlayHint.textContent = 'Space to start';
         rdShopOverlayPresetName.textContent = '';
         rdShopPrimaryBtn.textContent = '▶  Start Round';
@@ -52,7 +52,7 @@ export function updateOverlayContent() {
         rdOverlayGenerateBtn.style.display = 'none';
     }
     // Reset board button: only in planning, only when board has units
-    const boardHasUnits = Object.values(state.board).some(v => v !== null);
+    const boardHasUnits = state.board.values().some(v => v !== null);
     if (getRdMode() === 'planning' && boardHasUnits) {
         resetBoardBtn.textContent = state.boardGenerated ? '↺  Regenerate Board' : 'Clear Board';
         resetBoardBtn.style.display = 'block';

@@ -6,7 +6,7 @@ import { setUnitAt } from './board.js';
 // ============================================================
 export function findUnits(state, champName, stars) {
     const results = [];
-    for (const [key, unit] of Object.entries(state.board)) {
+    for (const [key, unit] of state.board.entries()) {
         if (unit?.name === champName && unit.stars === stars)
             results.push({ location: { type: 'board', key }, unit });
     }
@@ -18,7 +18,7 @@ export function findUnits(state, champName, stars) {
 }
 
 export function isChampOnBoard(state, champName) {
-    return Object.values(state.board).filter(u => u?.name == champName).length >= 1;
+    return state.board.values().filter(u => u?.name == champName).length >= 1;
 }
 
 export function isChampOnBench(state, champName) {
@@ -30,7 +30,7 @@ export function isChampAnywhere(state, champName) {
 }
 
 export function removeChamps(state, champName) {
-    for (const [key, unit] of Object.entries(state.board)) {
+    for (const [key, unit] of state.board.entries()) {
         if (unit?.name == champName) {
             setUnitAt(state, {type: 'board', key}, null);
         }
@@ -68,7 +68,7 @@ export function buyChamp(state, champName, shopIndex) {
     const firstEmpty = state.bench.findIndex(slot => slot === null);
 
     const isUnitOnBench = state.bench.filter(u => u?.name == champName).length >= 1;
-    const isUnitOnBoard = Object.values(state.board).filter(u => u?.name == champName).length >= 1;
+    const isUnitOnBoard = state.board.values().filter(u => u?.name == champName).length >= 1;
     const isUnitAnywhere = isUnitOnBench || isUnitOnBoard;
 
     // Handle bench full scenario
@@ -77,7 +77,7 @@ export function buyChamp(state, champName, shopIndex) {
 
         const ownedUnits = [
             ...state.bench.filter(u => u?.name === champName),
-            ...Object.values(state.board).filter(u => u?.name === champName)
+            ...state.board.values().filter(u => u?.name === champName)
         ];
         const currentCopies = ownedUnits.reduce((sum, u) => sum + (u.stars === 2 ? 3 : u.stars === 3 ? 9 : 1), 0);
         const copiesInShop = state.shop.filter(u => u == champName).length;

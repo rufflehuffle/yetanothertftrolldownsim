@@ -11,7 +11,7 @@ import './teams.js';
 
 // Block starting a round when board and planner are both empty
 setStartGuard(() => {
-    const boardEmpty = Object.values(state.board).every(v => v === null);
+    const boardEmpty = state.board.values().every(v => v === null);
     return !(boardEmpty && state.teamPlan.size === 0);
 });
 

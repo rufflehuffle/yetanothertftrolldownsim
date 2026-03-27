@@ -28,9 +28,7 @@ function _snapshot() {
         xp:    state.xp,
         shop:  [...state.shop],
         bench: state.bench.map(u => u ? { ...u } : null),
-        board: Object.fromEntries(
-            Object.entries(state.board).map(([k, v]) => [k, v ? { ...v } : null])
-        ),
+        board: state.board.snapshot(),
     };
 }
 

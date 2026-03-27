@@ -45,7 +45,7 @@ window.__tft ??= {};
  * Useful mid-session to preview grading without finishing a round.
  */
 window.__tft.openPostRd = () => {
-    openPostRdWith(getEvents(), state.board);
+    openPostRdWith(getEvents(), state.board.snapshot());
 };
 
 /**
@@ -83,7 +83,7 @@ window.__tft.toggleAutoOpen = (eventsOverride, boardOverride) => {
         console.log('[TFT Debug] Auto-open disabled');
     } else {
         const events = eventsOverride ?? getEvents();
-        const board  = boardOverride  ?? { ...state.board };
+        const board  = boardOverride  ?? state.board.snapshot();
         localStorage.setItem(LS_EVENTS, JSON.stringify(events));
         localStorage.setItem(LS_BOARD,  JSON.stringify(board));
         localStorage.setItem(LS_AUTO,   'true');

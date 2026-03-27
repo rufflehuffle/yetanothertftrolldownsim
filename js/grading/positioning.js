@@ -325,6 +325,6 @@ export function calcPositioning(board) {
 import { state } from '../state.js';
 
 document.addEventListener('roundcomplete', () => {
-    const board = state.board;
+    const board = state.board.snapshot();
     console.log(`[grading/positioning] corner=${mainCarryInCorner(board)} adjTank=${strongestMeleeCarryNextToStrongestTank(board)} tankFront=${mainTankInFrontOfCornerCarry(board)} | meleeBack:`, meleeInBackRow(board), '| rangedFront:', rangedNotInBackRow(board), '| meleeCarryNoTank:', meleeCarriesNotNextToTank(board));
 });
