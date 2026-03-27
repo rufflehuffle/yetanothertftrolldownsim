@@ -1,5 +1,5 @@
 import { pool, traits as traitTable } from './tables.js';
-import { addXp } from './logic.js';
+import { addXp, doRoll } from './logic.js';
 import { state, saveTeamPlan, saveUnlockedOverrides, isOriginallyLocked, setPlannedAsGenerateTarget, syncTeamPlanSlots } from './state.js';
 import { render, computeTraits, getSortedTraitEntries, activeBreakpoint, nextBreakpoint, showTraitTooltip, positionTooltip } from './render.js';
 import { generateBoard } from './board-generation/generator.js';
@@ -709,6 +709,7 @@ export function triggerGenerate41Board() {
     state.bench = result.bench;
     state.board = result.board;
     state.boardGenerated = true;
+    doRoll(false);
     closeTeamPlanner();
     render();
     document.dispatchEvent(new CustomEvent('teamplanchange'));
