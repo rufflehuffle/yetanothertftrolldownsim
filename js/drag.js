@@ -9,7 +9,7 @@ import {
     dispatch, history,
     BuyCommand, SellCommand, MoveUnitCommand
 } from './commands.js';
-import { tbDragging, setTbDragging } from './team-builder.js';
+import { tbDragging, setTbDragging, teamBuilderActive } from './team-builder.js';
 import { playSound } from './audio.js';
 import { isPlanning, isRoundEnd } from './rolldown-state.js';
 
@@ -83,7 +83,7 @@ export function handleDrop(location) {
     if (!dragging || dragging.type === 'shop') return;
     const isBoardBenchSwap = (dragging.type === 'board' && location.type === 'bench') ||
                              (dragging.type === 'bench' && location.type === 'board');
-    if (isPlanning() && isBoardBenchSwap) { playSound('board_full.mp3'); endDrag(); return; }
+    if (isPlanning() && isBoardBenchSwap && !teamBuilderActive) { playSound('board_full.mp3'); endDrag(); return; }
     const ok = dispatch(new MoveUnitCommand(dragging, location));
     if (!ok) playSound('board_full.mp3');
     else     playSound('unit_drop.mp3');
@@ -169,6 +169,13 @@ export function endDrag() {
     sellZone.classList.remove('active');
     sellZone.textContent = 'Sell';
 }
+
+// ============================================================
+// Cancel shop drag on roll
+// ============================================================
+document.addEventListener('shoproll', () => {
+    if (dragging?.type === 'shop') endDrag();
+});
 
 // ============================================================
 // Sell Zone events
@@ -268,7 +275,7 @@ document.addEventListener('mouseup', (e) => {
             const champName = tbDragging;
             const existing = getUnitAt(state, hoveredSlot);
             if (hoveredSlot.type === 'board') {
-                if (!existing && boardCount(state) >= state.level) {
+                if (!existing && boardCount(state) >= state.level && !teamBuilderActive) {
                     playSound('board_full.mp3');
                     const benchIdx = state.bench.findIndex(s => s === null);
                     if (benchIdx !== -1) state.bench[benchIdx] = { name: champName, stars: 1 };

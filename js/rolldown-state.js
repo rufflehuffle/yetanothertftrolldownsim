@@ -21,11 +21,15 @@ const _state = {
 
 export function getRdMode() { return _state.mode; }
 
-export function isPlanning()  { return _state.mode === 'planning'; }
-export function isRound()     { return _state.mode === 'round'; }
-export function isPaused()    { return _state.mode === 'paused'; }
-export function isRoundEnd()  { return _state.mode === 'roundEnd'; }
-export function isFreeroll()  { return _state.mode === 'freeroll'; }
+export function isPlanning()    { return _state.mode === 'planning'; }
+export function isRound()       { return _state.mode === 'round'; }
+export function isPaused()      { return _state.mode === 'paused'; }
+export function isRoundEnd()    { return _state.mode === 'roundEnd'; }
+export function isFreeroll()    { return _state.mode === 'freeroll'; }
+
+/** True while a round is actively in progress (timer running or paused mid-round).
+ *  Loading presets, generating boards, and entering Team Builder are blocked in this state. */
+export function isActiveRound() { return _state.mode === 'round' || _state.mode === 'paused'; }
 
 // ── Core transition ──────────────────────────────────────────
 

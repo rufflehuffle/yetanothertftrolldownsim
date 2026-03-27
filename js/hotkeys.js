@@ -2,7 +2,7 @@ import { dispatch, history, RollCommand, BuyXpCommand, SellCommand, MoveHoveredC
 import { getUnitAt } from './board.js';
 import { hoveredSlot } from './movement.js';
 import {
-    isPlanning, isRound, isPaused, isRoundEnd, isFreeroll,
+    isPlanning, isRound, isPaused, isRoundEnd, isFreeroll, isActiveRound,
     startRound, pauseRound, resumeRound, returnToPlanning, exitFreeroll
 } from './rolldown-state.js';
 import { timerControls } from './timer.js';
@@ -18,7 +18,7 @@ import { addXp } from './shop.js';
 document.addEventListener('keydown', (e) => {
     if (e.key === 'F1') {
         e.preventDefault();
-        if (lastLoadedPreset) loadPreset(lastLoadedPreset);
+        if (lastLoadedPreset && !isActiveRound()) loadPreset(lastLoadedPreset);
         return;
     }
 

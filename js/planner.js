@@ -6,6 +6,7 @@ import { render, computeTraits, getSortedTraitEntries, activeBreakpoint, nextBre
 import { generateBoard } from './board-generation/generator.js';
 import { openTeams, saveActiveTeam, lastLoadedPreset, renameTeam } from './teams.js';
 import { initFilter, getActiveFilterTraits } from './planner-filter.js';
+import { isActiveRound } from './rolldown-state.js';
 
 // ============================================================
 // Constants
@@ -539,7 +540,7 @@ export function toggleTeamPlan(name) {
 // Open / Close
 // ============================================================
 function renderPlannerTitle() {
-    plannerTitleEl.textContent = lastLoadedPreset?.name ?? 'Your Team';
+    plannerTitleEl.textContent = lastLoadedPreset?.name ?? 'New Team';
 }
 
 export function openTeamPlanner() {
@@ -718,7 +719,7 @@ export function triggerGenerate41Board() {
 }
 
 generateBtnEl?.addEventListener('click', () => {
-    triggerGenerate41Board();
+    if (!isActiveRound()) triggerGenerate41Board();
 });
 
 // Target team hover preview

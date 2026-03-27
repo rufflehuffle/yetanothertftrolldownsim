@@ -5,7 +5,7 @@ import { openTeamBuilder, closeTeamBuilder } from './team-builder.js';
 import { openSavePreset } from './teams.js';
 import { ghost } from './drag.js';
 import { dispatch, BuyXpCommand } from './commands.js';
-import { isRoundEnd } from './rolldown-state.js';
+import { isRoundEnd, isActiveRound } from './rolldown-state.js';
 
 // ============================================================
 // Level dropdown
@@ -67,5 +67,5 @@ import { isRoundEnd } from './rolldown-state.js';
 // ============================================================
 document.querySelector('.buy-xp-button').addEventListener('click', () => { if (!isRoundEnd()) dispatch(new BuyXpCommand()); });
 
-document.querySelector('.builder-btn').addEventListener('click', () => openTeamBuilder(ghost, openSavePreset));
+document.querySelector('.builder-btn').addEventListener('click', () => { if (!isActiveRound()) openTeamBuilder(ghost, openSavePreset); });
 document.querySelector('.rolldown-btn').addEventListener('click', closeTeamBuilder);
