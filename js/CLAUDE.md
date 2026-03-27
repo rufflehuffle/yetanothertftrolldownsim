@@ -4,7 +4,7 @@
 |------|------|
 | `state.js` | Singleton `state` + localStorage helpers |
 | `tables.js` | Read-only data: pool, traits, shop_odds, xp_to_level (see tables.js Reference below) |
-| `board.js` | **Pure.** Board constants, queries (`boardCount`, `findEmptyBoardHex`), unit accessors — no app imports |
+| `board.js` | **Pure.** `Board` class, constants, queries (`boardCount`, `findEmptyBoardHex`), unit accessors — no app imports |
 | `shop.js` | **Pure.** Shop rolling, economy (`doRoll`, `addXp`, `buyXp`) — imports only `tables.js` |
 | `units.js` | **Pure.** Champion queries, star-up, buy/sell — imports `tables.js` + `board.js` |
 | `movement.js` | **Pure.** `moveUnit`, hovered-slot state — imports only `board.js` |
@@ -30,7 +30,7 @@
 | `grading/` | Five grading modules; see [`grading/CLAUDE.md`](grading/CLAUDE.md) |
 
 **Dependency rules:**
-- `state.js` and `tables.js` are leaf nodes — no imports from other app modules
+- `state.js` imports `Board` from `board.js`; `tables.js` has no app imports
 - `board.js`, `shop.js`, `units.js`, `movement.js` are **pure** — all functions take `state` as first parameter, no side effects (no render/audio calls). Only import from `tables.js` and each other
 - `commands.js` is the **orchestrator** — the only module that wires state + logic + render + audio together
 - `effects.js` exists to keep summon logic separate from `units.js`; takes `state` param, caller renders
@@ -45,7 +45,7 @@ state = {
   gold, level, xp,
   shop: string[5],            // champion names or null
   bench: Array(9),            // null | { name, stars }
-  board: { A1..D7 },          // null | { name, stars }
+  board: Board,               // Board instance (see Board Class below)
   teamPlan: Set,              // planned champion names
   teamPlanSlots: Array(10),   // ordered slots for planner grid
   targetTeam: Set | null,     // board-gen override
@@ -59,6 +59,71 @@ state = {
 
 ---
 
+## Board Class (`board.js`)
+
+`state.board` is a `Board` instance that manages 28 hex slots (A1–A7, B1–B7, C1–C7, D1–D7). Each slot holds `null` or `{ name, stars }`. Slots are stored internally in `_slots` — never access `_slots` directly from outside `board.js`.
+
+### Slot access
+
+```js
+board.get('A1')              // → null | { name, stars }
+board.set('A1', { name: 'Lux', stars: 1 })
+board.set('A1', null)        // clear a single slot
+```
+
+### Iteration
+
+```js
+board.keys()                 // → ['D1', 'D2', ..., 'A7']  (string[])
+board.values()               // → [null, { name, stars }, ...]  (array)
+board.entries()              // → [['D1', null], ['D2', { name, stars }], ...]
+```
+
+These return plain arrays, so `.filter()`, `.map()`, `.some()`, `.every()` all work directly.
+
+### Snapshot and restore
+
+```js
+const snap = board.snapshot()     // → plain { A1: null, A2: { ... }, ... } (deep copy)
+board.restore(snap)               // load from a plain object snapshot (deep copy in)
+board.clear()                     // null all 28 slots
+```
+
+`snapshot()` returns a plain object suitable for JSON serialization, undo history, and passing to subsystems (grading, postrd) that expect `board[key]` / `Object.values(board)`.
+
+### Shop-related methods
+
+```js
+board.getThreeStarredChampions(state.bench)   // → Set<string> of 3-starred champion names
+board.countOwnedCopies(state.bench)           // → { champName: copyCount, ... }
+```
+
+Both scan bench + board. Copy counts: 1-star = 1, 2-star = 3, 3-star = 9.
+
+### Construction
+
+```js
+new Board()              // empty board (all slots null) — used by state.js
+Board.from(plainObj)     // create Board from a plain { A1: ..., D7: ... } object
+```
+
+`Board.from()` is used when receiving plain board objects from external sources (board generator, localStorage).
+
+### Boundary rules
+
+| Context | Board form | How to convert |
+|---------|-----------|----------------|
+| Live game state (`state.board`) | `Board` instance | — |
+| Undo snapshots (`commands.js`) | Plain object | `board.snapshot()` to save, `board.restore(snap)` to load |
+| Round event log (`round.js`) | Plain object | `board.snapshot()` |
+| Saved presets (`teams.js`) | Plain object | `board.snapshot()` to save, `board.restore(obj)` to load |
+| Board generator results | Plain object | `Board.from(result.board)` |
+| Grading / postrd subsystems | Plain object | Always pass `board.snapshot()` at the boundary |
+
+**Key rule:** grading and postrd modules never receive a `Board` instance. Always convert to a plain object with `snapshot()` before passing to those subsystems.
+
+---
+
 ## Key Invariants
 
 - **Always `dispatch(cmd)`** — never call `buyChamp`, `sellUnit`, `moveUnit` directly from UI code
@@ -68,6 +133,8 @@ state = {
 - **Board cap:** `boardCount(state) >= state.level` blocks placing a non-board unit onto an empty hex
 - **`history.clear()` after** `loadPreset()` and team-builder drops
 - **Star-up is recursive** — `checkStarUp(state, champName)` handles 1★→2★→3★ in a single buy
+- **Use Board API for `state.board`** — `.get(key)` / `.set(key, unit)` for slot access, `.values()` / `.entries()` / `.keys()` for iteration. Never use bracket access (`state.board[key]`) or `Object.values(state.board)`.
+- **Snapshot at subsystem boundaries** — pass `state.board.snapshot()` (not the Board instance) to grading, postrd, serialization, and undo history
 
 ---
 
