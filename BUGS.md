@@ -1,7 +1,6 @@
 # Bugs
 
 ## Gameplay / Logic
-- Units can still appear in shop after being 3-starred
 - Inactive traits reorder based on unit positions on board (expected: some fixed order by breakpoints?)
 - Presets don't load with XP in the bank
 
