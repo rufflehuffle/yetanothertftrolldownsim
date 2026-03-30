@@ -1,7 +1,9 @@
-# Bugs
+# Bugs + Unintended Behavior
 
 ## Trait Panel
 - Inactive traits reorder based on unit positions on board (expected: some fixed order by breakpoints?)
+- Trait breakpoint colors are wrong.
+  - Space Groove 7 -> prismatic, should be gold
 
 ## Input / Controls
 - Can drag star indicators and unit count if clicking the right spot in board-bench gap
@@ -12,8 +14,5 @@
 - HUD is messed up and clippy in TB mode
 - Presets don't load with XP in the bank
 
-## Unit / Trait / Set Specific
-- Galio can be fielded
-- Unlock condition doesn't load properly
-- Ice Tower, Tibbers, and Azir Soldiers have hardcoded hex placements and overwrite units
-- Shop, planner, etc. don't support 7-cost units
+## Post RD Review
+- Scrolling through feels slow
