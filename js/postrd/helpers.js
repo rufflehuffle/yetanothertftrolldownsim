@@ -2,7 +2,8 @@
 // postrd/helpers.js — Pure utilities shared across post-RD modules
 // ============================================================
 
-import { pool, traits as traitTable } from '../tables.js';
+import { pool } from '../data/pool.js';
+import { traits as traitTable } from '../data/traits.js';
 
 // ── Grade scale ──────────────────────────────────────────────
 export function scoreToGrade(score) {

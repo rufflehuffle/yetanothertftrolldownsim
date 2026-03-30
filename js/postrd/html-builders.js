@@ -2,7 +2,7 @@
 // postrd/html-builders.js — HTML string builders for snapshot display
 // ============================================================
 
-import { traits as traitTable } from '../tables.js';
+import { traits as traitTable } from '../data/traits.js';
 import {
     starsText, starColor, costColor, traitTierColor,
     activeBreakpoint, champIcon, champCost, champSynergies,

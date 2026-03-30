@@ -1,4 +1,4 @@
-import { pool } from './tables.js';
+import { pool } from './data/pool.js';
 import { state } from './state.js';
 import { render, renderShopSlot } from './render.js';
 import { getChampAt, getUnitAt, boardCount, findEmptyBoardHex } from './board.js';

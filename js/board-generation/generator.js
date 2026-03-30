@@ -1,4 +1,4 @@
-import { pool } from '../tables.js';
+import { pool } from '../data/pool.js';
 import { isOriginallyLocked } from '../state.js';
 import { getBestBoard, getStrongestTankAndCarry, calcBoardStrength } from '../board-strength.js';
 import { SHOP_SEQUENCE, SECONDARY_GOLD_FLOOR, FRONTLINE_ROLES } from './constants.js';

@@ -6,7 +6,7 @@ import { getUnitAt, boardCount, findEmptyBoardHex } from './board.js';
 import { doRoll, buyXp } from './shop.js';
 import { buyChamp, sellUnit } from './units.js';
 import { moveUnit, hoveredSlot } from './movement.js';
-import { pool } from './tables.js';
+import { pool } from './data/pool.js';
 import { record } from './round.js';
 
 // ============================================================

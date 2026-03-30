@@ -15,7 +15,7 @@
 //   • Offset rows (B, D):     adjacent cols in non-offset row are [col, col+1]
 // ──────────────────────────────────────────────────────────────
 
-import { pool } from '../tables.js';
+import { pool } from '../data/pool.js';
 import { TWO_RANGE_UNITS } from '../board-generation/constants.js';
 
 const RANGED_ROLES      = new Set(['Marksman', 'Caster', 'Specialist']);

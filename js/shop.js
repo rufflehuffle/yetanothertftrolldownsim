@@ -1,4 +1,6 @@
-import { pool, shop_odds, xp_to_level } from './tables.js';
+import { pool } from './data/pool.js';
+import { shop_odds } from './data/shop-odds.js';
+import { xp_to_level } from './data/xp.js';
 
 // ============================================================
 // Shop & economy

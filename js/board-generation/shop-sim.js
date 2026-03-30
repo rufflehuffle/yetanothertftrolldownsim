@@ -1,4 +1,5 @@
-import { pool, shop_odds } from '../tables.js';
+import { pool } from '../data/pool.js';
+import { shop_odds } from '../data/shop-odds.js';
 import { weightedRandom } from './helpers.js';
 
 // Simulate one 5-slot shop at the given level.

@@ -1,4 +1,4 @@
-import { pool } from '../tables.js';
+import { pool } from '../data/pool.js';
 import { FRONTLINE_ROLES, BACKLINE_ROLES, TANK_CLASS, TWO_RANGE_UNITS } from './constants.js';
 
 // ============================================================

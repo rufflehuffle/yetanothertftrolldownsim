@@ -2,7 +2,7 @@
 // postrd/postrd.js — Post-RD modal: pentagon chart + score history
 // ============================================================
 
-import { pool } from '../tables.js';
+import { pool } from '../data/pool.js';
 import { state } from '../state.js';
 import { getEvents } from '../round.js';
 import { initAnalysis, onAnalysisVisible } from './analysis.js';

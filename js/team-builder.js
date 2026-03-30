@@ -1,4 +1,4 @@
-import { pool } from './tables.js';
+import { pool } from './data/pool.js';
 import { state, isOriginallyLocked } from './state.js';
 import { render } from './render.js';
 import { getUnitAt, findEmptyBoardHex } from './board.js';

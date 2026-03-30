@@ -2,7 +2,8 @@
 // discipline.js — Discipline Scoring Helpers
 // ============================================================
 
-import { pool, shop_odds } from '../tables.js';
+import { pool } from '../data/pool.js';
+import { shop_odds } from '../data/shop-odds.js';
 import { _countOwnedCopies, _totalRemainingByCost, avgShopsForCopies, plannerCarryName, plannerTankName } from './helper.js';
 
 /** Returns true if a 2★ copy of `unitName` exists on board or bench. */

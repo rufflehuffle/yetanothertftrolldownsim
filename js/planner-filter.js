@@ -1,4 +1,5 @@
-import { pool, traits } from './tables.js';
+import { pool } from './data/pool.js';
+import { traits } from './data/traits.js';
 
 // --- Data: count how many champions share each trait ---
 const traitCounts = {};

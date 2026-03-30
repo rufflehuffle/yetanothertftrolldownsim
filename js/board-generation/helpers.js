@@ -1,4 +1,5 @@
-import { pool, traits as traitTable } from '../tables.js';
+import { pool } from '../data/pool.js';
+import { traits as traitTable } from '../data/traits.js';
 
 export function localActiveBreakpoint(traitName, count) {
     const bp = traitTable[traitName]?.breakpoints ?? [];

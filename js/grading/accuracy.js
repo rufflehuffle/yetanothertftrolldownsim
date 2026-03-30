@@ -2,7 +2,7 @@
 // accuracy.js — Accuracy Scoring
 // ============================================================
 
-import { pool } from '../tables.js';
+import { pool } from '../data/pool.js';
 import { avgShopsForCopies, plannerCarryName, plannerTankName } from './helper.js';
 
 // ── Missed Units ──────────────────────────────────────────────

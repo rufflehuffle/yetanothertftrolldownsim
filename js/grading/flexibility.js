@@ -2,7 +2,8 @@
 // flexibility.js — Flexibility Scoring
 // ============================================================
 
-import { pool, traits } from '../tables.js';
+import { pool } from '../data/pool.js';
+import { traits } from '../data/traits.js';
 
 const TANK_ROLE           = 'Tank';
 const TANK_SYNERGY_TRAITS = new Set(['Defender', 'Bruiser', 'Juggernaut', 'Warden']);

@@ -1,4 +1,4 @@
-import { pool } from './tables.js';
+import { pool } from './data/pool.js';
 import { Board } from './board.js';
 
 // ============================================================

@@ -2,7 +2,8 @@
 // helper.js — Shared Grading Helpers
 // ============================================================
 
-import { pool, shop_odds } from '../tables.js';
+import { pool } from '../data/pool.js';
+import { shop_odds } from '../data/shop-odds.js';
 
 /**
  * Count how many physical copies of a unit the player owns across board and bench.

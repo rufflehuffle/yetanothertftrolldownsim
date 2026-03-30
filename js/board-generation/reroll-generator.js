@@ -1,4 +1,4 @@
-import { pool } from '../tables.js';
+import { pool } from '../data/pool.js';
 import { getBestBoard, getStrongestTankAndCarry, calcBoardStrength } from '../board-strength.js';
 import { FRONTLINE_ROLES, SECONDARY_GOLD_FLOOR } from './constants.js';
 import { localActiveBreakpoint, localSellValue, buildTraitCounts } from './helpers.js';

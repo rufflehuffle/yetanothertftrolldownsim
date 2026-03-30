@@ -2,7 +2,7 @@
 // postrd/renderers.js — Stateless DOM writers for snapshot display
 // ============================================================
 
-import { traits as traitTable } from '../tables.js';
+import { traits as traitTable } from '../data/traits.js';
 import { BOARD_ROWS, activeBreakpoint } from './helpers.js';
 import { hexWrapHTML, benchWrapHTML, shopSlotHTML, computeTraits, traitRowHTML } from './html-builders.js';
 import { calcApm, calcRolldownSpeed } from '../grading/speed.js';

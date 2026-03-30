@@ -1,4 +1,5 @@
-import { pool, traits } from './tables.js';
+import { pool } from './data/pool.js';
+import { traits } from './data/traits.js';
 
 // ─── Load trait strength data ─────────────────────────────────────────────────
 let TRAIT_STRENGTH = {};

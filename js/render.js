@@ -1,5 +1,7 @@
-import { pool, traits as traitTable, xp_to_level } from './tables.js';
-import { shop_odds } from './tables.js';
+import { pool } from './data/pool.js';
+import { traits as traitTable } from './data/traits.js';
+import { shop_odds } from './data/shop-odds.js';
+import { xp_to_level } from './data/xp.js';
 import { state } from './state.js';
 import { boardCount } from './board.js';
 
@@ -96,9 +98,23 @@ export function positionTooltip(e) {
 export function showTraitTooltip(e, traitName, activeBP) {
     const lines = [];
     if (activeBP > 0) {
-        lines.push(`<span class="tt-active">✦ ${traitName} (${activeBP} active)</span>`);
+        lines.push(`<span class="tt-active">${traitName}</span>`);
     } else {
         lines.push(`<span class="tt-name">${traitName}</span>`);
+    }
+    const desc = traitTable[traitName]?.description;
+    if (desc) lines.push(`<span class="tt-desc">${desc}</span>`);
+
+    const bpDescs = traitTable[traitName]?.breakpoint_descriptions;
+    const bps     = traitTable[traitName]?.breakpoints ?? [];
+    const tiers   = traitTable[traitName]?.breakpoint_tiers ?? [];
+    if (bpDescs?.length) {
+        lines.push('<div class="tt-breakpoints">');
+        for (let i = 0; i < bps.length; i++) {
+            const isActive = bps[i] === activeBP;
+            lines.push(`<div class="tt-bp${isActive ? ' tt-bp-active' : ''}" data-tier="${tiers[i] ?? ''}"><span class="tt-bp-num">(${bps[i]})</span> ${bpDescs[i] ?? ''}</div>`);
+        }
+        lines.push('</div>');
     }
     lines.push('<hr class="tt-divider">');
 
@@ -115,7 +131,7 @@ export function showTraitTooltip(e, traitName, activeBP) {
         const active = onBoard.has(champ.name);
         lines.push(`
             <div class="tt-unit-icon${active ? '' : ' tt-unit-inactive'}" title="${champ.name}">
-                <img src="${champ.icon}" alt="${champ.name}">
+                <div class="tt-unit-img-wrap" data-cost="${champ.cost}"><img src="${champ.icon}" alt="${champ.name}"></div>
                 <span class="tt-unit-name">${champ.name}</span>
             </div>
         `);

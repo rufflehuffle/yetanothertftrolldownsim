@@ -1,4 +1,4 @@
-import { pool } from '../tables.js';
+import { pool } from '../data/pool.js';
 import { TANK_CLASS } from './constants.js';
 import { buildTraitCounts, localActiveBreakpoint } from './helpers.js';
 

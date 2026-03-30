@@ -1,4 +1,5 @@
-import { pool, traits as traitTable } from './tables.js';
+import { pool } from './data/pool.js';
+import { traits as traitTable } from './data/traits.js';
 import { state, _originallyLocked, isOriginallyLocked, saveTeamPlan, saveUnlockedOverrides, syncTeamPlanSlots } from './state.js';
 import { Board } from './board.js';
 import { generateBoard, buildTraitCounts } from './board-generation/generator.js';
