@@ -41,6 +41,7 @@ let dragSourceEl = null;
 let shopDragActivated = false;
 
 export function handleDragStart(e, location) {
+    if (e.button !== 0) return;
     const champName = getChampAt(state, location);
     if (!champName) return;
     dragging = location;

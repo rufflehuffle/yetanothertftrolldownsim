@@ -3,7 +3,7 @@ import { traits } from './data/traits.js';
 
 function preloadImage(href) {
     const link = document.createElement('link');
-    link.rel = 'preload';
+    link.rel = 'prefetch';
     link.as = 'image';
     link.href = href;
     document.head.appendChild(link);
