@@ -3,7 +3,7 @@ import { traits as traitTable } from './data/traits.js';
 import { state, _originallyLocked, isOriginallyLocked, saveTeamPlan, saveUnlockedOverrides, syncTeamPlanSlots } from './state.js';
 import { Board } from './board.js';
 import { generateBoard, buildTraitCounts } from './board-generation/generator.js';
-import { is2CostReroll, get2CostCarryAndTank } from './board-generation/detect-reroll.js';
+import { is2CostReroll, get2CostCarryAndTank, detectArchetype, ARCHETYPE_LABEL, ARCHETYPE_ICON } from './board-generation/detect-reroll.js';
 import { render } from './render.js';
 import { doRoll } from './shop.js';
 import { teamBuilderActive, buildTbPicker } from './team-builder.js';
@@ -186,6 +186,7 @@ export function saveActiveTeam() {
             teamPlan: [...state.teamPlan],
             targetTeam: [...(state.targetTeam ?? [])],
             autoGenerateTeam: false,
+            generationOverride: null,
             unlocks: Object.values(pool)
                 .filter(c => isOriginallyLocked(c.name) && c.unlocked)
                 .map(c => c.name),
@@ -225,6 +226,19 @@ export function saveActiveTeam() {
 history.addListener(saveActiveTeam);
 
 // ============================================================
+// Set the generation archetype override for the active preset.
+// Pass null to revert to auto-detection.
+// ============================================================
+export function setPresetOverride(id, override) {
+    const all = loadTeams();
+    const t = all.find(t => t.id === id);
+    if (!t) return;
+    t.generationOverride = override;
+    Object.assign(lastLoadedPreset, t);
+    saveTeams(all);
+}
+
+// ============================================================
 // NEW button — create blank team and open planner
 // ============================================================
 document.querySelector('.teams__new-btn').addEventListener('click', () => {
@@ -240,6 +254,7 @@ document.querySelector('.teams__new-btn').addEventListener('click', () => {
         teamPlan: [],
         targetTeam: [],
         autoGenerateTeam: false,
+        generationOverride: null,
         unlocks: [],
     };
 
@@ -276,6 +291,7 @@ teamsPasteBtnEl.addEventListener('click', async () => {
         teamPlan: [],
         targetTeam: [],
         autoGenerateTeam: false,
+        generationOverride: null,
         unlocks: [],
     };
     allTeams.push(team);
@@ -318,25 +334,34 @@ function renderTeamsList() {
         nameEl.className = 'team__name';
         nameEl.textContent = team.name;
 
-        const levelEl = document.createElement('div');
-        levelEl.className = 'team__level';
-        levelEl.textContent = `Lv ${team.level}`;
-
-        const goldEl = document.createElement('div');
-        goldEl.className = 'team__gold';
-        goldEl.textContent = `${team.gold}g`;
-
         nameRow.appendChild(nameEl);
 
-        nameRow.appendChild(levelEl);
-        nameRow.appendChild(goldEl);
+        // Archetype label — inline after team name (display-only)
+        const planNames = team.teamPlan ?? [];
+        const archetypeNames = planNames.filter(n => pool[n]);
+        if (archetypeNames.length) {
+            const archetype = team.generationOverride
+                ?? detectArchetype(archetypeNames);
+            if (archetype) {
+                const labelEl = document.createElement('div');
+                labelEl.className = 'team__archetype-label';
+                const iconEl = document.createElement('img');
+                iconEl.src = ARCHETYPE_ICON[archetype];
+                iconEl.className = 'team__archetype-icon';
+                const textEl = document.createElement('span');
+                textEl.textContent = ARCHETYPE_LABEL[archetype];
+                labelEl.appendChild(iconEl);
+                labelEl.appendChild(textEl);
+                nameRow.appendChild(labelEl);
+            }
+        }
+
         container.appendChild(nameRow);
 
         // Unit slots sourced from teamPlan (planner units)
         const unitsEl = document.createElement('div');
         unitsEl.className = 'team__units';
 
-        const planNames = team.teamPlan ?? [];
         for (let i = 0; i < 10; i++) {
             const slot = document.createElement('div');
             if (i < planNames.length) {
@@ -585,7 +610,7 @@ export function loadPreset(team) {
     if (team.autoGenerateTeam) {
         // Override board/bench with a generated layout (4-1 or 3-2 reroll)
         const target = team.targetTeam?.length ? new Set(team.targetTeam) : new Set(team.teamPlan ?? []);
-        const result = target.size ? generateBoard(target) : null;
+        const result = target.size ? generateBoard(target, team.generationOverride ?? null) : null;
         if (result) {
             const generated = {
                 ...team,

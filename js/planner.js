@@ -5,7 +5,8 @@ import { Board } from './board.js';
 import { state, saveTeamPlan, saveUnlockedOverrides, isOriginallyLocked, setPlannedAsGenerateTarget, syncTeamPlanSlots } from './state.js';
 import { render, computeTraits, getSortedTraitEntries, activeBreakpoint, nextBreakpoint, showTraitTooltip, positionTooltip } from './render.js';
 import { generateBoard } from './board-generation/generator.js';
-import { openTeams, saveActiveTeam, lastLoadedPreset, renameTeam } from './teams.js';
+import { openTeams, saveActiveTeam, lastLoadedPreset, renameTeam, setPresetOverride } from './teams.js';
+import { detectArchetype, ARCHETYPES, ARCHETYPE_LABEL, ARCHETYPE_ICON } from './board-generation/detect-reroll.js';
 import { initFilter, getActiveFilterTraits } from './planner-filter.js';
 import { isActiveRound } from './rolldown-state.js';
 
@@ -118,6 +119,107 @@ const setTargetBtnEl    = document.querySelector('.planner-selected__set-target-
 const pasteBtnEl        = document.querySelector('.planner-selected__paste-btn');
 const plannerTitleEl    = document.querySelector('.planner-selected__title');
 const plannerEditBtnEl  = document.querySelector('.planner-selected__edit-btn');
+
+// ============================================================
+// Archetype label — inline after .planner-selected__title
+// ============================================================
+const archetypeLabelEl = document.createElement('div');
+archetypeLabelEl.className = 'planner-archetype-label';
+archetypeLabelEl.style.display = 'none';
+plannerTitleEl.after(archetypeLabelEl);
+
+let _openArchetypeDropdown = null;
+
+function refreshArchetypeLabel() {
+    archetypeLabelEl.innerHTML = '';
+
+    const names = [...state.teamPlan].filter(n => pool[n]);
+    if (!names.length) {
+        archetypeLabelEl.style.display = 'none';
+        return;
+    }
+
+    const override  = lastLoadedPreset?.generationOverride ?? null;
+    const detected  = detectArchetype(names);
+    const effective = override ?? detected;
+
+    archetypeLabelEl.style.display = 'flex';
+
+    const iconEl = document.createElement('img');
+    iconEl.className = 'archetype-label__icon';
+    iconEl.src = ARCHETYPE_ICON[effective];
+    archetypeLabelEl.appendChild(iconEl);
+
+    const textEl = document.createElement('span');
+    textEl.className = 'archetype-label__text';
+    textEl.textContent = ARCHETYPE_LABEL[effective];
+    archetypeLabelEl.appendChild(textEl);
+
+    if (override) {
+        const lockEl = document.createElement('img');
+        lockEl.className = 'archetype-label__lock';
+        lockEl.src = 'img/lock.png';
+        archetypeLabelEl.appendChild(lockEl);
+    }
+}
+
+archetypeLabelEl.addEventListener('click', e => {
+    e.stopPropagation();
+
+    if (_openArchetypeDropdown) {
+        _openArchetypeDropdown.remove();
+        _openArchetypeDropdown = null;
+        return;
+    }
+
+    if (!lastLoadedPreset) return;
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'archetype-dropdown';
+
+    const currentOverride = lastLoadedPreset?.generationOverride ?? null;
+    const names = [...state.teamPlan].filter(n => pool[n]);
+    const detected = detectArchetype(names);
+
+    const options = [{ key: 'auto', icon: detected ? ARCHETYPE_ICON[detected] : 'img/xp.png', label: 'Auto' },
+        ...ARCHETYPES.map(a => ({ key: a, icon: ARCHETYPE_ICON[a], label: ARCHETYPE_LABEL[a] }))];
+
+    for (const opt of options) {
+        const item = document.createElement('div');
+        item.className = 'archetype-dropdown__item';
+        const isSelected = opt.key === 'auto' ? currentOverride === null : currentOverride === opt.key;
+        if (isSelected) item.classList.add('archetype-dropdown__item--selected');
+
+        const optIcon = document.createElement('img');
+        optIcon.className = 'archetype-dropdown__icon';
+        optIcon.src = opt.icon;
+        item.appendChild(optIcon);
+
+        const optText = document.createElement('span');
+        optText.textContent = opt.label;
+        item.appendChild(optText);
+
+        item.addEventListener('click', ev => {
+            ev.stopPropagation();
+            setPresetOverride(lastLoadedPreset.id, opt.key === 'auto' ? null : opt.key);
+            dropdown.remove();
+            _openArchetypeDropdown = null;
+            refreshArchetypeLabel();
+        });
+
+        dropdown.appendChild(item);
+    }
+
+    archetypeLabelEl.appendChild(dropdown);
+    _openArchetypeDropdown = dropdown;
+});
+
+document.addEventListener('click', () => {
+    if (_openArchetypeDropdown) {
+        _openArchetypeDropdown.remove();
+        _openArchetypeDropdown = null;
+    }
+});
 
 // ============================================================
 // Undo stack  (stores serialised Set snapshots)
@@ -323,7 +425,7 @@ export function buildPicker() {
         header.className = 'planner-picker__group-header';
         const headerIcon = document.createElement('img');
         headerIcon.className = 'planner-picker__group-icon';
-        headerIcon.src = 'https://wiki.leagueoflegends.com/en-us/images/thumb/Gold_colored_icon.png/20px-Gold_colored_icon.png?39991';
+        headerIcon.src = 'img/gold-coin.png';
         headerIcon.alt = '';
         header.appendChild(headerIcon);
         const headerText = document.createElement('div');
@@ -434,6 +536,8 @@ export function renderTeamGrid() {
 
         teamGridEl.appendChild(slot);
     }
+
+    refreshArchetypeLabel();
 }
 
 // ============================================================
@@ -542,6 +646,7 @@ export function toggleTeamPlan(name) {
 // ============================================================
 function renderPlannerTitle() {
     plannerTitleEl.textContent = lastLoadedPreset?.name ?? 'New Team';
+    refreshArchetypeLabel();
 }
 
 export function openTeamPlanner() {
@@ -703,7 +808,7 @@ plannerEditBtnEl?.addEventListener('click', () => {
 export function triggerGenerate41Board() {
     const target = state.targetTeam ?? state.teamPlan;
     if (!target.size) return false;
-    const result = generateBoard(target);
+    const result = generateBoard(target, lastLoadedPreset?.generationOverride ?? null);
     if (!result) return false;
     state.gold  = result.gold;
     state.level = result.level;
