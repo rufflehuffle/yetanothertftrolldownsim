@@ -16,7 +16,9 @@
 | `timer.js` | Countdown; fills board from bench on expiry |
 | `main.js` | Entry point: wires modules, sets start guard, kicks off first roll |
 | `drag.js` | Drag/drop: shop buy, board/bench swap, team-builder placement |
-| `hotkeys.js` | All keyboard shortcuts |
+| `hotkey-bindings.js` | Rebindable action store — `getKey(id)`, `setKey(id, key)`, `resetBindings()`, `matches(e, id)`; persists to localStorage |
+| `hotkeys.js` | All keyboard shortcuts — reads live bindings via `matches()` from `hotkey-bindings.js` |
+| `hotkeys-modal.js` | Hotkeys modal — dynamic render, click-to-rebind UX, reset button; opens via options-btn |
 | `hud.js` | Level dropdown, gold input, builder button |
 | `overlay.js` | Shop overlay (Start/Reset) and pause overlay |
 | `popup.js` | No-comp popup when board and planner are both empty |

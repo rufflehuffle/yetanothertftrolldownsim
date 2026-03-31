@@ -5,10 +5,15 @@
 | `constants.js` | Role sets (`TANK_CLASS`, `FRONTLINE_ROLES`, `BACKLINE_ROLES`, `TWO_RANGE_UNITS`), `SHOP_SEQUENCE`, `SECONDARY_GOLD_FLOOR` |
 | `helpers.js` | `localActiveBreakpoint`, `weightedRandom`, `localSellValue`, `buildTraitCounts` |
 | `shop-sim.js` | `simulateShop` — weighted pool draw for one 5-slot shop at a given level |
-| `carry-tank.js` | `getMainCarryAndTank` — infer best carry and tank from the planned comp |
+| `carry-tank.js` | `getMainCarryAndTank` (prefers 4-cost), `getFast9CarryAndTank` (prefers 5-cost) — infer best carry and tank from the planned comp |
+| `detect-reroll.js` | `is1CostReroll`, `is2CostReroll`, `is3CostReroll`, `isFast9` — comp detection; `get1CostCarryAndTank`, `get2CostCarryAndTank`, `get3CostCarryAndTank` — cost-tier carry/tank selection; `detectArchetype(targetNames)` — unified archetype resolver returning one of `ARCHETYPES`; `ARCHETYPES`, `ARCHETYPE_LABEL`, `ARCHETYPE_ICON` — display metadata used by UI. **⚠ Note:** `is1CostReroll`, `is3CostReroll`, and `isFast9` heuristics are AI-assisted first drafts — validate against real comps before relying on them. |
 | `positioning.js` | `buildSpread`, `placeBoardUnits` — hex layout logic |
-| `generator.js` | `generate41Board` — main orchestrator; re-exports `buildTraitCounts` |
-| `../board-strength.js` | `getBestBoard`, `AVG_EHP`, `AVG_DPS` — EHP×DPS scoring consumed by `generator.js` |
+| `generator.js` | `generateBoard(teamPlan, override?)` router + `generate41Board` (Fast 8); re-exports `buildTraitCounts`. Pass `override` (one of `ARCHETYPES`) to bypass auto-detection. |
+| `reroll-generator.js` | `generate32Board` — 2-cost reroll (Lv.5, 100g at 3-2) |
+| `reroll-generator-1cost.js` | `generate31Board` — 1-cost reroll (Lv.4, 60g at 3-1) |
+| `reroll-generator-3cost.js` | `generate51Board` — 3-cost reroll (Lv.7, 80g at 5-1) |
+| `fast9-generator.js` | `generate52Board` — Fast 9 (Lv.8, 150g at 5-2) |
+| `../board-strength.js` | `getBestBoard`, `AVG_EHP`, `AVG_DPS` — EHP×DPS scoring consumed by generator files |
 | `../board-generator.js` | Re-export shim so existing importers (`planner.js`, `teams.js`) need no changes |
 
 ---
@@ -17,7 +22,7 @@
 
 **Inputs:** `teamPlan` (Set of champion names)
 
-**Budget:** Lv.7, 140g at 4-1. Standard curve: `SHOP_SEQUENCE = [2,3,3,4,4,4,5,5,5,5,6,6,6,7,7,7]`.
+**Budget:** Lv.7, 140g at 4-1. Standard curve: `[2,3,3,4,4,4,5,5,5,5,6,6,6,7,7,7]`.
 
 **Steps per attempt (up to 1000 attempts, keep best 5):**
 1. **Shop simulation** (`shop-sim.js`) — draw 16 shops weighted by pool odds; buy priority targets freely, secondary targets only if gold ≥ `SECONDARY_GOLD_FLOOR` (20g).
