@@ -1,4 +1,5 @@
 import { pool } from './data/pool.js';
+import { traits as traitTable } from './data/traits.js';
 import { state, isOriginallyLocked } from './state.js';
 import { render } from './render.js';
 import { getUnitAt, findEmptyBoardHex } from './board.js';
@@ -13,6 +14,79 @@ export function setTbDragging(val) { tbDragging = val; }
 
 // Ghost element is passed in from main.js when openTeamBuilder is called
 let _ghost = null;
+
+// ============================================================
+// Unit hover hint
+// ============================================================
+const tbHintPanel = document.createElement('div');
+tbHintPanel.className = 'tb-unit-hint';
+document.body.appendChild(tbHintPanel);
+
+function showTbHint(champ, anchorEl) {
+    tbHintPanel.innerHTML = '';
+
+    const header = document.createElement('div');
+    header.className = 'tb-unit-hint__header';
+
+    const icon = document.createElement('img');
+    icon.className = 'tb-unit-hint__icon';
+    icon.src = champ.icon;
+    icon.alt = champ.name;
+    header.appendChild(icon);
+
+    const info = document.createElement('div');
+    info.className = 'tb-unit-hint__info';
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'tb-unit-hint__name';
+    nameEl.textContent = champ.name;
+    info.appendChild(nameEl);
+
+    const roleEl = document.createElement('div');
+    roleEl.className = 'tb-unit-hint__role';
+    roleEl.textContent = `${champ.damageType} ${champ.role}`;
+    info.appendChild(roleEl);
+
+    header.appendChild(info);
+    tbHintPanel.appendChild(header);
+
+    const hr = document.createElement('hr');
+    hr.className = 'tb-unit-hint__hr';
+    tbHintPanel.appendChild(hr);
+
+    const traitsEl = document.createElement('div');
+    traitsEl.className = 'tb-unit-hint__traits';
+    for (const trait of champ.synergies) {
+        const traitData = traitTable[trait];
+        const row = document.createElement('div');
+        row.className = 'tb-unit-hint__trait';
+        if (traitData) {
+            const traitIcon = document.createElement('img');
+            traitIcon.className = 'tb-unit-hint__trait-icon';
+            traitIcon.src = traitData.icon;
+            traitIcon.alt = '';
+            row.appendChild(traitIcon);
+        }
+        const traitName = document.createElement('span');
+        traitName.className = 'tb-unit-hint__trait-name';
+        traitName.textContent = trait;
+        row.appendChild(traitName);
+        traitsEl.appendChild(row);
+    }
+    tbHintPanel.appendChild(traitsEl);
+
+    const rect = anchorEl.getBoundingClientRect();
+    tbHintPanel.style.display = 'block';
+    const hintH = tbHintPanel.offsetHeight;
+    const top = Math.min(rect.top, window.innerHeight - hintH - 8);
+    tbHintPanel.style.top = `${top}px`;
+    tbHintPanel.style.left = `${rect.left - 8}px`;
+    tbHintPanel.style.transform = 'translateX(-100%)';
+}
+
+function hideTbHint() {
+    tbHintPanel.style.display = 'none';
+}
 
 const tbPickerPanel    = document.querySelector('.tb-picker-panel');
 const tbPickerInner    = document.querySelector('.tb-picker-inner');
@@ -87,8 +161,16 @@ export function buildTbPicker() {
 
         const label = document.createElement('div');
         label.className = 'tb-cost-label';
-        label.textContent = COST_LABELS[cost];
-        label.style.color = COST_COLORS[cost];
+        const labelIcon = document.createElement('img');
+        labelIcon.className = 'tb-cost-label-icon';
+        labelIcon.src = 'img/gold-coin.png';
+        labelIcon.alt = '';
+        const labelText = document.createElement('div');
+        labelText.className = 'tb-cost-label-text';
+        labelText.textContent = COST_LABELS[cost];
+        labelText.style.color = COST_COLORS[cost];
+        label.appendChild(labelIcon);
+        label.appendChild(labelText);
         group.appendChild(label);
 
         const row = document.createElement('div');
@@ -104,11 +186,15 @@ export function buildTbPicker() {
             img.alt = champ.name;
             // if (isOriginallyLocked(champ.name)) img.style.filter = 'brightness(0.4) saturate(0.2)';
             el.appendChild(img);
+            el.addEventListener('mouseenter', () => showTbHint(champ, el));
+            el.addEventListener('mouseleave', hideTbHint);
 
             // Drag from picker — also handles click (no-drag mouseup)
             let tbDragMoved = false;
             el.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return;
                 if (!teamBuilderActive) return;
+                hideTbHint();
                 e.preventDefault();
                 e.stopPropagation();
                 tbDragMoved = false;
@@ -176,6 +262,7 @@ export function openTeamBuilder(ghost, onSave) {
 }
 
 export function closeTeamBuilder() {
+    hideTbHint();
     teamBuilderActive = false;
     document.dispatchEvent(new CustomEvent('tbmodechange'));
     document.body.classList.remove('team-builder-mode');
