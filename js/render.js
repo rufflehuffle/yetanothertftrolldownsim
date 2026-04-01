@@ -332,7 +332,7 @@ export function renderShopSlot(slot, champName) {
         slot.classList.toggle('star-up-2', willStar2);
         slot.classList.toggle('star-up-3', willStar3);
 
-        if (state.teamPlan.has(champName)) {
+        if (state.teamPlan.has(champName) && !state.satisfiedPlanUnits.has(champName)) {
             const badge = document.createElement('div');
             badge.className = 'team-plan-badge';
             slot.querySelector('.shop-slot-clip').appendChild(badge);

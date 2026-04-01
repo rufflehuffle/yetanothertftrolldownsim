@@ -15,6 +15,7 @@ export let state = {
     boardGenerated: false,  // true when board was populated by triggerGenerate41Board
     teamPlan: new Set(),
     teamPlanSlots: Array(10).fill(null), // positional slots for the planner grid
+    satisfiedPlanUnits: new Set(),       // units auto-removed from active plan after board gen (already 2-star, not 3-star targets)
     targetTeam: null,
     rolldownHistory: [],  // numeric scores for past rolldowns
 };

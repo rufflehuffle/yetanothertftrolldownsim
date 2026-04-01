@@ -9,7 +9,7 @@ import { doRoll } from './shop.js';
 import { teamBuilderActive, buildTbPicker } from './team-builder.js';
 import { history } from './commands.js';
 import { isActiveRound } from './rolldown-state.js';
-import { openTeamPlanner, loadTeamCode } from './planner.js';
+import { openTeamPlanner, loadTeamCode, snapshotBoardToPlanner } from './planner.js';
 
 // ============================================================
 // Auto team name — "<Most Active Trait> <Main Carry Name>"
@@ -112,7 +112,8 @@ const teamsEl         = document.querySelector('.teams');
 const teamsCloseBtnEl = document.querySelector('.teams__close-btn');
 const teamsBackdropEl = document.querySelector('.planner-backdrop');
 const teamsList       = document.querySelector('.teams__list');
-const teamsPasteBtnEl = document.querySelector('.teams__paste-btn');
+const teamsPasteBtnEl     = document.querySelector('.teams__paste-btn');
+const teamsSnapshotBtnEl  = document.querySelector('.teams__snapshot-btn');
 
 function isEmptyTeam(team) {
     const hasBoard = team.board && Object.values(team.board).some(Boolean);
@@ -300,6 +301,15 @@ teamsPasteBtnEl.addEventListener('click', async () => {
     closeTeams();
     openTeamPlanner();
     loadTeamCode(text);
+});
+
+// ============================================================
+// SNAPSHOT button — snapshot current board into planner and open it
+// ============================================================
+teamsSnapshotBtnEl?.addEventListener('click', () => {
+    snapshotBoardToPlanner();
+    closeTeams();
+    openTeamPlanner();
 });
 
 // ============================================================
@@ -523,6 +533,7 @@ function _deactivateTeam() {
 
     state.teamPlan.clear();
     syncTeamPlanSlots([]);
+    state.satisfiedPlanUnits = new Set();
     state.targetTeam = null;
     for (const name of Object.keys(pool)) {
         if (isOriginallyLocked(name)) pool[name].unlocked = false;
@@ -550,6 +561,7 @@ function _applyTeamPlanOnly(team) {
         }
         saveUnlockedOverrides();
     }
+    state.satisfiedPlanUnits = new Set();
     state.targetTeam = team.targetTeam?.length ? new Set(team.targetTeam) : null;
     lastLoadedPreset = team;
     try { localStorage.setItem('tft-last-preset', team.id); } catch {}
@@ -562,6 +574,7 @@ function _applyTeamPlanOnly(team) {
 // ============================================================
 function _applyTeam(team, emptyBoard = false) {
     state.boardGenerated = false;
+    state.satisfiedPlanUnits = new Set();
     if (team.teamPlan) {
         for (const name of _originallyLocked) {
             if (pool[name]) pool[name].unlocked = false;

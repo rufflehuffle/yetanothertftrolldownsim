@@ -7,6 +7,7 @@ import { render, computeTraits, getSortedTraitEntries, activeBreakpoint, nextBre
 import { generateBoard } from './board-generation/generator.js';
 import { openTeams, saveActiveTeam, lastLoadedPreset, renameTeam, setPresetOverride } from './teams.js';
 import { detectArchetype, ARCHETYPES, ARCHETYPE_LABEL, ARCHETYPE_ICON } from './board-generation/detect-reroll.js';
+import { TANK_CLASS } from './board-generation/constants.js';
 import { initFilter, getActiveFilterTraits } from './planner-filter.js';
 import { isActiveRound } from './rolldown-state.js';
 
@@ -112,10 +113,9 @@ const traitsEl          = document.querySelector('.planner-traits');
 const closeBtnEl        = document.querySelector('.planner__close-btn');
 const clearBtnEl        = document.querySelector('.planner-selected__clear-btn');
 const undoBtnEl         = document.querySelector('.planner-selected__undo-btn');
-const unlockToggleEl    = document.querySelector('.planner-picker__unlockable-switch input');
+const snapshotBtnEl     = document.querySelector('.planner-selected__snapshot-btn');
 const teamPlannerBtnEl  = document.querySelector('.planner-btn');
-const generateBtnEl     = document.querySelector('.planner-selected__generate-btn'); // TODO (temp): 4-1 generator
-const setTargetBtnEl    = document.querySelector('.planner-selected__set-target-btn');
+const actionsBtnEl      = document.querySelector('.planner-selected__actions-btn');
 const pasteBtnEl        = document.querySelector('.planner-selected__paste-btn');
 const plannerTitleEl    = document.querySelector('.planner-selected__title');
 const plannerEditBtnEl  = document.querySelector('.planner-selected__edit-btn');
@@ -219,6 +219,7 @@ document.addEventListener('click', () => {
         _openArchetypeDropdown.remove();
         _openArchetypeDropdown = null;
     }
+    closeActionsDropdown();
 });
 
 // ============================================================
@@ -459,10 +460,12 @@ export function renderTeamGrid() {
 
         if (champ) {
             slot.dataset.name = name;
-            const isLocked   = isOriginallyLocked(name);
-            const isUnlocked = isLocked && pool[name].unlocked;
+            const isLocked    = isOriginallyLocked(name);
+            const isUnlocked  = isLocked && pool[name].unlocked;
+            const isSatisfied = state.satisfiedPlanUnits.has(name);
 
             slot.classList.add(SELECTED_COST_CLASS[champ.cost] ?? '');
+            if (isSatisfied) slot.classList.add('planner-selected__unit--satisfied');
 
             // Trait hexagons (top-left overlay)
             const traitsOverlay = document.createElement('div');
@@ -526,11 +529,20 @@ export function renderTeamGrid() {
             slot.addEventListener('mouseenter', () => showUnitInfo(champ, slot));
             slot.addEventListener('mouseleave', hideUnitInfo);
 
-            // Left-click to remove
+            // Left-click: re-add if satisfied, otherwise remove
             slot.addEventListener('click', () => {
                 pushUndo();
                 hideUnitInfo();
-                toggleTeamPlan(name);
+                if (isSatisfied) {
+                    state.satisfiedPlanUnits.delete(name);
+                    state.teamPlan.add(name);
+                    saveTeamPlan();
+                    renderTeamGrid();
+                    render();
+                    saveActiveTeam();
+                } else {
+                    toggleTeamPlan(name);
+                }
             });
         }
 
@@ -635,6 +647,39 @@ export function toggleTeamPlan(name) {
     const container = pickerEl.querySelector(`.planner-picker__unit-container[data-name="${CSS.escape(name)}"]`);
     if (container) refreshPickerUnit(container, pool[name]);
 
+    renderTeamGrid();
+    renderPlannerTraits();
+    render();
+    saveActiveTeam();
+}
+
+// ============================================================
+// Snapshot board → planner (replace plan with deduped board units)
+// ============================================================
+const SNAPSHOT_SUMMONS = new Set(['Ice Tower', 'Sand Soldier']);
+
+export function snapshotBoardToPlanner() {
+    const names = [...new Set(
+        state.board.values()
+            .filter(u => u !== null && !SNAPSHOT_SUMMONS.has(u.name))
+            .map(u => u.name)
+    )].slice(0, TEAM_MAX);
+
+    if (!names.length) return;
+
+    pushUndo();
+    state.teamPlan.clear();
+    for (const name of Object.keys(pool)) {
+        if (isOriginallyLocked(name)) pool[name].unlocked = false;
+    }
+    for (const name of names) {
+        state.teamPlan.add(name);
+        if (isOriginallyLocked(name)) pool[name].unlocked = true;
+    }
+    syncTeamPlanSlots(names);
+    saveTeamPlan();
+    saveUnlockedOverrides();
+    buildPicker();
     renderTeamGrid();
     renderPlannerTraits();
     render();
@@ -771,6 +816,9 @@ undoBtnEl?.addEventListener('click', () => {
     saveActiveTeam();
 });
 
+// Snapshot button
+snapshotBtnEl?.addEventListener('click', snapshotBoardToPlanner);
+
 // Planner title edit button
 plannerEditBtnEl?.addEventListener('click', () => {
     if (!lastLoadedPreset) return;
@@ -801,6 +849,52 @@ plannerEditBtnEl?.addEventListener('click', () => {
     input.select();
 });
 
+// ============================================================
+// Satisfied plan units — units already 2-starred after board gen
+// that are not 3-star targets. These are suppressed from shop
+// badges and greyed in the planner grid.
+// ============================================================
+function computeSatisfiedPlanUnits() {
+    state.satisfiedPlanUnits = new Set();
+
+    const planNames = state.teamPlanSlots.filter(Boolean);
+    if (!planNames.length) return;
+
+    const override  = lastLoadedPreset?.generationOverride ?? null;
+    const archetype = override ?? detectArchetype(planNames);
+
+    // Build exempt set: 3-star targets that should never be removed
+    const exempt = new Set();
+    const rerollCost = archetype === 'lv5' ? 1 : archetype === 'lv6' ? 2 : archetype === 'lv7' ? 3 : null;
+    if (rerollCost !== null) {
+        for (const name of planNames) {
+            const champ = pool[name];
+            if (!champ) continue;
+            if (champ.cost === rerollCost) {
+                exempt.add(name);
+            } else if (rerollCost < 3 && champ.cost === rerollCost + 1 && TANK_CLASS.has(champ.role)) {
+                exempt.add(name);
+            }
+        }
+    }
+
+    // Collect names of all 2-star units on board and bench
+    const twoStarNames = new Set();
+    for (const unit of state.board.values()) {
+        if (unit && unit.stars === 2) twoStarNames.add(unit.name);
+    }
+    for (const unit of state.bench) {
+        if (unit && unit.stars === 2) twoStarNames.add(unit.name);
+    }
+
+    // Any non-exempt planner unit already at 2-star is satisfied
+    for (const name of planNames) {
+        if (!exempt.has(name) && twoStarNames.has(name)) {
+            state.satisfiedPlanUnits.add(name);
+        }
+    }
+}
+
 // Generate 4-1 Board button ─────────────────────────────────
 // Simulates a standard early-game buying curve and loads the resulting
 // board + bench + gold into the main state. Close the planner so the
@@ -817,6 +911,7 @@ export function triggerGenerate41Board() {
     state.bench = result.bench;
     state.board = Board.from(result.board);
     state.boardGenerated = true;
+    computeSatisfiedPlanUnits();
     doRoll(state, false);
     closeTeamPlanner();
     render();
@@ -824,15 +919,10 @@ export function triggerGenerate41Board() {
     return true;
 }
 
-generateBtnEl?.addEventListener('click', () => {
-    if (!isActiveRound()) triggerGenerate41Board();
-});
-
-// Target team hover preview
+// Target team hover preview element (reused across dropdown opens)
 const targetPreviewEl = document.createElement('div');
 targetPreviewEl.className = 'target-team-preview';
 targetPreviewEl.style.display = 'none';
-setTargetBtnEl?.appendChild(targetPreviewEl);
 
 function refreshTargetPreview() {
     if (!state.targetTeam || state.targetTeam.size === 0) return;
@@ -855,20 +945,90 @@ function refreshTargetPreview() {
 
 function refreshSetTargetBtn() {
     const hasTarget = !!(state.targetTeam?.size);
-    setTargetBtnEl?.classList.toggle('has-target', hasTarget);
-    generateBtnEl?.classList.toggle('has-target', hasTarget);
+    actionsBtnEl?.classList.toggle('has-target', hasTarget);
 }
 
-setTargetBtnEl?.addEventListener('click', () => {
-    setPlannedAsGenerateTarget();
-    refreshTargetPreview();
-    refreshSetTargetBtn();
-});
+// Actions dropdown (GENERATE + SET AS TARGET)
+let _openActionsDropdown = null;
 
-setTargetBtnEl?.addEventListener('mouseenter', refreshTargetPreview);
+function closeActionsDropdown() {
+    if (_openActionsDropdown) {
+        _openActionsDropdown.remove();
+        _openActionsDropdown = null;
+    }
+}
 
-setTargetBtnEl?.addEventListener('mouseleave', () => {
+actionsBtnEl?.addEventListener('click', e => {
+    e.stopPropagation();
+    if (_openActionsDropdown) { closeActionsDropdown(); return; }
+
+    const hasTarget = !!(state.targetTeam?.size);
+    const dropdown = document.createElement('div');
+    dropdown.className = 'actions-dropdown';
+
+    // ── GENERATE item ──────────────────────────────────────────
+    const generateItem = document.createElement('div');
+    generateItem.className = 'actions-dropdown__item actions-item--generate';
+    if (isActiveRound()) generateItem.classList.add('is-disabled');
+    if (hasTarget) generateItem.classList.add('has-target');
+
+    const generateText = document.createElement('span');
+    generateText.textContent = 'GENERATE';
+    generateItem.appendChild(generateText);
+
+    const generateTooltip = document.createElement('div');
+    generateTooltip.className = 'generate-item__tooltip btn-panel';
+    generateTooltip.innerHTML =
+        '<div class="btn-panel__title">Generate Board</div>' +
+        '<div class="btn-panel__rule"></div>' +
+        '<div class="btn-panel__desc generate-desc--plan">Builds a pre-rolldown board for your planned team.</div>' +
+        '<div class="btn-panel__desc generate-desc--target">Builds a pre-rolldown board for your target team.</div>';
+    generateItem.appendChild(generateTooltip);
+
+    generateItem.addEventListener('click', ev => {
+        ev.stopPropagation();
+        if (generateItem.classList.contains('is-disabled')) return;
+        triggerGenerate41Board();
+        closeActionsDropdown();
+    });
+
+    // ── SET AS TARGET item ─────────────────────────────────────
+    const setTargetItem = document.createElement('div');
+    setTargetItem.className = 'actions-dropdown__item actions-item--set-target';
+    if (hasTarget) setTargetItem.classList.add('has-target');
+
+    const setTargetText = document.createElement('span');
+    setTargetText.textContent = 'SET AS TARGET';
+    setTargetItem.appendChild(setTargetText);
+
+    const setTargetTooltip = document.createElement('div');
+    setTargetTooltip.className = 'set-target-item__tooltip btn-panel';
+    setTargetTooltip.innerHTML =
+        '<div class="btn-panel__title">Set as Target</div>' +
+        '<div class="btn-panel__rule"></div>' +
+        '<div class="btn-panel__desc">Locks your current plan as the Generate target.</div>';
+    setTargetItem.appendChild(setTargetTooltip);
+
     targetPreviewEl.style.display = 'none';
+    setTargetItem.appendChild(targetPreviewEl);
+
+    setTargetItem.addEventListener('click', ev => {
+        ev.stopPropagation();
+        setPlannedAsGenerateTarget();
+        refreshTargetPreview();
+        refreshSetTargetBtn();
+        const nowHasTarget = !!(state.targetTeam?.size);
+        generateItem.classList.toggle('has-target', nowHasTarget);
+        setTargetItem.classList.toggle('has-target', nowHasTarget);
+    });
+
+    setTargetItem.addEventListener('mouseenter', refreshTargetPreview);
+    setTargetItem.addEventListener('mouseleave', () => { targetPreviewEl.style.display = 'none'; });
+
+    dropdown.appendChild(generateItem);
+    dropdown.appendChild(setTargetItem);
+    actionsBtnEl.appendChild(dropdown);
+    _openActionsDropdown = dropdown;
 });
 // ── end TODO ────────────────────────────────────────────────────────────────
 
