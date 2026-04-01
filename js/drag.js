@@ -29,10 +29,16 @@ let shopGhostEl = null, shopGhostSlotEl = null, shopGhostSlotIndex = -1;
 // ============================================================
 const sellZone = document.querySelector('.sell-zone');
 const hudEl    = document.querySelector('.hud');
+const benchEl  = document.querySelector('.bench');
 
 function isOverHud(x, y) {
     const rect = hudEl.getBoundingClientRect();
     return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+}
+
+function isBelowBench(x, y) {
+    const rect = benchEl.getBoundingClientRect();
+    return y > rect.bottom;
 }
 
 export let dragging = null;
@@ -189,7 +195,7 @@ sellZone.addEventListener('mouseleave', () => {
 });
 sellZone.addEventListener('mouseup', () => {
     if (!dragging) return;
-    if ((isPlanning() || isRoundEnd()) && dragging.type !== 'bench') { endDrag(); return; }
+    if ((isPlanning() || isRoundEnd()) && dragging.type !== 'bench' && !teamBuilderActive) { endDrag(); return; }
     const unit = dragging.type === 'shop' ? null : getUnitAt(state, dragging);
     if (unit) dispatch(new SellCommand(unit, dragging));
     endDrag();
@@ -218,6 +224,14 @@ document.querySelectorAll('.bench-slot').forEach((slot, i) => {
     slot.addEventListener('mouseleave', () => setHoveredSlot(null));
     slot.addEventListener('mousedown', (e) => handleDragStart(e, location));
     slot.addEventListener('mouseup', () => handleDrop(location));
+    slot.addEventListener('contextmenu', (e) => {
+        if (!teamBuilderActive) return;
+        e.preventDefault();
+        if (state.bench[i] === null) return;
+        state.bench[i] = null;
+        applyBoardEffects(state);
+        render();
+    });
 });
 
 document.querySelectorAll('.hex').forEach(hex => {
@@ -227,6 +241,14 @@ document.querySelectorAll('.hex').forEach(hex => {
     hex.addEventListener('mouseleave', () => setHoveredSlot(null));
     hex.addEventListener('mousedown', (e) => handleDragStart(e, location));
     hex.addEventListener('mouseup', () => handleDrop(location));
+    hex.addEventListener('contextmenu', (e) => {
+        if (!teamBuilderActive) return;
+        e.preventDefault();
+        if (!state.board.get(key)) return;
+        state.board.set(key, null);
+        applyBoardEffects(state);
+        render();
+    });
 });
 
 document.querySelectorAll('.bench-slot, .hex, .shop-slot, .shop-container, .star-indicator, .board, .trait-panel, .star-adj, .hex-wrapper').forEach(el => {
@@ -260,10 +282,13 @@ document.addEventListener('mousemove', (e) => {
     }
     if (dragging.type !== 'shop') {
         const overShop = isOverHud(e.clientX, e.clientY);
-        sellZone.style.display = overShop ? 'flex' : 'none';
-        if (!overShop) sellZone.classList.remove('active');
+        const belowBench = isBelowBench(e.clientX, e.clientY);
         const nearest = findNearestHexToPoint(e.clientX, e.clientY);
         const nearestBenchIdx = findNearestBenchSlotToPoint(e.clientX, e.clientY);
+        const showSell = (overShop || belowBench) && nearestBenchIdx === null;
+        sellZone.style.display = showSell ? 'flex' : 'none';
+        if (!showSell) sellZone.classList.remove('active');
+        if (belowBench && nearestBenchIdx === null) sellZone.classList.add('active');
         document.querySelectorAll('.hex.drag-hover, .bench-slot.drag-hover').forEach(h => h.classList.remove('drag-hover'));
         if (nearest) nearest.classList.add('drag-hover');
         else if (nearestBenchIdx !== null) document.querySelectorAll('.bench-slot')[nearestBenchIdx].classList.add('drag-hover');
@@ -314,21 +339,22 @@ document.addEventListener('mouseup', (e) => {
         return;
     }
     if (dragging?.type === 'shop' && shopDragActivated) handleShopDragEnd(e);
-    else if (dragging && dragging.type !== 'shop' && isOverHud(e.clientX, e.clientY)) {
-        if (!isPlanning() && !isRoundEnd() || (isPlanning() && dragging.type === 'bench')) {
-            const unit = getUnitAt(state, dragging);
-            if (unit) dispatch(new SellCommand(unit, dragging));
-        }
-        endDrag();
-    } else if (dragging && dragging.type !== 'shop') {
+    else if (dragging && dragging.type !== 'shop') {
         const nearestHex = findNearestHexToPoint(e.clientX, e.clientY);
-        if (nearestHex) {
+        const nearestBench = findNearestBenchSlotToPoint(e.clientX, e.clientY);
+        if (nearestHex === null && nearestBench === null && (isOverHud(e.clientX, e.clientY) || isBelowBench(e.clientX, e.clientY))) {
+            if (!isPlanning() && !isRoundEnd() || (isPlanning() && dragging.type === 'bench')) {
+                const unit = getUnitAt(state, dragging);
+                if (unit) dispatch(new SellCommand(unit, dragging));
+            }
+            endDrag();
+        } else if (nearestHex) {
             const key = [...nearestHex.classList].find(c => c !== 'hex');
             handleDrop({ type: 'board', key });
+        } else if (nearestBench !== null) {
+            handleDrop({ type: 'bench', index: nearestBench });
         } else {
-            const nearestBench = findNearestBenchSlotToPoint(e.clientX, e.clientY);
-            if (nearestBench !== null) handleDrop({ type: 'bench', index: nearestBench });
-            else endDrag();
+            endDrag();
         }
     } else endDrag();
 });

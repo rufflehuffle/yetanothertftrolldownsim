@@ -11,15 +11,15 @@ import { isPlanning, isRoundEnd, isActiveRound } from './rolldown-state.js';
 // Level dropdown
 // ============================================================
 (function () {
-    const levelDropdown = document.querySelector('.level-dropdown');
-    const levelDisplay  = document.querySelector('.level-display');
-
-    levelDisplay.addEventListener('click', (e) => {
-        e.stopPropagation();
-        levelDropdown.classList.toggle('open');
+    document.querySelectorAll('.level-display').forEach(levelDisplay => {
+        const levelDropdown = levelDisplay.closest('.level-dropdown');
+        levelDisplay.addEventListener('click', (e) => {
+            e.stopPropagation();
+            levelDropdown.classList.toggle('open');
+        });
     });
 
-    levelDropdown.querySelectorAll('.level-option').forEach(opt => {
+    document.querySelectorAll('.level-option').forEach(opt => {
         opt.addEventListener('click', (e) => {
             e.stopPropagation();
             const chosen = Number(opt.dataset.value);
@@ -29,12 +29,12 @@ import { isPlanning, isRoundEnd, isActiveRound } from './rolldown-state.js';
                 applyBoardEffects(state);
                 render();
             }
-            levelDropdown.classList.remove('open');
+            document.querySelectorAll('.level-dropdown').forEach(d => d.classList.remove('open'));
         });
     });
 
     document.addEventListener('click', () => {
-        levelDropdown.classList.remove('open');
+        document.querySelectorAll('.level-dropdown').forEach(d => d.classList.remove('open'));
     });
 })();
 
@@ -42,30 +42,31 @@ import { isPlanning, isRoundEnd, isActiveRound } from './rolldown-state.js';
 // Gold editor (persistent input)
 // ============================================================
 (function () {
-    const goldInput = document.querySelector('.gold-persistent');
-    let persistentOriginal = state.gold;
+    document.querySelectorAll('.gold-persistent').forEach(goldInput => {
+        let persistentOriginal = state.gold;
 
-    goldInput.addEventListener('focus', () => {
-        persistentOriginal = state.gold;
-        goldInput.select();
+        goldInput.addEventListener('focus', () => {
+            persistentOriginal = state.gold;
+            goldInput.select();
+        });
+        goldInput.addEventListener('blur', () => {
+            const val = parseInt(goldInput.value, 10);
+            state.gold = isNaN(val) ? persistentOriginal : Math.max(0, val);
+            render();
+        });
+        goldInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); goldInput.blur(); }
+            if (e.key === 'Escape') { goldInput.value = state.gold; goldInput.blur(); }
+        });
+        goldInput.addEventListener('mousedown', (e) => e.stopPropagation());
+        goldInput.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
     });
-    goldInput.addEventListener('blur', () => {
-        const val = parseInt(goldInput.value, 10);
-        state.gold = isNaN(val) ? persistentOriginal : Math.max(0, val);
-        render();
-    });
-    goldInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') { e.preventDefault(); goldInput.blur(); }
-        if (e.key === 'Escape') { goldInput.value = state.gold; goldInput.blur(); }
-    });
-    goldInput.addEventListener('mousedown', (e) => e.stopPropagation());
-    goldInput.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
 })();
 
 // ============================================================
 // Team Builder & Presets sidebar buttons
 // ============================================================
-document.querySelector('.buy-xp-button').addEventListener('click', () => { if (!isRoundEnd()) dispatch(new BuyXpCommand()); });
+document.querySelectorAll('.buy-xp-button').forEach(btn => btn.addEventListener('click', () => { if (!isRoundEnd()) dispatch(new BuyXpCommand()); }));
 document.querySelector('.roll-button').addEventListener('click', () => { if (!isPlanning() && !isRoundEnd()) dispatch(new RollCommand()); });
 
 document.querySelector('.builder-btn').addEventListener('click', () => { if (!isActiveRound()) openTeamBuilder(ghost, openSavePreset); });

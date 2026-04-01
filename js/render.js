@@ -355,24 +355,18 @@ export function renderShopSlot(slot, champName) {
 
 function renderXpBar() {
     const maxXp = xp_to_level[state.level];
-    const xpFill = document.querySelector('.xp-bar-fill');
-    const xpText = document.querySelector('.xp-bar-text');
-    const levelDisplay = document.querySelector('.level-display');
-    if (levelDisplay) {
+    document.querySelectorAll('.level-display').forEach(levelDisplay => {
         levelDisplay.firstChild.textContent = `Lvl ${state.level}`;
-        document.querySelectorAll('.level-option').forEach(opt => {
-            opt.classList.toggle('active', Number(opt.dataset.value) === state.level);
-        });
-    }
-    if (xpFill && xpText) {
-        if (state.level >= 10 || maxXp == null) {
-            xpFill.style.width = '100%';
-            xpText.textContent = 'MAX';
-        } else {
-            xpFill.style.width = `${Math.min(100, (state.xp / maxXp) * 100)}%`;
-            xpText.textContent = `${state.xp} / ${maxXp}`;
-        }
-    }
+    });
+    document.querySelectorAll('.level-option').forEach(opt => {
+        opt.classList.toggle('active', Number(opt.dataset.value) === state.level);
+    });
+    document.querySelectorAll('.xp-bar-fill').forEach(xpFill => {
+        xpFill.style.width = (state.level >= 10 || maxXp == null) ? '100%' : `${Math.min(100, (state.xp / maxXp) * 100)}%`;
+    });
+    document.querySelectorAll('.xp-bar-text').forEach(xpText => {
+        xpText.textContent = (state.level >= 10 || maxXp == null) ? 'MAX' : `${state.xp} / ${maxXp}`;
+    });
 }
 
 function renderOdds() {
@@ -388,11 +382,10 @@ function renderOdds() {
 // Main render
 // ============================================================
 export function render() {
-    document.querySelector('.gold').textContent = state.gold;
-    const goldInput = document.querySelector('.gold-persistent');
-    if (goldInput && document.activeElement !== goldInput) {
-        goldInput.value = state.gold;
-    }
+    document.querySelectorAll('.gold').forEach(el => { el.textContent = state.gold; });
+    document.querySelectorAll('.gold-persistent').forEach(goldInput => {
+        if (document.activeElement !== goldInput) goldInput.value = state.gold;
+    });
 
     renderXpBar();
     renderOdds();

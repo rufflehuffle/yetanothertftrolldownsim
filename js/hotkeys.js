@@ -12,6 +12,7 @@ import { playSound } from './audio.js';
 import { rdShopPrimaryBtn, updateOverlayContent, wasLastRoundGenerated } from './overlay.js';
 import { triggerGenerate41Board } from './planner.js';
 import { state } from './state.js';
+import { teamBuilderActive } from './team-builder.js';
 import { render } from './render.js';
 import { addXp } from './shop.js';
 import { ACTIONS, matches, matchesMouse } from './hotkey-bindings.js';
@@ -68,7 +69,7 @@ function fireAction(id, repeat = false) {
         case 'sell': {
             if (isRoundEnd()) return;
             const activeSlot = (dragging && dragging.type !== 'shop') ? dragging : hoveredSlot;
-            if (isPlanning() && activeSlot?.type !== 'bench') return;
+            if (isPlanning() && activeSlot?.type !== 'bench' && !teamBuilderActive) return;
             if (dragging && dragging.type !== 'shop') {
                 const unit = getUnitAt(state, dragging);
                 if (unit) dispatch(new SellCommand(unit, dragging));
@@ -93,17 +94,6 @@ document.addEventListener('keydown', (e) => {
             timerControls.pause();
             pauseRound();
         }
-        return;
-    }
-
-    if (e.ctrlKey && e.key === 'z' && !e.shiftKey) {
-        e.preventDefault();
-        history.undo();
-        return;
-    }
-    if ((e.ctrlKey && e.key === 'y') || (e.ctrlKey && e.shiftKey && e.key === 'z')) {
-        e.preventDefault();
-        history.redo();
         return;
     }
 

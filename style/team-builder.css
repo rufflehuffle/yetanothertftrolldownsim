@@ -1,19 +1,23 @@
-/* Team Builder mode overlay indicator */
-body.team-builder-mode .hud .shop-container .shop {
+/* Hide main HUD in team builder mode; show the dedicated TB HUD instead */
+body.team-builder-mode .hud:not(.tb-hud) {
     display: none;
 }
-body.team-builder-mode .hud .shop-container .gold-container {
-    display: flex; /* keep gold visible */
-}
-body.team-builder-mode .roll-button {
+.tb-hud {
     display: none;
 }
-/* Hide timer in team builder mode */
-body.team-builder-mode .top-timer-bar {
-    display: none;
+body.team-builder-mode .tb-hud {
+    display: flex;
 }
 
-body.team-builder-mode .odds-container {
+/* Give the TB HUD shop-container enough size to center the gold display */
+.tb-hud .shop-container {
+    min-width: 200px;
+    min-height: 50px;
+    justify-content: center;
+}
+
+/* Hide timer in team builder mode */
+body.team-builder-mode .top-timer-bar {
     display: none;
 }
 
@@ -268,4 +272,36 @@ body.team-builder-mode .hex-wrapper.has-unit:focus-within .star-adj {
 .star-adj button:hover {
     background: rgba(255,255,255,0.2);
     border-color: rgba(255,255,255,0.6);
+}
+
+@media (max-width: 1280px) {
+    .tb-picker-panel {
+        width: 200px;
+    }
+    .tb-unit {
+        width: 36px;
+        height: 36px;
+    }
+    body.team-builder-mode .team-planner-button,
+    body.team-builder-mode .team-builder-button,
+    body.team-builder-mode .presets-button,
+    body.team-builder-mode .rolldown-mode-button {
+        right: calc(200px + 16px);
+    }
+}
+
+@media (max-width: 900px) {
+    .tb-picker-panel {
+        width: 160px;
+    }
+    .tb-unit {
+        width: 32px;
+        height: 32px;
+    }
+    body.team-builder-mode .team-planner-button,
+    body.team-builder-mode .team-builder-button,
+    body.team-builder-mode .presets-button,
+    body.team-builder-mode .rolldown-mode-button {
+        right: calc(160px + 16px);
+    }
 }
